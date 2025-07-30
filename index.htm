@@ -157,7 +157,7 @@
                     // Armazena o nome do usuário logado no localStorage
                     localStorage.setItem('isAuthenticated', 'true');
                     localStorage.setItem('username', result.userName); // Usa o userName retornado pelo App Script
-                    window.location.href = 'dashboard.htm'; // Redireciona para o dashboard
+                    window.location.href = 'inicio.htm'; // Redireciona para o inicio
                 } else {
                     errorMessageDiv.textContent = result.message || 'Erro desconhecido ao fazer login.';
                     errorMessageDiv.classList.remove('hidden');
