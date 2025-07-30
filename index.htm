@@ -3,319 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plano de Acompanhamento de Vendedor</title>
-    <!-- Inclui o CDN do Tailwind CSS para estilização rápida e responsiva -->
+    <title>Plano de Acompanhamento de Vendedor - Login</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Importa a fonte Inter do Google Fonts para uma tipografia moderna -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* Define a fonte Inter como padrão para o corpo do documento */
         body {
             font-family: 'Inter', sans-serif;
         }
-        /* Estilo para o spinner de carregamento */
-        .loader {
-            border: 4px solid #f3f3f3; /* Light grey */
-            border-top: 4px solid #3498db; /* Blue */
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
+        /* Cor de fundo para o body */
+        body {
+            background-color: #e0e7ff; /* Um azul bem claro, similar ao da imagem */
         }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        /* Estilo para o container principal do formulário */
+        .login-container {
+            background-color: white;
+            padding: 2.5rem; /* p-10 para mais padding */
+            border-radius: 1rem; /* rounded-xl */
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); /* shadow-2xl */
+            width: 100%;
+            max-width: 480px; /* Largura um pouco maior que o padrão para acomodar o conteúdo */
+            transform: translateY(0); /* Remove o hover:translate-y-1 do container principal */
+            transition: none; /* Remove a transição do container principal */
+        }
+        .logo-sig {
+            height: 40px; /* Ajuste conforme necessário */
+            margin-bottom: 1rem;
+            align-self: flex-start; /* Alinha à esquerda dentro do flex container */
+        }
+        .logo-triunfante {
+            width: 200px; /* Ajuste conforme necessário */
+            margin-bottom: 2rem; /* Espaçamento abaixo do logo principal */
+        }
+        .main-title {
+            font-size: 2.5rem; /* text-4xl */
+            font-weight: 800; /* font-extrabold */
+            color: #1a237e; /* Um azul mais escuro para o título principal */
+            line-height: 1.2; /* Espaçamento de linha para títulos multi-linha */
+            margin-bottom: 2rem;
+        }
+        .form-label {
+            display: block;
+            color: #4a5568; /* text-gray-700 */
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 600; /* font-semibold */
+            margin-bottom: 0.5rem;
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem; /* py-3 px-4 */
+            border: 1px solid #cbd5e0; /* border-gray-300 */
+            border-radius: 0.5rem; /* rounded-lg */
+            font-size: 1rem;
+            color: #2d3748; /* text-gray-800 */
+            transition: all 0.2s ease-in-out;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #4299e1; /* blue-500 */
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5); /* ring-2 focus:ring-blue-500 */
+        }
+        .btn-primary {
+            width: 100%;
+            padding: 0.75rem 1rem; /* py-3 px-4 */
+            background-color: #3b82f6; /* blue-600 */
+            color: white;
+            font-weight: 700; /* font-bold */
+            border-radius: 0.75rem; /* rounded-lg */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+            transition: all 0.3s ease-in-out;
+        }
+        .btn-primary:hover {
+            background-color: #2563eb; /* blue-700 */
+            transform: translateY(-2px); /* hover:-translate-y-1 */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Mais sombra no hover */
+        }
+        .error-message {
+            color: #ef4444; /* red-600 */
+            font-size: 0.875rem; /* text-sm */
+            text-align: center;
+            margin-top: 1rem;
+        }
+        .footer-text {
+            color: #6b7280; /* gray-500 */
+            font-size: 0.875rem; /* text-sm */
+            margin-top: 2rem;
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-gray-100 to-blue-200 min-h-screen flex items-center justify-center p-4">
-    <!-- Container principal que centraliza o conteúdo e adiciona um estilo de cartão -->
-    <div class="max-w-md w-full bg-white p-8 rounded-xl shadow-2xl flex flex-col items-center space-y-8 relative">
-        <!-- Nova imagem adicionada dentro do container, no topo esquerdo, menor e posicionada absolutamente -->
-        <img src="https://i.imgur.com/b6JbtR3.png" alt="Imagem Adicional" class="absolute top-4 left-4 w-20 h-auto object-contain">
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
 
-        <!-- Logo da empresa, centralizada -->
-        <img src="https://i.imgur.com/x5yvEo7.png" alt="Logo Auditoria Comercial" class="w-40 h-40 object-contain mb-4 mt-8">
+    <div class="login-container flex flex-col items-center">
+        <img src="https://i.imgur.com/b6JbtR3.png" alt="SIG - Sistema Integrado de Gestão" class="logo-sig">
 
-        <!-- Título do sistema com estilo moderno e tamanho ajustado -->
-        <h1 class="text-3xl font-extrabold text-blue-800 mb-6 text-center">Plano de Acompanhamento de Vendedor</h1>
+        <img src="https://i.imgur.com/x5yvEo7.png" alt="Triunfante" class="logo-triunfante">
 
-        <!-- Formulário de login -->
-        <form id="loginForm" class="w-full">
-            <!-- Grupo de entrada para o nome de usuário -->
-            <div class="mb-6">
-                <label for="username" class="block text-gray-700 text-sm font-semibold mb-2">Usuário:</label>
-                <input type="text" id="username" name="username" required
-                       class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300 ease-in-out">
+        <h1 class="main-title text-center">Plano de Acompanhamento de Vendedor</h1>
+
+        <form id="loginForm" class="w-full space-y-6">
+            <div>
+                <label for="username" class="form-label">Usuário:</label>
+                <input type="text" id="username" name="username" class="form-input" required>
             </div>
-            <!-- Grupo de entrada para a senha -->
-            <div class="mb-6">
-                <label for="password" class="block text-gray-700 text-sm font-semibold mb-2">Senha:</label>
-                <input type="password" id="password" name="password" required
-                       class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300 ease-in-out">
+            <div>
+                <label for="password" class="form-label">Senha:</label>
+                <input type="password" id="password" name="password" class="form-input" required>
             </div>
-            <!-- Mensagem de erro (inicialmente oculta) -->
-            <div class="text-red-600 text-sm mt-2 hidden" id="loginError">Usuário ou senha inválidos.</div>
-            <!-- Botão de login com estilo vibrante e efeito hover -->
-            <button type="submit"
-                    class="w-full py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out transform hover:-translate-y-1 shadow-lg">
+            <button type="submit" class="btn-primary">
                 Entrar
             </button>
+            <div id="errorMessage" class="error-message hidden"></div>
         </form>
 
-        <!-- Texto "Desenvolvido por Triunfante Brasil" no rodapé do container -->
-        <p class="text-gray-500 text-sm mt-8">Desenvolvido por Triunfante Brasil</p>
+        <p class="footer-text text-center">Desenvolvido por Triunfante Brasil</p>
     </div>
 
-    <!-- Overlay de carregamento (inicialmente oculto) -->
-    <div id="loadingOverlay" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 hidden">
-        <div class="loader"></div>
-    </div>
-
-    <script>
-
-        // Adiciona um listener para o evento de submit do formulário
-
-        document.getElementById('loginForm').addEventListener('submit', function(event) {
-
-            event.preventDefault(); // Previne o comportamento padrão de submit do formulário
-
-
-
-            const username = document.getElementById('username').value;
-
-            const password = document.getElementById('password').value;
-
-            const errorMessage = document.getElementById('loginError');
-
-            const loadingOverlay = document.getElementById('loadingOverlay');
-
-
-
-            // Mostra o overlay de carregamento
-
-            loadingOverlay.classList.remove('hidden');
-
-
-
-            // Simula um atraso de 2 segundos para o processo de login
-
-            setTimeout(() => {
-
-                // Esconde o overlay de carregamento
-
-                loadingOverlay.classList.add('hidden');
-
-
-
-                // Exemplo simples de validação (substitua pela sua lógica de autenticação real)
-
-                if (username === 'admin' && password === 'password') {
-
-                    errorMessage.classList.add('hidden'); // Esconde a mensagem de erro
-
-                    // Anteriormente, havia um console.log aqui. Ele foi removido.
-
-                    // Aqui você redirecionaria o usuário ou faria outra ação de sucesso
-
-                } else {
-
-                    errorMessage.classList.remove('hidden'); // Mostra a mensagem de erro
-
-                    console.log('Usuário ou senha inválidos.');
-
-                }
-
-            }, 2000); // 2000 milissegundos = 2 segundos
-
-        });
-
-
-
-        // Adiciona um listener para o evento de submit do formulário
-
-        document.getElementById('loginForm').addEventListener('submit', function(event) {
-
-            event.preventDefault(); // Previne o comportamento padrão de submit do formulário
-
-
-
-            const username = document.getElementById('username').value;
-
-            const password = document.getElementById('password').value;
-
-            const errorMessage = document.getElementById('loginError');
-
-            const loadingOverlay = document.getElementById('loadingOverlay');
-
-
-
-            // Mostra o overlay de carregamento
-
-            loadingOverlay.classList.remove('hidden');
-
-
-
-            // Simula um atraso de 2 segundos para o processo de login
-
-            setTimeout(() => {
-
-                // Esconde o overlay de carregamento
-
-                loadingOverlay.classList.add('hidden');
-
-
-
-                // Exemplo simples de validação (substitua pela sua lógica de autenticação real)
-
-                if (username === 'admin' && password === 'password') {
-
-                    errorMessage.classList.add('hidden'); // Esconde a mensagem de erro
-
-                    console.log('Login bem-sucedido!');
-
-                    // Aqui você redirecionaria o usuário ou faria outra ação de sucesso
-
-                } else {
-
-                    errorMessage.classList.remove('hidden'); // Mostra a mensagem de erro
-
-                    console.log('Usuário ou senha inválidos.');
-
-                }
-
-            }, 2000); // 2000 milissegundos = 2 segundos
-
-        });        document.getElementById('loginForm').addEventListener('submit', async function(event) {
-
-            event.preventDefault(); // Impede o envio padrão do formulário
-
-
-
-            const username = document.getElementById('username').value;
-
-            const password = document.getElementById('password').value;
-
-            const errorMessage = document.getElementById('loginError');
-
-
-
-            errorMessage.style.display = 'none'; // Esconde a mensagem de erro ao tentar novamente
-
-
-
-            const webAppUrl = 'https://script.google.com/macros/s/AKfycbyyyVBWAvHZuimo1MEJVpn6wLDlZ03r1uIVvxa_rUo4_yjcRdZB4tIUUrhX5d-1eMny/exec'; // Mantenha sua URL aqui
-
-
-
-            try {
-
-                // Usaremos fetch com um método POST para enviar os dados de login
-
-                const response = await fetch(webAppUrl, {
-
-                    method: 'POST',
-
-                    // Importante: No ambiente de desenvolvimento local, 'no-cors' é comum.
-
-                    // Para receber a resposta JSON do Apps Script, precisaremos de um proxy ou
-
-                    // implantar o front-end em um servidor (mesmo que seja o Google Drive/Sites).
-
-                    // POR ENQUANTO, MANTEREMOS 'no-cors' para testes iniciais de comunicação.
-
-                    // Quando passarmos para um ambiente mais robusto, reavaliaremos CORS.
-
-                    mode: 'no-cors', 
-
-                    headers: {
-
-                        'Content-Type': 'application/json'
-
-                    },
-
-                    body: JSON.stringify({
-
-                        action: 'login', // Indica ao Apps Script que esta é uma requisição de login
-
-                        username: username,
-
-                        password: password
-
-                    })
-
-                });
-
-
-
-                // --- ATENÇÃO: TRATAMENTO DE RESPOSTA COM 'no-cors' ---
-
-                // Com 'no-cors', a 'response' será "opaca", e você NÃO PODE ler 'response.json()'.
-
-                // Isso significa que o JavaScript do navegador NÃO SABERÁ diretamente
-
-                // se o login foi sucesso ou falha APENAS pela resposta do fetch.
-
-                //
-
-                // Para contornar isso temporariamente e permitir o redirecionamento,
-
-                // vamos SIMULAR um sucesso *APÓS O ENVIO*.
-
-                // EM UM CENÁRIO REAL, você precisaria de:
-
-                // 1. Um backend que configure os headers CORS corretamente (se não for GAS).
-
-                // 2. Ou usar uma implantação do Apps Script que permita a leitura da resposta
-
-                //    (por exemplo, se o front-end também for servido via Apps Script ou Google Sites).
-
-                //
-
-                // Por agora, após enviar a requisição (e presumindo que o Apps Script a processou),
-
-                // vamos simular o sucesso para permitir a navegação.
-
-                // O Apps Script AINDA RETORNARÁ { success: true/false }, mas o navegador não o verá.
-
-                //
-
-                // Para uma validação front-end real da resposta, teríamos que mudar a estratégia de CORS.
-
-                // Isso é uma complexidade que podemos abordar depois, se necessário, com Web App Service (GAS).
-
-
-
-                console.log('Requisição de login enviada. Verifique o Apps Script para o resultado.');
-
-                
-
-                // Simulação de sucesso para fins de navegação
-
-                localStorage.setItem('isAuthenticated', 'true'); // Marca como logado
-
-                localStorage.setItem('username', username); // Armazena o nome de usuário
-
-    
-                window.location.href = 'inicio.htm'; // Redireciona para a página inicial
-
-                
-
-            } catch (error) {
-
-                console.error('Erro ao tentar login:', error);
-
-                errorMessage.textContent = 'Erro de conexão ou servidor. Tente novamente mais tarde.';
-
-                errorMessage.style.display = 'block';
-
-            }
-
-        });
-
-    </script>
-
+    <script>
+        // Substitua pelo seu URL de implantação do App Script
+        const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzu_mz1seo3NI5cIfUvqSDPN3GnJheBfdE7II6zwSUJhsjH95fxQZFBXGRbPU0vAt3a/exec'; // Certifique-se de que este é o URL correto
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Limpa o localStorage ao carregar a página de login para evitar logins "presos"
+            localStorage.removeItem('isAuthenticated');
+            localStorage.removeItem('username');
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Impede o envio padrão do formulário
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessageDiv = document.getElementById('errorMessage');
+
+            errorMessageDiv.textContent = ''; // Limpa mensagens de erro anteriores
+            errorMessageDiv.classList.add('hidden'); // Esconde a div de erro
+
+            try {
+                const response = await fetch(APP_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded' // Formato para doPost com e.parameter
+                    },
+                    body: new URLSearchParams({ // Envia os parâmetros no formato de formulário
+                        action: 'login',
+                        username: username,
+                        password: password
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Armazena o nome do usuário logado no localStorage
+                    localStorage.setItem('isAuthenticated', 'true');
+                    localStorage.setItem('username', result.userName); // Usa o userName retornado pelo App Script
+                    window.location.href = 'dashboard.htm'; // Redireciona para o dashboard
+                } else {
+                    errorMessageDiv.textContent = result.message || 'Erro desconhecido ao fazer login.';
+                    errorMessageDiv.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Erro na requisição de login:', error);
+                errorMessageDiv.textContent = 'Erro de conexão. Verifique sua URL do App Script e a conexão de rede.';
+                errorMessageDiv.classList.remove('hidden');
+            }
+        });
+    </script>
 </body>
-
 </html>
