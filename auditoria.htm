@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -306,6 +307,45 @@
             transform: translateY(0);
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
+
+        /* Loading Spinner Styles */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            transition: opacity 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loading-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid var(--primary-color);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
 
         /* --- Media Queries para Responsividade --- */
         @media (max-width: 992px) {
@@ -838,6 +878,10 @@
         </form>
     </div>
 
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+
  <script>
     // --- Lógica para preenchimento do nome do supervisor ---
     document.addEventListener('DOMContentLoaded', function() {
@@ -860,12 +904,12 @@
 
        async function fetchSalespersons() {
             const loggedInUsername = localStorage.getItem('username'); // Pega o nome do supervisor logado do localStorage
-            
+
             let url = `${GOOGLE_APP_SCRIPT_URL}?action=getSalespersons`;
             // Se houver um supervisor logado, adiciona ele como parâmetro na URL
             if (loggedInUsername) {
                 // Use encodeURIComponent para garantir que caracteres especiais no nome sejam tratados corretamente
-                url += `&supervisorName=${encodeURIComponent(loggedInUsername)}`; 
+                url += `&supervisorName=${encodeURIComponent(loggedInUsername)}`;
             }
 
             try {
@@ -1077,6 +1121,9 @@
     document.getElementById('auditForm').addEventListener('submit', async function(event) {
         event.preventDefault(); // Impede o envio padrão do formulário
 
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        loadingOverlay.classList.add('visible'); // Show loading spinner
+
         let totalScore = 0;
         const auditData = {};
         const imagesToUpload = {};
@@ -1103,6 +1150,7 @@
             } else {
                 // Se uma pergunta obrigatória não for respondida, alertar e parar
                 alert(`Por favor, responda a todas as perguntas. Pergunta ausente: ${questionName}`);
+                loadingOverlay.classList.remove('visible'); // Hide loading spinner
                 return;
             }
         }
@@ -1123,6 +1171,7 @@
 
                 if (isRequiredAndVisible && fileInput.files.length === 0) {
                      alert(`Por favor, anexe uma imagem para o campo: ${fileInput.previousElementSibling.textContent.trim()}`);
+                     loadingOverlay.classList.remove('visible'); // Hide loading spinner
                      return;
                 }
 
@@ -1139,6 +1188,7 @@
                         reader.onerror = (error) => {
                             console.error("Erro ao ler arquivo:", error);
                             alert("Erro ao ler uma imagem. Por favor, tente novamente.");
+                            loadingOverlay.classList.remove('visible'); // Hide loading spinner
                             resolve(); // Resolve para não bloquear o envio, mas com erro
                         };
                     });
@@ -1169,13 +1219,14 @@
             // Como estamos usando 'no-cors', não podemos ler a resposta diretamente.
             // Assumimos sucesso aqui para o feedback inicial.
             alert('Auditoria enviada com sucesso!');
-            // Opcional: Redirecionar ou limpar o formulário
             this.reset(); // Limpa todos os campos do formulário
             // window.location.href = 'inicio.htm';
 
         } catch (error) {
             console.error('Erro ao enviar auditoria:', error);
             alert('Ocorreu um erro ao enviar a auditoria. Por favor, tente novamente.');
+        } finally {
+            loadingOverlay.classList.remove('visible'); // Ensure loading spinner is hidden after fetch completes or errors
         }
     });
 </script>
