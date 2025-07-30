@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plano de Acompanhamento de Vendedor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Define a fonte Inter como padrão para o corpo do documento */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-100 to-blue-200 min-h-screen flex flex-col items-center justify-center p-4">
+    <div class="max-w-2xl w-full bg-white p-8 rounded-xl shadow-2xl flex flex-col items-center space-y-8">
+        <h1 class="text-4xl font-extrabold text-blue-800 mb-4 text-center">Bem-vindo(a) ao Plano de Acompanhamento de Vendedor!</h1>
+        <p class="text-gray-700 text-lg text-center mb-6">Selecione uma das opções abaixo para continuar:</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+            <a href="auditoria.htm" class="flex items-center justify-center p-6 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 ease-in-out transform hover:-translate-y-1 text-center text-xl">
+                Auditoria de Visita
+            </a>
+            <a href="cadastro_vendedor.htm" class="flex items-center justify-center p-6 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 ease-in-out transform hover:-translate-y-1 text-center text-xl">
+                Cadastro de Vendedor
+            </a>
+            <a href="dashboard.htm" class="flex items-center justify-center p-6 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 ease-in-out transform hover:-translate-y-1 text-center text-xl md:col-span-2">
+                Dashboard de Auditorias
+            </a>
+        </div>
+
+        <button id="logoutButton" class="mt-8 py-3 px-8 bg-red-600 text-white font-bold rounded-lg shadow-md hover:bg-red-700 transition duration-300 ease-in-out transform hover:-translate-y-1">
+            Sair
+        </button>
+
+        <p class="text-gray-500 text-sm mt-8">Desenvolvido por Triunfante Brasil</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificação de autenticação simples: verifica se há um item no localStorage
+            const isAuthenticated = localStorage.getItem('isAuthenticated'); 
+            const username = localStorage.getItem('username'); // Recupera o nome de usuário se armazenado
+
+            if (!isAuthenticated) {
+                // Se não autenticado, redireciona para a página de login
+                alert('Você precisa estar logado para acessar esta página.');
+                window.location.href = 'login.htm'; 
+            } else {
+                // Opcional: Personalize a mensagem de boas-vindas
+                const welcomeMessage = document.querySelector('h1');
+                if (username) {
+                    welcomeMessage.textContent = `Bem-vindo(a), ${username}!`;
+                }
+            }
+
+            // Lógica para o botão de Sair (Logout)
+            document.getElementById('logoutButton').addEventListener('click', function() {
+                localStorage.removeItem('isAuthenticated'); // Remove o status de autenticação
+                localStorage.removeItem('username'); // Remove o nome de usuário
+                alert('Você foi desconectado(a).');
+                // Redireciona para a página 'index.htm' conforme solicitado
+                window.location.href = 'index.htm'; 
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Vendedores</title>
+    <!-- Inclui o CDN do Tailwind CSS para estilização rápida e responsiva -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Importa a fonte Inter do Google Fonts para uma tipografia moderna -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Define a fonte Inter como padrão para o corpo do documento */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-100 to-blue-200 min-h-screen flex items-center justify-center p-4">
+    <!-- Container principal que centraliza o conteúdo e adiciona um estilo de cartão -->
+    <div class="max-w-2xl w-full bg-white p-8 rounded-xl shadow-2xl flex flex-col items-center space-y-8 relative">
+        <!-- Botão "Voltar" posicionado no canto superior esquerdo do container -->
+        <a href="inicio.htm" class="absolute top-4 left-4 py-2 px-4 bg-blue-600 text-white font-bold rounded-full shadow-md hover:bg-blue-700 transition duration-300 ease-in-out transform hover:-translate-y-1 text-sm">
+            Voltar
+        </a>
+
+        <!-- Título da página com estilo moderno -->
+        <h1 class="text-4xl font-extrabold text-blue-800 mb-4 text-center mt-8">Cadastro de Vendedores</h1>
+
+        <!-- Formulário de cadastro de vendedor -->
+        <form id="cadastroVendedorForm" class="w-full">
+            <!-- Campo Nome Completo -->
+            <div class="mb-6 p-4 bg-blue-50 border-l-4 border-blue-600 rounded-lg transition duration-300 ease-in-out focus-within:ring-2 focus-within:ring-blue-300">
+                <label for="fullName" class="block text-gray-700 text-sm font-semibold mb-2">Nome Completo:</label>
+                <input type="text" id="fullName" name="fullName" placeholder="Nome completo do vendedor" required
+                       class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300 ease-in-out">
+            </div>
+            <!-- Campo Setor -->
+            <div class="mb-6 p-4 bg-blue-50 border-l-4 border-blue-600 rounded-lg transition duration-300 ease-in-out focus-within:ring-2 focus-within:ring-blue-300">
+                <label for="sector" class="block text-gray-700 text-sm font-semibold mb-2">Setor:</label>
+                <input type="text" id="sector" name="sector" placeholder="Ex: 101,55" required
+                       class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300 ease-in-out">
+            </div>
+            <!-- Campo Cidade -->
+            <div class="mb-6 p-4 bg-blue-50 border-l-4 border-blue-600 rounded-lg transition duration-300 ease-in-out focus-within:ring-2 focus-within:ring-blue-300">
+                <label for="city" class="block text-gray-700 text-sm font-semibold mb-2">Cidade:</label>
+                <input type="text" id="city" name="city" placeholder="Cidade de atuação" required
+                       class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300 ease-in-out">
+            </div>
+            <!-- Campo Data de Nascimento -->
+            <div class="mb-6 p-4 bg-blue-50 border-l-4 border-blue-600 rounded-lg transition duration-300 ease-in-out focus-within:ring-2 focus-within:ring-blue-300">
+                <label for="birthDate" class="block text-gray-700 text-sm font-semibold mb-2">Data de Nascimento:</label>
+                <input type="date" id="birthDate" name="birthDate" required
+                       class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300 ease-in-out">
+            </div>
+            <!-- Campo Supervisor (somente leitura) -->
+            <div class="mb-6 p-4 bg-blue-50 border-l-4 border-blue-600 rounded-lg transition duration-300 ease-in-out focus-within:ring-2 focus-within:ring-blue-300">
+                <label for="supervisorName" class="block text-gray-700 text-sm font-semibold mb-2">Supervisor:</label>
+                <input type="text" id="supervisorName" name="supervisorName" readonly required
+                       class="w-full p-3 border border-gray-300 rounded-lg bg-gray-100 cursor-default focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300 ease-in-out">
+            </div>
+            <!-- Campo Unidade (select) -->
+            <div class="mb-6 p-4 bg-blue-50 border-l-4 border-blue-600 rounded-lg transition duration-300 ease-in-out focus-within:ring-2 focus-within:ring-blue-300">
+                <label for="unit" class="block text-gray-700 text-sm font-semibold mb-2">Unidade:</label>
+                <select id="unit" name="unit" required
+                        class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300 ease-in-out">
+                    <option value="">Selecione a Unidade</option>
+                    <option value="TPH">TPH</option>
+                    <option value="API">API</option>
+                    <option value="TPA">TPA</option>
+                    <option value="TBA">TBA</option>
+                    <option value="MCD">MCD</option>
+                    <option value="TCG">TCG</option>
+                    <option value="TSJ">TSJ</option>
+                    <option value="TCV">TCV</option>
+                    <option value="ABC">ABC</option>
+                    <option value="TCA">TCA</option>
+                    <option value="TBL">TBL</option>
+                </select>
+            </div>
+
+            <!-- Botão de submissão -->
+            <button type="submit"
+                    class="w-full py-3 bg-green-600 text-white font-bold rounded-lg shadow-md hover:bg-green-700 transition duration-300 ease-in-out transform hover:-translate-y-1 mt-8">
+                Cadastrar Vendedor
+            </button>
+        </form>
+    </div>
+
+    <script>
+        // Preenche o campo Supervisor automaticamente com o nome do usuário logado
+        document.addEventListener('DOMContentLoaded', function() {
+            const supervisorNameInput = document.getElementById('supervisorName');
+            const loggedInUsername = localStorage.getItem('username'); // Obtém o nome do supervisor do localStorage
+
+            if (loggedInUsername) {
+                supervisorNameInput.value = loggedInUsername;
+            } else {
+                console.warn('Nome do supervisor não encontrado no localStorage. Redirecionando para login...');
+                // Opcional: Redirecionar para a página de login se o nome não for encontrado
+                // window.location.href = 'login.htm';
+            }
+        });
+
+        // Lógica para enviar o formulário para o Google Apps Script
+        document.getElementById('cadastroVendedorForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const formData = {
+                action: 'registerSalesperson', // Uma nova ação para o Apps Script
+                fullName: document.getElementById('fullName').value,
+                sector: document.getElementById('sector').value,
+                city: document.getElementById('city').value,
+                birthDate: document.getElementById('birthDate').value,
+                supervisor: document.getElementById('supervisorName').value, // Nome do supervisor
+                unit: document.getElementById('unit').value, // <-- AQUI AGORA VEM DO SELECT
+                submissionTimestamp: new Date().toISOString() // Adiciona um timestamp
+            };
+
+            // --- IMPORTANTE: SUBSTITUA PELA URL DO SEU GOOGLE APPS SCRIPT DEPLOYADO ---
+            const GOOGLE_APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyyyVBWAvHZuimo1MEJVpn6wLDlZ03r1uIVvxa_rUo4_yjcRdZB4tIUUrhX5d-1eMny/exec';
+
+
+            try {
+                const response = await fetch(GOOGLE_APP_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Use 'no-cors' para testes locais. Para produção, considere outras abordagens de CORS.
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                // Como estamos usando 'no-cors', não podemos ler a resposta diretamente.
+                // Assumimos sucesso para o feedback inicial.
+                alert('Vendedor cadastrado com sucesso!');
+                this.reset(); // Limpa o formulário após o envio
+
+            } catch (error) {
+                console.error('Erro ao cadastrar vendedor:', error);
+                alert('Ocorreu um erro ao cadastrar o vendedor. Por favor, tente novamente.');
+            }
+        });
+    </script>
+</body>
+</html>
