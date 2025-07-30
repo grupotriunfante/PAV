@@ -149,7 +149,7 @@
                 <canvas id="auditDistributionChart"></canvas>
             </div>
         </div>
-        
+                
         <button id="logoutButton" class="mt-8 py-3 px-8 bg-red-600 text-white font-bold rounded-lg shadow-md hover:bg-red-700 transition duration-300 ease-in-out transform hover:-translate-y-1">
             Sair
         </button>
@@ -159,7 +159,7 @@
 
     <script>
         // Substitua pelo seu URL de implantação do App Script
-        const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw7J5_HX24pQ8WeuBiMtawpT7iEP0D9ivbTxP5Ffw0yndi_OkEUBc3ilGXFZg_7QLUV/exec';
+        const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-DXVXSxS_Q2YjcPxC1jBtvrpe4w8TbWRt33Zxy85hKHcIEyF52kpN14bial4OoH-p/exec'; // ATUALIZE ESTE URL APÓS A IMPLANTAÇÃO DO SEU APP SCRIPT
 
         let allAuditData = []; // Armazenará todos os dados brutos da auditoria (do supervisor logado)
         let loggedInSupervisor = ''; // Variável para armazenar o nome do supervisor logado
@@ -170,50 +170,85 @@
         // É CRUCIAL que estes nomes de perguntas correspondam EXATAMENTE aos cabeçalhos das suas colunas na planilha de Auditorias.
         const sectionWeights = {
             'Planejamento': {
-                questions: ['P1.1', 'P1.2', 'P1.3', 'P1.4', 'P1.5', 'P1.6', 'P1.7'],
-                weights: {'P1.1': 1, 'P1.2': 1, 'P1.3': 1, 'P1.4': 2, 'P1.5': 3, 'P1.6': 1, 'P1.7': 1},
-                total: 10 // Soma dos pesos do Planejamento
+                questions: ['Planejamento_1_1', 'Planejamento_1_2', 'Planejamento_1_3', 'Planejamento_1_4', 'Planejamento_1_5', 'Planejamento_1_6'],
+                weights: {
+                    'Planejamento_1_1': 1,
+                    'Planejamento_1_2': 1,
+                    'Planejamento_1_3': 2, // Corrigido para 2 pontos, conforme a imagem inicial
+                    'Planejamento_1_4': 3,
+                    'Planejamento_1_5': 1,
+                    'Planejamento_1_6': 1
+                },
+                total: 9 // Soma dos pesos do Planejamento (1+1+2+3+1+1 = 9)
             },
             'Pre-Visita': {
-                questions: ['P2.1', 'P2.2', 'P2.3'],
-                weights: {'P2.1': 4, 'P2.2': 5, 'P2.3': 5},
+                questions: ['PreVisit_2_1', 'PreVisit_2_2', 'PreVisit_2_3'],
+                weights: {
+                    'PreVisit_2_1': 4,
+                    'PreVisit_2_2': 5,
+                    'PreVisit_2_3': 5
+                },
                 total: 14 // Soma dos pesos da Pré-Visita
             },
             'Leitura de Loja': {
-                questions: ['L3.1', 'L3.2', 'L3.3', 'L3.4', 'L3.5', 'L3.6'],
-                weights: {'L3.1': 6, 'L3.2': 3, 'L3.3': 4, 'L3.4': 6, 'L3.5': 4, 'L3.6': 7},
+                questions: ['StoreReading_3_1', 'StoreReading_3_2', 'StoreReading_3_3', 'StoreReading_3_4', 'StoreReading_3_5', 'StoreReading_3_6'],
+                weights: {
+                    'StoreReading_3_1': 6,
+                    'StoreReading_3_2': 3,
+                    'StoreReading_3_3': 4,
+                    'StoreReading_3_4': 6,
+                    'StoreReading_3_5': 4,
+                    'StoreReading_3_6': 7
+                },
                 total: 30 // Soma dos pesos da Leitura de Loja
             },
             'Execucao': {
-                questions: ['E4.1', 'E4.2', 'E4.3', 'E4.4', 'E4.5'],
-                weights: {'E4.1': 4, 'E4.2': 3, 'E4.3': 4, 'E4.4': 4, 'E4.5': 5},
+                questions: ['Execution_4_1', 'Execution_4_2', 'Execution_4_3', 'Execution_4_4', 'Execution_4_5'],
+                weights: {
+                    'Execution_4_1': 4,
+                    'Execution_4_2': 3,
+                    'Execution_4_3': 4,
+                    'Execution_4_4': 4,
+                    'Execution_4_5': 5
+                },
                 total: 20 // Soma dos pesos da Execução
             },
             'Negociacao': {
-                questions: ['N5.1', 'N5.2', 'N5.3'],
-                weights: {'N5.1': 6, 'N5.2': 7, 'N5.3': 7},
+                questions: ['Negotiation_5_1', 'Negotiation_5_2', 'Negotiation_5_3'],
+                weights: {
+                    'Negotiation_5_1': 6,
+                    'Negotiation_5_2': 7,
+                    'Negotiation_5_3': 7
+                },
                 total: 20 // Soma dos pesos da Negociação
             },
             'Fechamento': {
-                questions: ['F6.1', 'F6.2', 'F6.3'],
-                weights: {'F6.1': 3, 'F6.2': 2, 'F6.3': 1},
+                questions: ['Closing_6_1', 'Closing_6_2', 'Closing_6_3'],
+                weights: {
+                    'Closing_6_1': 3,
+                    'Closing_6_2': 2,
+                    'Closing_6_3': 1 // Confirmado
+                },
                 total: 6 // Soma dos pesos do Fechamento
             }
         };
 
-        const TOTAL_POINTS_ALL_SECTIONS = Object.values(sectionWeights).reduce((sum, section) => sum + section.total, 0); // Deve ser 100
+        // A soma total dos pontos das seções é 9 + 14 + 30 + 20 + 20 + 6 = 99.
+        // Se a pontuação máxima da auditoria for 100, pode ser necessário ajustar um peso para que a soma seja 100.
+        // O cálculo no dashboard usará este total como base para o percentual geral.
+        const TOTAL_POINTS_ALL_SECTIONS = Object.values(sectionWeights).reduce((sum, section) => sum + section.total, 0);
 
         // --- DEFINA AQUI QUAIS SÃO AS PERGUNTAS CRÍTICAS ---
         // Estas são as perguntas que, se respondidas como "Não", contam como "Itens Críticos Reprovados".
-        // Adapte esta lista com base na sua definição de "crítico".
+        // Adaptado para usar os nomes das colunas da planilha.
         const CRITICAL_QUESTIONS = [
-            'L3.1', // Analisou todos os corredores
-            'L3.4', // Visitou rupturas e sugeriu novos produtos
-            'E4.1', // Abasteceu a loja com produtos do estoque
-            'E4.2', // Garantiu limpeza e organização nos expositores
-            'N5.2', // Mostrou soluções aplicadas (preço, validade, organização)
-            'N5.3', // Apresentou levantamento de estoque
-            'F6.1'  // Reforçou parceria com o cliente
+            'StoreReading_3_1', // Analisou todos os corredores
+            'StoreReading_3_4', // Verificou rupturas e sugeriu novos produtos
+            'Execution_4_1', // Abasteceu a loja com produtos do estoque
+            'Execution_4_2', // Garantiu limpeza e organização nos expositores
+            'Negotiation_5_2', // Mostrou soluções aplicadas (preço, validade, organização)
+            'Negotiation_5_3', // Apresentou levantamento de estoque
+            'Closing_6_1'  // Reforçou parceria com o cliente
         ];
 
 
@@ -223,8 +258,10 @@
             const username = localStorage.getItem('username'); // Assume que 'username' é o nome do supervisor
 
             if (!isAuthenticated || !username) {
-                alert('Você precisa estar logado para acessar esta página.');
-                window.location.href = 'inicio.htm'; // Redireciona para sua página de login
+                // Usando um modal customizado em vez de alert()
+                showCustomAlert('Você precisa estar logado para acessar esta página.', function() {
+                    window.location.href = 'inicio.htm'; // Redireciona para sua página de login
+                });
                 return;
             }
             loggedInSupervisor = username; // Armazena o nome do supervisor globalmente
@@ -241,8 +278,9 @@
             document.getElementById('logoutButton').addEventListener('click', function() {
                 localStorage.removeItem('isAuthenticated');
                 localStorage.removeItem('username');
-                alert('Você foi desconectado(a).');
-                window.location.href = 'index.htm';
+                showCustomAlert('Você foi desconectado(a).', function() {
+                    window.location.href = 'index.htm';
+                });
             });
         });
 
@@ -254,10 +292,11 @@
 
                 if (result.success) {
                     allAuditData = result.data;
+                    console.log("Dados de auditoria recebidos:", allAuditData); // LOG: Dados brutos recebidos
                     renderDashboard(); // Renderiza o dashboard com os dados já filtrados
                 } else {
                     console.error('Erro ao buscar dados de auditoria:', result.message);
-                    alert('Erro ao carregar dados de auditoria: ' + result.message);
+                    showCustomAlert('Erro ao carregar dados de auditoria: ' + result.message);
                     document.getElementById('salespersonPerformanceTableBody').innerHTML = `<tr><td colspan="9" class="text-center text-red-500 py-4">Erro ao carregar dados: ${result.message}</td></tr>`;
                     // Também limpar ou mostrar erro nos cards
                     document.getElementById('totalAudits').innerText = 'Erro';
@@ -266,7 +305,7 @@
                 }
             } catch (error) {
                 console.error('Erro na requisição da API de auditoria:', error);
-                alert('Erro de conexão ao carregar dados de auditoria. Verifique a URL do App Script e a conexão.');
+                showCustomAlert('Erro de conexão ao carregar dados de auditoria. Verifique a URL do App Script e a conexão.');
                 document.getElementById('salespersonPerformanceTableBody').innerHTML = `<tr><td colspan="9" class="text-center text-red-500 py-4">Erro de conexão.</td></tr>`;
                 // Também limpar ou mostrar erro nos cards
                 document.getElementById('totalAudits').innerText = 'Erro';
@@ -300,13 +339,23 @@
                 totalPossibleForCalculation = TOTAL_POINTS_ALL_SECTIONS;
             }
             
+            console.log(`--- Calculando score para ${sectionName || 'Geral'} ---`); // LOG: Início do cálculo
             questionsToConsider.forEach(questionId => {
-                if (audit[questionId] === 'Sim') {
-                    achievedScore += (weightsToConsider[questionId] || 0);
+                const auditValue = audit.hasOwnProperty(questionId) ? String(audit[questionId]).trim().toLowerCase() : ''; // Normaliza o valor
+                const expectedSim = 'sim';
+
+                console.log(`  Pergunta: ${questionId}, Valor na auditoria: '${auditValue}', Esperado: '${expectedSim}'`); // LOG: Valor de cada pergunta
+
+                if (auditValue === expectedSim) {
+                    const weight = weightsToConsider[questionId] || 0;
+                    achievedScore += weight;
+                    console.log(`    MATCH! Adicionando peso: ${weight}. Score atual: ${achievedScore}`); // LOG: Match e adição de peso
                 }
             });
-
-            return totalPossibleForCalculation > 0 ? (achievedScore / totalPossibleForCalculation) * 100 : 0;
+            console.log(`Total possível para ${sectionName || 'Geral'}: ${totalPossibleForCalculation}, Score alcançado: ${achievedScore}`); // LOG: Totais
+            const percentage = totalPossibleForCalculation > 0 ? (achievedScore / totalPossibleForCalculation) * 100 : 0;
+            console.log(`Percentual calculado: ${percentage}%`); // LOG: Percentual final
+            return percentage;
         }
 
         /**
@@ -316,11 +365,19 @@
          */
         function calculateCriticalRejected(audit) {
             let criticalRejectedCount = 0;
+            const expectedNao = 'não'; // Ou 'nao' se for o caso na planilha
+
+            console.log(`--- Calculando itens críticos reprovados ---`); // LOG: Início do cálculo crítico
             CRITICAL_QUESTIONS.forEach(questionId => {
-                if (audit[questionId] === 'Não') {
+                const auditValue = audit.hasOwnProperty(questionId) ? String(audit[questionId]).trim().toLowerCase() : ''; // Normaliza o valor
+                console.log(`  Pergunta Crítica: ${questionId}, Valor na auditoria: '${auditValue}', Esperado: '${expectedNao}'`); // LOG: Valor de cada pergunta crítica
+
+                if (auditValue === expectedNao) {
                     criticalRejectedCount++;
+                    console.log(`    CRÍTICO REPROVADO! Contador atual: ${criticalRejectedCount}`); // LOG: Item crítico reprovado
                 }
             });
+            console.log(`Total de itens críticos reprovados: ${criticalRejectedCount}`); // LOG: Total de críticos
             return criticalRejectedCount;
         }
 
@@ -332,6 +389,7 @@
 
                 if (selectedMes) {
                     // Assumindo que 'Data Visita' vem como "DD/MM/YYYY"
+                    // É importante que o formato da data na planilha seja consistente.
                     const auditDate = moment(audit['Data Visita'], 'DD/MM/YYYY'); 
                     const filterDate = moment(selectedMes); 
                     
@@ -351,11 +409,14 @@
             let totalCriticalRejectedItems = 0;
 
             // Estrutura para agregar as notas por vendedor e seção
-            const salespersonPerformance = {}; 
+            const salespersonPerformance = {};
             
             filteredData.forEach(audit => {
                 const salesperson = audit['Vendedor'];
-                if (!salesperson || salesperson.trim() === '') return; // Pula se o nome do vendedor for vazio
+                if (!salesperson || String(salesperson).trim() === '') {
+                    console.warn("Auditoria ignorada: Nome do vendedor vazio ou inválido.", audit); // LOG: Vendedor inválido
+                    return; // Pula se o nome do vendedor for vazio ou string vazia
+                }
 
                 if (!salespersonPerformance[salesperson]) {
                     salespersonPerformance[salesperson] = {
@@ -523,6 +584,29 @@
             });
         }
 
+        /**
+         * Função para exibir um alerta customizado em vez de `alert()`.
+         * @param {string} message A mensagem a ser exibida.
+         * @param {function} [callback] Uma função a ser executada após o alerta ser fechado.
+         */
+        function showCustomAlert(message, callback) {
+            const alertModal = document.createElement('div');
+            alertModal.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50';
+            alertModal.innerHTML = `
+                <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+                    <p class="text-lg font-semibold text-gray-800 mb-4">${message}</p>
+                    <button id="alertCloseButton" class="py-2 px-4 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700 transition duration-300">OK</button>
+                </div>
+            `;
+            document.body.appendChild(alertModal);
+
+            document.getElementById('alertCloseButton').addEventListener('click', function() {
+                document.body.removeChild(alertModal);
+                if (callback) {
+                    callback();
+                }
+            });
+        }
     </script>
 </body>
 </html>
