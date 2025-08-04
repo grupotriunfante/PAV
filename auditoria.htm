@@ -463,10 +463,58 @@
                 padding: 6px 10px;
                 font-size: 0.9em;
             }
-        }
+
+/* CSS para o overlay de carregamento */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  transition: opacity 0.3s ease;
+  opacity: 1; /* A tela de carregamento inicia visível */
+}
+
+.loading-overlay.hidden {
+  opacity: 0;
+  pointer-events: none; /* Desabilita os cliques quando o overlay está invisível */
+}
+
+.loading-content {
+  text-align: center;
+}
+
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
     </style>
 </head>
 <body>
+
+
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <p class="loading-text">Aguarde o carregamento, pode demorar um pouco...</p>
+    </div>
+  </div>
     <div class="container">
         <a href="inicio.htm" class="back-button">Voltar</a>
         <h1>Plano de Acompanhamento de Vendedor</h1>
@@ -884,51 +932,53 @@
 
  <script>
     // --- Lógica para preenchimento do nome do supervisor ---
-    document.addEventListener('DOMContentLoaded', function() {
-        const supervisorNameInput = document.getElementById('supervisorName');
-        const salespersonSelect = document.getElementById('salespersonName');
-        // CORREÇÃO AQUI: Usa localStorage e a chave 'username'
-        const loggedInUsername = localStorage.getItem('username');
+   // --- Lógica para preenchimento do nome do supervisor ---
+document.addEventListener('DOMContentLoaded', function() {
+  const supervisorNameInput = document.getElementById('supervisorName');
+  const salespersonSelect = document.getElementById('salespersonName');
+  const loggedInUsername = localStorage.getItem('username');
 
-        if (loggedInUsername) {
-            supervisorNameInput.value = loggedInUsername; // Preenche o campo
-        } else {
-            // Opcional: Se quiser forçar o redirecionamento para o login caso o nome não seja encontrado
-            // console.warn('Nome do supervisor não encontrado no localStorage. Redirecionando para login...');
-            // window.location.href = 'login.htm';
-        }
+  if (loggedInUsername) {
+    supervisorNameInput.value = loggedInUsername;
+  }
 
-        // --- Fetch salespeople and populate dropdown ---
-        // IMPORTANT: REPLACE WITH YOUR DEPLOYED GOOGLE APPS SCRIPT URL FOR THE BACKEND
-        const GOOGLE_APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-DXVXSxS_Q2YjcPxC1jBtvrpe4w8TbWRt33Zxy85hKHcIEyF52kpN14bial4OoH-p/exec'; // Make sure this is your *deployed* URL
+  // --- Fetch salespeople and populate dropdown ---
+  const GOOGLE_APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-DXVXSxS_Q2YjcPxC1jBtvrpe4w8TbWRt33Zxy85hKHcIEyF52kpN14bial4OoH-p/exec';
 
-       async function fetchSalespersons() {
-            const loggedInUsername = localStorage.getItem('username'); // Pega o nome do supervisor logado do localStorage
+  async function fetchSalespersons() {
+    const loggedInUsername = localStorage.getItem('username');
+    let url = `${GOOGLE_APP_SCRIPT_URL}?action=getSalespersons`;
 
-            let url = `${GOOGLE_APP_SCRIPT_URL}?action=getSalespersons`;
-            // Se houver um supervisor logado, adiciona ele como parâmetro na URL
-            if (loggedInUsername) {
-                // Use encodeURIComponent para garantir que caracteres especiais no nome sejam tratados corretamente
-                url += `&supervisorName=${encodeURIComponent(loggedInUsername)}`;
-            }
+    if (loggedInUsername) {
+      url += `&supervisorName=${encodeURIComponent(loggedInUsername)}`;
+    }
 
-            try {
-                const response = await fetch(url); // Usa a URL construída com o parâmetro
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                if (data.success) {
-                    populateSalespersonDropdown(data.salespersons);
-                } else {
-                    console.error('Failed to fetch salespeople:', data.message);
-                    alert('Erro ao carregar lista de vendedores: ' + data.message);
-                }
-            } catch (error) {
-                console.error('Error fetching salespeople:', error);
-                alert('Ocorreu um erro ao buscar a lista de vendedores.');
-            }
-        }
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      if (data.success) {
+        populateSalespersonDropdown(data.salespersons);
+      } else {
+        console.error('Failed to fetch salespeople:', data.message);
+        alert('Erro ao carregar lista de vendedores: ' + data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching salespeople:', error);
+      alert('Ocorreu um erro ao buscar a lista de vendedores.');
+    } finally {
+      // Esta linha é a mais importante. Ela esconde a mensagem de carregamento.
+      document.getElementById('loadingOverlay').classList.add('hidden');
+    }
+  }
+
+  // ... (o restante do seu código JavaScript continua aqui)
+  // ...
+
+  fetchSalespersons(); // A função já está sendo chamada, então não precisa de outra chamada.
+});
 
         function populateSalespersonDropdown(salespersons) {
             salespersonSelect.innerHTML = '<option value="">Selecione o Vendedor</option>'; // Clear existing options
