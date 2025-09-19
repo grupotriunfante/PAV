@@ -378,7 +378,7 @@
                     <li class="audit-item">
                         <span class="question-text"><span class="question-number">3.1.</span> Analisou todos os corredores da loja para analisar exposição dos nossos produtos?</span>
                         <div class="radio-options">
-                            <label><input type="radio" name="storeReading_3_1" value="sim" required data-target-field="storeReading_3_1_img_container"> Sim</label>
+                            <label><input type="radio" name="storeReading_3_1" value="sim" data-target-field="storeReading_3_1_img_container"> Sim</label>
                             <label><input type="radio" name="storeReading_3_1" value="nao" data-target-field="storeReading_3_1_img_container"> Não</label>
                         </div>
                         <div class="required-media-field hidden-field" id="storeReading_3_1_img_container">
@@ -390,7 +390,7 @@
                     <li class="audit-item">
                         <span class="question-text"><span class="question-number">3.2.</span> Todos os produtos estão na área de vendas precificados e acessíveis?</span>
                         <div class="radio-options">
-                            <label><input type="radio" name="storeReading_3_2" value="sim" required data-target-field="storeReading_3_2_img_container"> Sim</label>
+                            <label><input type="radio" name="storeReading_3_2" value="sim" data-target-field="storeReading_3_2_img_container"> Sim</label>
                             <label><input type="radio" name="storeReading_3_2" value="nao" data-target-field="storeReading_3_2_img_container"> Não</label>
                         </div>
                         <div class="required-media-field hidden-field" id="storeReading_3_2_img_container">
@@ -435,7 +435,7 @@
                     <li class="audit-item">
                         <span class="question-text"><span class="question-number">4.1.</span> Abasteceu a loja com produtos do estoque?</span>
                         <div class="radio-options">
-                           <label><input type="radio" name="execution_4_1" value="sim" required data-target-field="execution_4_1_img_container"> Sim</label>
+                           <label><input type="radio" name="execution_4_1" value="sim" data-target-field="execution_4_1_img_container"> Sim</label>
                            <label><input type="radio" name="execution_4_1" value="nao" data-target-field="execution_4_1_img_container"> Não</label>
                         </div>
                         <div class="required-media-field hidden-field" id="execution_4_1_img_container">
@@ -447,7 +447,7 @@
                     <li class="audit-item">
                         <span class="question-text"><span class="question-number">4.2.</span> Garantiu limpeza e organização dos produtos nos expositores?</span>
                         <div class="radio-options">
-                            <label><input type="radio" name="execution_4_2" value="sim" required data-target-field="execution_4_2_img_container"> Sim</label>
+                            <label><input type="radio" name="execution_4_2" value="sim" data-target-field="execution_4_2_img_container"> Sim</label>
                             <label><input type="radio" name="execution_4_2" value="nao" data-target-field="execution_4_2_img_container"> Não</label>
                         </div>
                         <div class="required-media-field hidden-field" id="execution_4_2_img_container">
@@ -459,7 +459,7 @@
                     <li class="audit-item">
                         <span class="question-text"><span class="question-number">4.3.</span> Posicionou expositores em locais estratégicos?</span>
                         <div class="radio-options">
-                            <label><input type="radio" name="execution_4_3" value="sim" required data-target-field="execution_4_3_img_container"> Sim</label>
+                            <label><input type="radio" name="execution_4_3" value="sim" data-target-field="execution_4_3_img_container"> Sim</label>
                             <label><input type="radio" name="execution_4_3" value="nao" data-target-field="execution_4_3_img_container"> Não</label>
                         </div>
                         <div class="required-media-field hidden-field" id="execution_4_3_img_container">
@@ -471,7 +471,7 @@
                     <li class="audit-item">
                         <span class="question-text"><span class="question-number">4.4.</span> Aplicou Cross Merchandising?</span>
                         <div class="radio-options">
-                            <label><input type="radio" name="execution_4_4" value="sim" required data-target-field="execution_4_4_img_container"> Sim</label>
+                            <label><input type="radio" name="execution_4_4" value="sim" data-target-field="execution_4_4_img_container"> Sim</label>
                             <label><input type="radio" name="execution_4_4" value="nao" data-target-field="execution_4_4_img_container"> Não</label>
                         </div>
                         <div class="required-media-field hidden-field" id="execution_4_4_img_container">
@@ -556,7 +556,7 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             
-            // ================ CÓDIGO DO SUPERVISOR E VENDEDOR RESTAURADO ================
+            // --- Lógica do Supervisor e Vendedor ---
             const supervisorNameInput = document.getElementById('supervisorName');
             const salespersonSelect = document.getElementById('salespersonName');
             const loggedInUsername = localStorage.getItem('username');
@@ -607,7 +607,6 @@
             });
 
             fetchSalespersons();
-            // =========================================================================
 
             // --- Lógica para mostrar/ocultar campos ---
             const radioButtons = document.querySelectorAll('input[type="radio"][data-target-field]');
@@ -615,16 +614,13 @@
                 radio.addEventListener('change', (event) => {
                     const targetFieldId = event.target.dataset.targetField;
                     const targetFieldContainer = document.getElementById(targetFieldId);
-
                     if (targetFieldContainer) {
                         const fileInput = targetFieldContainer.querySelector('input[type="file"]');
                         if (event.target.value === 'sim') {
                             targetFieldContainer.classList.remove('hidden-field');
-                            if (fileInput) fileInput.setAttribute('required', 'true');
                         } else {
                             targetFieldContainer.classList.add('hidden-field');
                             if (fileInput) {
-                                fileInput.removeAttribute('required');
                                 fileInput.value = '';
                                 uploadedFiles[fileInput.id] = [];
                                 document.getElementById(`${fileInput.id}_preview`).innerHTML = '';
@@ -709,8 +705,8 @@
                 loadingOverlay.classList.add('visible');
 
                 const auditData = {
-                    supervisorName: document.getElementById('supervisorName').value,
-                    salespersonName: document.getElementById('salespersonName').value,
+                    supervisorName: supervisorNameInput.value,
+                    salespersonName: salespersonSelect.value,
                     clientCnpj: document.getElementById('clientCnpj').value,
                     clientName: document.getElementById('clientName').value,
                     visitDate: document.getElementById('visitDate').value,
@@ -731,6 +727,21 @@
                 }
                 auditData.totalScore = totalScore;
                 
+                // Validação manual de imagens obrigatórias
+                for (const inputId in imageLimits) {
+                    const radioGroupName = inputId.replace('_img', '');
+                    const simRadio = document.querySelector(`input[name="${radioGroupName}"][value="sim"]`);
+                    if (simRadio && simRadio.checked) {
+                        if (!uploadedFiles[inputId] || uploadedFiles[inputId].length === 0) {
+                            const label = document.querySelector(`label[for="${inputId}"]`);
+                            const labelText = label ? label.textContent.split('(')[0].trim() : `campo ${inputId}`;
+                            alert(`É obrigatório anexar ao menos uma imagem para o campo: "${labelText}"`);
+                            loadingOverlay.classList.remove('visible');
+                            return;
+                        }
+                    }
+                }
+
                 auditData.images = {};
                 for (const inputId in uploadedFiles) {
                     const files = uploadedFiles[inputId];
@@ -745,19 +756,19 @@
                 
                 try {
                     await fetch(GOOGLE_APP_SCRIPT_URL_POST, {
-                        method: 'POST',
-                        mode: 'no-cors',
+                        method: 'POST', mode: 'no-cors',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ action: 'submitAudit', data: auditData })
                     });
                     alert('Auditoria enviada com sucesso!');
                     form.reset();
                     document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
-                    document.querySelectorAll('.hidden-field').forEach(field => field.classList.add('hidden-field'));
+                    document.querySelectorAll('.required-media-field').forEach(field => field.classList.add('hidden-field'));
                     for (const inputId in uploadedFiles) {
                         uploadedFiles[inputId] = [];
                         document.getElementById(`${inputId}_preview`).innerHTML = '';
                     }
+                    supervisorNameInput.value = loggedInUsername || ''; // Restaura o nome do supervisor logado
                 } catch (error) {
                     console.error('Erro ao enviar auditoria:', error);
                     alert('Ocorreu um erro ao enviar a auditoria.');
