@@ -25,9 +25,6 @@
             padding: 20px;
             background-color: var(--secondary-bg-color);
             color: var(--text-color);
-            box-sizing: border-box;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
         }
 
         .container {
@@ -57,6 +54,11 @@
             margin-bottom: 25px;
             font-size: 1.8em;
             font-weight: 500;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
         }
 
         .info-field {
@@ -101,17 +103,11 @@
             flex-wrap: wrap;
             box-shadow: var(--box-shadow-light);
         }
-        
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
 
         .audit-item .question-text {
             flex-grow: 1;
             margin-right: 25px;
             font-size: 1.05em;
-            color: var(--text-color);
         }
 
         .question-number {
@@ -132,8 +128,7 @@
             align-items: center;
         }
 
-        .required-media-field,
-        .required-text-field {
+        .required-media-field {
             width: 100%;
             margin-top: 20px;
             padding: 15px;
@@ -209,11 +204,8 @@
             align-items: center;
             justify-content: center;
             line-height: 1;
-            transition: background-color 0.2s;
         }
-        .remove-btn:hover {
-            background-color: rgba(255, 0, 0, 0.8);
-        }
+        .remove-btn:hover { background-color: rgba(255, 0, 0, 0.8); }
 
         .submit-button {
             display: block;
@@ -232,8 +224,7 @@
         .hidden-field { display: none; }
         
         .loading-overlay {
-            position: fixed;
-            top: 0; left: 0;
+            position: fixed; top: 0; left: 0;
             width: 100%; height: 100%;
             background-color: rgba(255, 255, 255, 0.8);
             display: flex;
@@ -355,7 +346,6 @@
                     </li>
                 </ul>
             </section>
-
             <section>
                 <h2>2. Pré Visita</h2>
                 <ul>
@@ -382,7 +372,6 @@
                     </li>
                 </ul>
             </section>
-
             <section>
                 <h2>3. Leitura de Loja</h2>
                 <ul>
@@ -440,7 +429,6 @@
                     </li>
                 </ul>
             </section>
-
             <section>
                 <h2>4. Execução</h2>
                 <ul>
@@ -501,7 +489,6 @@
                     </li>
                 </ul>
             </section>
-            
             <section>
                 <h2>5. Negociação</h2>
                 <ul>
@@ -535,7 +522,6 @@
                     </li>
                 </ul>
             </section>
-
             <section>
                 <h2>6. Fechamento da Visita</h2>
                 <ul>
@@ -564,175 +550,229 @@
         <div class="spinner"></div>
     </div>
 
- <script>
-    // Objeto global para armazenar os arquivos selecionados para cada input
-    const uploadedFiles = {};
-    const GOOGLE_APP_SCRIPT_URL_POST = 'https://script.google.com/macros/s/AKfycbw-DXVXSxS_Q2YjcPxC1jBtvrpe4w8TbWRt33Zxy85hKHcIEyF52kpN14bial4OoH-p/exec';
+    <script>
+        const uploadedFiles = {};
+        const GOOGLE_APP_SCRIPT_URL_POST = 'https://script.google.com/macros/s/AKfycbw-DXVXSxS_Q2YjcPxC1jBtvrpe4w8TbWRt33Zxy85hKHcIEyF52kpN14bial4OoH-p/exec';
 
-    document.addEventListener('DOMContentLoaded', () => {
-        // --- Lógica para mostrar/ocultar campos ---
-        const radioButtons = document.querySelectorAll('input[type="radio"][data-target-field]');
-        radioButtons.forEach(radio => {
-            radio.addEventListener('change', (event) => {
-                const targetFieldId = event.target.dataset.targetField;
-                const targetFieldContainer = document.getElementById(targetFieldId);
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // ================ CÓDIGO DO SUPERVISOR E VENDEDOR RESTAURADO ================
+            const supervisorNameInput = document.getElementById('supervisorName');
+            const salespersonSelect = document.getElementById('salespersonName');
+            const loggedInUsername = localStorage.getItem('username');
 
-                if (targetFieldContainer) {
-                    const fileInput = targetFieldContainer.querySelector('input[type="file"]');
-                    if (event.target.value === 'sim') {
-                        targetFieldContainer.classList.remove('hidden-field');
-                        if (fileInput) fileInput.setAttribute('required', 'true');
+            if (loggedInUsername) {
+                supervisorNameInput.value = loggedInUsername;
+            }
+
+            const GOOGLE_APP_SCRIPT_URL_GET = 'https://script.google.com/macros/s/AKfycbw-DXVXSxS_Q2YjcPxC1jBtvrpe4w8TbWRt33Zxy85hKHcIEyF52kpN14bial4OoH-p/exec';
+
+            async function fetchSalespersons() {
+                let url = `${GOOGLE_APP_SCRIPT_URL_GET}?action=getSalespersons`;
+                if (loggedInUsername) {
+                    url += `&supervisorName=${encodeURIComponent(loggedInUsername)}`;
+                }
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    const data = await response.json();
+                    if (data.success) {
+                        populateSalespersonDropdown(data.salespersons);
                     } else {
-                        targetFieldContainer.classList.add('hidden-field');
-                        if (fileInput) {
-                            fileInput.removeAttribute('required');
-                            fileInput.value = ''; // Limpa o seletor
-                            // Limpa o array de arquivos e o preview
-                            uploadedFiles[fileInput.id] = [];
-                            document.getElementById(`${fileInput.id}_preview`).innerHTML = '';
+                        console.error('Failed to fetch salespeople:', data.message);
+                    }
+                } catch (error) {
+                    console.error('Error fetching salespeople:', error);
+                }
+            }
+
+            function populateSalespersonDropdown(salespersons) {
+                salespersonSelect.innerHTML = '<option value="">Selecione o Vendedor</option>';
+                salespersons.forEach(person => {
+                    const option = document.createElement('option');
+                    option.value = person.name;
+                    option.textContent = person.name;
+                    option.dataset.supervisor = person.supervisor;
+                    salespersonSelect.appendChild(option);
+                });
+            }
+
+            salespersonSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                if (selectedOption && selectedOption.dataset.supervisor) {
+                    supervisorNameInput.value = selectedOption.dataset.supervisor;
+                } else {
+                    supervisorNameInput.value = loggedInUsername || '';
+                }
+            });
+
+            fetchSalespersons();
+            // =========================================================================
+
+            // --- Lógica para mostrar/ocultar campos ---
+            const radioButtons = document.querySelectorAll('input[type="radio"][data-target-field]');
+            radioButtons.forEach(radio => {
+                radio.addEventListener('change', (event) => {
+                    const targetFieldId = event.target.dataset.targetField;
+                    const targetFieldContainer = document.getElementById(targetFieldId);
+
+                    if (targetFieldContainer) {
+                        const fileInput = targetFieldContainer.querySelector('input[type="file"]');
+                        if (event.target.value === 'sim') {
+                            targetFieldContainer.classList.remove('hidden-field');
+                            if (fileInput) fileInput.setAttribute('required', 'true');
+                        } else {
+                            targetFieldContainer.classList.add('hidden-field');
+                            if (fileInput) {
+                                fileInput.removeAttribute('required');
+                                fileInput.value = '';
+                                uploadedFiles[fileInput.id] = [];
+                                document.getElementById(`${fileInput.id}_preview`).innerHTML = '';
+                            }
+                        }
+                    }
+                });
+            });
+
+            // --- Lógica para adicionar e gerenciar múltiplos arquivos ---
+            const fileInputs = document.querySelectorAll('#auditForm input[type="file"]');
+            const imageLimits = {
+                'storeReading_3_1_img': 10, 'storeReading_3_2_img': 5,
+                'execution_4_1_img': 5, 'execution_4_2_img': 5, 
+                'execution_4_3_img': 5, 'execution_4_4_img': 5
+            };
+
+            fileInputs.forEach(input => {
+                uploadedFiles[input.id] = [];
+                input.addEventListener('change', (event) => {
+                    const currentFiles = uploadedFiles[input.id];
+                    const newFiles = Array.from(event.target.files);
+                    const limit = imageLimits[input.id] || 1;
+
+                    if (currentFiles.length + newFiles.length > limit) {
+                        alert(`Você pode selecionar no máximo ${limit} fotos. Você já tem ${currentFiles.length} e tentou adicionar ${newFiles.length}.`);
+                        event.target.value = '';
+                        return;
+                    }
+                    currentFiles.push(...newFiles);
+                    renderPreview(input.id);
+                    event.target.value = ''; 
+                });
+            });
+
+            const renderPreview = (inputId) => {
+                const previewContainer = document.getElementById(`${inputId}_preview`);
+                previewContainer.innerHTML = ''; 
+
+                uploadedFiles[inputId].forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const previewItem = document.createElement('div');
+                        previewItem.classList.add('preview-item');
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = file.name;
+                        const fileNameSpan = document.createElement('span');
+                        fileNameSpan.classList.add('file-name');
+                        fileNameSpan.textContent = file.name;
+                        const removeBtn = document.createElement('button');
+                        removeBtn.classList.add('remove-btn');
+                        removeBtn.textContent = 'X';
+                        removeBtn.type = 'button';
+                        removeBtn.onclick = () => {
+                            uploadedFiles[inputId].splice(index, 1);
+                            renderPreview(inputId);
+                        };
+                        previewItem.appendChild(img);
+                        previewItem.appendChild(fileNameSpan);
+                        previewItem.appendChild(removeBtn);
+                        previewContainer.appendChild(previewItem);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            };
+
+            // --- Lógica de Envio do Formulário ---
+            const form = document.getElementById('auditForm');
+            const questionWeights = {
+                'planejamento_1_1': 1, 'planejamento_1_2': 1, 'planejamento_1_3': 1, 'planejamento_1_4': 1, 'planejamento_1_5': 1, 'planejamento_1_6': 1, 'planejamento_1_7': 1, 'planejamento_1_8': 1, 'planejamento_1_9': 1,
+                'preVisit_2_1': 1, 'preVisit_2_2': 1, 'preVisit_2_3': 1,
+                'storeReading_3_1': 1, 'storeReading_3_2': 1, 'storeReading_3_3': 1, 'storeReading_3_4': 1, 'storeReading_3_5': 1, 'storeReading_3_6': 1,
+                'execution_4_1': 1, 'execution_4_2': 1, 'execution_4_3': 1, 'execution_4_4': 1, 'execution_4_5': 1,
+                'negotiation_5_1': 1, 'negotiation_5_2': 1, 'negotiation_5_3': 1, 'negotiation_5_4': 1,
+                'closing_6_1': 1, 'closing_6_2': 1
+            };
+
+            form.addEventListener('submit', async function(event) {
+                event.preventDefault();
+                const loadingOverlay = document.getElementById('loadingOverlay');
+                loadingOverlay.classList.add('visible');
+
+                const auditData = {
+                    supervisorName: document.getElementById('supervisorName').value,
+                    salespersonName: document.getElementById('salespersonName').value,
+                    clientCnpj: document.getElementById('clientCnpj').value,
+                    clientName: document.getElementById('clientName').value,
+                    visitDate: document.getElementById('visitDate').value,
+                    submissionTimestamp: new Date().toISOString()
+                };
+
+                let totalScore = 0;
+                for (const questionName in questionWeights) {
+                    const selectedOption = document.querySelector(`input[name="${questionName}"]:checked`);
+                    if (selectedOption) {
+                        auditData[questionName] = selectedOption.value;
+                        if (selectedOption.value === 'sim') totalScore += questionWeights[questionName];
+                    } else {
+                        alert(`Por favor, responda a todas as perguntas. Pergunta ausente: ${questionName}`);
+                        loadingOverlay.classList.remove('visible');
+                        return;
+                    }
+                }
+                auditData.totalScore = totalScore;
+                
+                auditData.images = {};
+                for (const inputId in uploadedFiles) {
+                    const files = uploadedFiles[inputId];
+                    if (files.length > 0) {
+                        auditData.images[inputId] = [];
+                        for (const file of files) {
+                            const base64 = await toBase64(file);
+                            auditData.images[inputId].push(base64);
                         }
                     }
                 }
-            });
-        });
-
-        // --- LÓGICA PARA ADICIONAR E GERENCIAR MÚLTIPLOS ARQUIVOS ---
-        const fileInputs = document.querySelectorAll('#auditForm input[type="file"]');
-        const imageLimits = {
-            'storeReading_3_1_img': 10, 'storeReading_3_2_img': 5,
-            'execution_4_1_img': 5, 'execution_4_2_img': 5, 
-            'execution_4_3_img': 5, 'execution_4_4_img': 5
-        };
-
-        fileInputs.forEach(input => {
-            uploadedFiles[input.id] = []; // Inicializa o array para cada input de arquivo
-            input.addEventListener('change', (event) => {
-                const currentFiles = uploadedFiles[input.id];
-                const newFiles = Array.from(event.target.files);
-                const limit = imageLimits[input.id] || 1;
-
-                if (currentFiles.length + newFiles.length > limit) {
-                    alert(`Você pode selecionar no máximo ${limit} fotos para este campo. Você já tem ${currentFiles.length} e tentou adicionar ${newFiles.length}.`);
-                    event.target.value = '';
-                    return;
-                }
-                currentFiles.push(...newFiles);
-                renderPreview(input.id);
-                event.target.value = ''; 
-            });
-        });
-
-        const renderPreview = (inputId) => {
-            const previewContainer = document.getElementById(`${inputId}_preview`);
-            previewContainer.innerHTML = ''; 
-
-            uploadedFiles[inputId].forEach((file, index) => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const previewItem = document.createElement('div');
-                    previewItem.classList.add('preview-item');
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.alt = file.name;
-                    const fileNameSpan = document.createElement('span');
-                    fileNameSpan.classList.add('file-name');
-                    fileNameSpan.textContent = file.name;
-                    const removeBtn = document.createElement('button');
-                    removeBtn.classList.add('remove-btn');
-                    removeBtn.textContent = 'X';
-                    removeBtn.type = 'button';
-                    removeBtn.onclick = () => {
-                        uploadedFiles[inputId].splice(index, 1);
-                        renderPreview(inputId);
-                    };
-                    previewItem.appendChild(img);
-                    previewItem.appendChild(fileNameSpan);
-                    previewItem.appendChild(removeBtn);
-                    previewContainer.appendChild(previewItem);
-                };
-                reader.readAsDataURL(file);
-            });
-        };
-
-        // --- Lógica de Envio do Formulário ---
-        const form = document.getElementById('auditForm');
-        const questionWeights = {
-            'planejamento_1_1': 1, 'planejamento_1_2': 1, 'planejamento_1_3': 1, 'planejamento_1_4': 1, 'planejamento_1_5': 1, 'planejamento_1_6': 1, 'planejamento_1_7': 1, 'planejamento_1_8': 1, 'planejamento_1_9': 1,
-            'preVisit_2_1': 1, 'preVisit_2_2': 1, 'preVisit_2_3': 1,
-            'storeReading_3_1': 1, 'storeReading_3_2': 1, 'storeReading_3_3': 1, 'storeReading_3_4': 1, 'storeReading_3_5': 1, 'storeReading_3_6': 1,
-            'execution_4_1': 1, 'execution_4_2': 1, 'execution_4_3': 1, 'execution_4_4': 1, 'execution_4_5': 1,
-            'negotiation_5_1': 1, 'negotiation_5_2': 1, 'negotiation_5_3': 1, 'negotiation_5_4': 1,
-            'closing_6_1': 1, 'closing_6_2': 1
-        };
-
-        form.addEventListener('submit', async function(event) {
-            event.preventDefault();
-            const loadingOverlay = document.getElementById('loadingOverlay');
-            loadingOverlay.classList.add('visible');
-
-            const auditData = {
-                supervisorName: document.getElementById('supervisorName').value,
-                salespersonName: document.getElementById('salespersonName').value,
-                clientCnpj: document.getElementById('clientCnpj').value,
-                clientName: document.getElementById('clientName').value,
-                visitDate: document.getElementById('visitDate').value,
-                submissionTimestamp: new Date().toISOString()
-            };
-
-            let totalScore = 0;
-            for (const questionName in questionWeights) {
-                const selectedOption = document.querySelector(`input[name="${questionName}"]:checked`);
-                if (selectedOption) {
-                    auditData[questionName] = selectedOption.value;
-                    if (selectedOption.value === 'sim') totalScore += questionWeights[questionName];
-                } else {
-                    alert(`Por favor, responda a todas as perguntas. Pergunta ausente: ${questionName}`);
-                    loadingOverlay.classList.remove('visible');
-                    return;
-                }
-            }
-            auditData.totalScore = totalScore;
-            
-            auditData.images = {};
-            for (const inputId in uploadedFiles) {
-                const files = uploadedFiles[inputId];
-                if (files.length > 0) {
-                    auditData.images[inputId] = [];
-                    for (const file of files) {
-                        const base64 = await toBase64(file);
-                        auditData.images[inputId].push(base64);
+                
+                try {
+                    await fetch(GOOGLE_APP_SCRIPT_URL_POST, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'submitAudit', data: auditData })
+                    });
+                    alert('Auditoria enviada com sucesso!');
+                    form.reset();
+                    document.querySelectorAll('input[type="radio"]').forEach(radio => radio.checked = false);
+                    document.querySelectorAll('.hidden-field').forEach(field => field.classList.add('hidden-field'));
+                    for (const inputId in uploadedFiles) {
+                        uploadedFiles[inputId] = [];
+                        document.getElementById(`${inputId}_preview`).innerHTML = '';
                     }
+                } catch (error) {
+                    console.error('Erro ao enviar auditoria:', error);
+                    alert('Ocorreu um erro ao enviar a auditoria.');
+                } finally {
+                    loadingOverlay.classList.remove('visible');
                 }
-            }
-            
-            try {
-                await fetch(GOOGLE_APP_SCRIPT_URL_POST, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'submitAudit', data: auditData })
-                });
-                alert('Auditoria enviada com sucesso!');
-                form.reset();
-                for (const inputId in uploadedFiles) {
-                    uploadedFiles[inputId] = [];
-                    document.getElementById(`${inputId}_preview`).innerHTML = '';
-                }
-            } catch (error) {
-                console.error('Erro ao enviar auditoria:', error);
-                alert('Ocorreu um erro ao enviar a auditoria.');
-            } finally {
-                loadingOverlay.classList.remove('visible');
-            }
-        });
+            });
 
-        const toBase64 = file => new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => reject(error);
+            const toBase64 = file => new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
         });
-    });
- </script>
+    </script>
 </body>
 </html>
