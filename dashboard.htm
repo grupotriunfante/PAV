@@ -13,7 +13,7 @@
         body { font-family: 'Inter', sans-serif; }
         .card {
             background-color: white;
-            border-radius: 0.75rem; /* rounded-xl */
+            border-radius: 0.75rem;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease-in-out;
         }
@@ -26,10 +26,9 @@
             height: 400px;
             width: 100%;
         }
-        /* Cores para a tabela de desempenho */
-        .score-high { background-color: #D1FAE5; color: #065F46; } /* green-100, green-800 */
-        .score-medium { background-color: #FEF3C7; color: #92400E; } /* amber-100, amber-800 */
-        .score-low { background-color: #FEE2E2; color: #991B1B; } /* red-100, red-800 */
+        .score-high { background-color: #D1FAE5; color: #065F46; }
+        .score-medium { background-color: #FEF3C7; color: #92400E; }
+        .score-low { background-color: #FEE2E2; color: #991B1B; }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -142,37 +141,37 @@
     </main>
 
     <script>
-        // ... (seu objeto sectionWeights e CRITICAL_QUESTIONS permanecem os mesmos) ...
         const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-DXVXSxS_Q2YjcPxC1jBtvrpe4w8TbWRt33Zxy85hKHcIEyF52kpN14bial4OoH-p/exec';
-
         let allAuditData = [];
         let loggedInSupervisor = '';
-        let chartInstances = {}; // Objeto para armazenar todas as instâncias de gráficos
+        let chartInstances = {};
 
-        // Seu objeto sectionWeights e CRITICAL_QUESTIONS vai aqui...
+        // ========================================================================
+        // ============= CORREÇÃO: Usando os nomes EXATOS das colunas =============
+        // ========================================================================
         const sectionWeights = {
             'Planejamento': {
-                questions: ['P1.1', 'P1.2', 'P1.3', 'P1.4', 'P1.5', 'P1.6', 'P1.7', 'P1.8', 'P1.9'],
+                questions: ['Planejamento_1_1', 'Planejamento_1_2', 'Planejamento_1_3', 'Planejamento_1_4', 'Planejamento_1_5', 'Planejamento_1_6', 'Planejamento_1_7', 'Planejamento_1_8', 'Planejamento_1_9'],
                 total: 9 
             },
             'Pré-Visita': {
-                questions: ['P2.1', 'P2.2', 'P2.3'],
+                questions: ['PreVisit_2_1', 'PreVisit_2_2', 'PreVisit_2_3'],
                 total: 3
             },
             'Leitura de Loja': {
-                questions: ['L3.1', 'L3.2', 'L3.3', 'L3.4', 'L3.5', 'L3.6'],
+                questions: ['StoreReading_3_1', 'StoreReading_3_2', 'StoreReading_3_3', 'StoreReading_3_4', 'StoreReading_3_5', 'StoreReading_3_6'],
                 total: 6
             },
             'Execução': {
-                questions: ['E4.1', 'E4.2', 'E4.3', 'E4.4', 'E4.5'],
+                questions: ['Execution_4_1', 'Execution_4_2', 'Execution_4_3', 'Execution_4_4', 'Execution_4_5'],
                 total: 5
             },
             'Negociação': {
-                questions: ['N5.1', 'N5.2', 'N5.3', 'N5.4'],
+                questions: ['Negotiation_5_1', 'Negotiation_5_2', 'Negotiation_5_3', 'Negotiation_5_4'],
                 total: 4
             },
             'Fechamento': {
-                questions: ['F6.1', 'F6.2'],
+                questions: ['Closing_6_1', 'Closing_6_2'],
                 total: 2
             }
         };
@@ -180,21 +179,21 @@
         const TOTAL_POINTS_ALL_SECTIONS = Object.values(sectionWeights).reduce((sum, section) => sum + section.total, 0);
 
         const CRITICAL_QUESTIONS_MAP = {
-            'L3.1': "Analisou todos os corredores",
-            'L3.4': "Verificou rupturas",
-            'E4.1': "Abasteceu a loja",
-            'E4.2': "Garantiu limpeza",
-            'N5.2': "Mostrou soluções aplicadas",
-            'N5.3': "Apresentou levantamento de estoque",
-            'F6.1': "Combinou valor e prazo"
+            'StoreReading_3_1': "Analisou todos os corredores",
+            'StoreReading_3_4': "Verificou rupturas",
+            'Execution_4_1': "Abasteceu a loja",
+            'Execution_4_2': "Garantiu limpeza",
+            'Negotiation_5_2': "Mostrou soluções aplicadas",
+            'Negotiation_5_3': "Apresentou levantamento de estoque",
+            'Closing_6_1': "Combinou valor e prazo"
         };
-
-
+        // ========================================================================
+        
         document.addEventListener('DOMContentLoaded', async function() {
             loggedInSupervisor = localStorage.getItem('username');
             if (!localStorage.getItem('isAuthenticated') || !loggedInSupervisor) {
                 alert('Você precisa estar logado para acessar.');
-                window.location.href = 'index.htm'; // Redireciona para sua página de login
+                window.location.href = 'index.htm';
                 return;
             }
             
@@ -257,12 +256,10 @@
         function renderDashboard() {
             const filteredData = processAndFilterData();
             
-            // Cálculos
             const performanceData = calculatePerformanceMetrics(filteredData);
             const problemAreas = calculateProblemAreas(filteredData);
             const failingItems = calculateFailingItems(filteredData);
 
-            // Renderização
             updateKpiCards(filteredData.length, performanceData.overallAverage, performanceData.avgCriticalRejected);
             renderPerformanceRankingChart(performanceData.bySalesperson);
             renderProblemAreasChart(problemAreas);
@@ -282,7 +279,10 @@
             if (!section) return 0;
 
             let achievedScore = section.questions.reduce((sum, qId) => {
-                return (String(audit[qId]).trim().toLowerCase() === 'sim') ? sum + 1 : sum;
+                if (audit.hasOwnProperty(qId) && String(audit[qId]).trim().toLowerCase() === 'sim') {
+                    return sum + 1;
+                }
+                return sum;
             }, 0);
             
             return section.total > 0 ? (achievedScore / section.total) * 100 : 0;
@@ -306,19 +306,22 @@
                 }
                 
                 performance[salesperson].auditCount++;
-                let auditTotalScore = 0;
+                let auditTotalPoints = 0;
                 Object.keys(sectionWeights).forEach(sec => {
-                    const sectionScore = calculateScore(audit, sec);
-                    performance[salesperson].scores[sec].push(sectionScore);
-                    auditTotalScore += (sectionScore * sectionWeights[sec].total / 100);
+                    const sectionScorePercent = calculateScore(audit, sec);
+                    performance[salesperson].scores[sec].push(sectionScorePercent);
+                    auditTotalPoints += (sectionScorePercent / 100) * sectionWeights[sec].total;
                 });
 
-                const generalScore = (auditTotalScore / TOTAL_POINTS_ALL_SECTIONS) * 100;
+                const generalScore = (auditTotalPoints / TOTAL_POINTS_ALL_SECTIONS) * 100;
                 performance[salesperson].generalScores.push(generalScore);
                 totalGeneralScore += generalScore;
                 
                 totalCriticalRejected += Object.keys(CRITICAL_QUESTIONS_MAP).reduce((count, qId) => {
-                    return String(audit[qId]).trim().toLowerCase() === 'não' ? count + 1 : count;
+                    if (audit.hasOwnProperty(qId) && String(audit[qId]).trim().toLowerCase() === 'não') {
+                        return count + 1;
+                    }
+                    return count;
                 }, 0);
             });
 
@@ -360,7 +363,7 @@
             const failingCounts = Object.keys(CRITICAL_QUESTIONS_MAP).reduce((acc, qId) => ({...acc, [qId]: 0}), {});
             data.forEach(audit => {
                 Object.keys(failingCounts).forEach(qId => {
-                    if (String(audit[qId]).trim().toLowerCase() === 'não') {
+                    if (audit.hasOwnProperty(qId) && String(audit[qId]).trim().toLowerCase() === 'não') {
                         failingCounts[qId]++;
                     }
                 });
@@ -370,7 +373,6 @@
                 .filter(item => item.count > 0)
                 .sort((a, b) => b.count - a.count);
         }
-
 
         // --- Funções de Renderização ---
         function updateKpiCards(totalAudits, avgConformity, avgCritical) {
@@ -488,7 +490,6 @@
             });
             container.appendChild(list);
         }
-
     </script>
 </body>
 </html>
