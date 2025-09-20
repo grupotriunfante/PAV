@@ -220,34 +220,69 @@
             document.getElementById('exportExcelBtn').addEventListener('click', exportData);
         });
 
-        async function fetchDataAndRenderDashboard() {
-            // ... (Lógica de busca de dados)
+async function fetchDataAndRenderDashboard() {
             try {
-                const response = await fetch(`${APP_SCRIPT_URL}?action=getAuditData&supervisorName=${encodeURIComponent(loggedInSupervisor)}`);
+                const role = localStorage.getItem('role');
+                const unidade = localStorage.getItem('unidade');
+                const username = localStorage.getItem('username');
+
+                let fetchUrl = `${APP_SCRIPT_URL}?action=getAuditData`;
+
+                // Constrói a URL de acordo com o cargo
+                if (role === 'Gerente') {
+                    fetchUrl += `&managerUnidade=${encodeURIComponent(unidade)}`;
+                } else { // Assume Supervisor como padrão
+                    fetchUrl += `&supervisorName=${encodeURIComponent(username)}`;
+                }
+
+                const response = await fetch(fetchUrl);
                 const result = await response.json();
+
                 if (result.success) {
                     allAuditData = result.data;
-                    populateSalespersonFilter(allAuditData);
+                    // O filtro de vendedor também precisa ser populado de acordo com o cargo
+                    await populateSalespersonFilter(); 
                     renderDashboard();
-                } else { throw new Error(result.message); }
+                } else {
+                    throw new Error(result.message);
+                }
             } catch (error) {
-                console.error('Erro ao buscar dados:', error);
+                console.error('Erro ao buscar dados do dashboard:', error);
                 document.getElementById('salespersonPerformanceTableBody').innerHTML = `<tr><td colspan="9" class="text-center text-red-500 py-8">Erro de conexão: ${error.message}</td></tr>`;
             }
         }
-
-        function populateSalespersonFilter(data) {
-            const salespeople = [...new Set(data.map(audit => audit.Vendedor).filter(Boolean))].sort();
-            const select = document.getElementById('filterVendedor');
-            select.innerHTML = '<option value="">Todos os Vendedores</option>';
-            salespeople.forEach(name => {
-                const option = document.createElement('option');
-                option.value = name;
-                option.textContent = name;
-                select.appendChild(option);
-            });
-        }
         
+        // A função de popular o filtro de vendedor também precisa ser atualizada
+        async function populateSalespersonFilter() {
+            const role = localStorage.getItem('role');
+            const unidade = localStorage.getItem('unidade');
+            const username = localStorage.getItem('username');
+
+            let fetchUrl = `${APP_SCRIPT_URL}?action=getSalespersons`;
+            if (role === 'Gerente') {
+                fetchUrl += `&managerUnidade=${encodeURIComponent(unidade)}`;
+            } else {
+                fetchUrl += `&supervisorName=${encodeURIComponent(username)}`;
+            }
+            
+            try {
+                const response = await fetch(fetchUrl);
+                const result = await response.json();
+                if(result.success) {
+                    const salespeople = result.salespersons.map(p => p.name).sort();
+                    const select = document.getElementById('filterVendedor');
+                    select.innerHTML = '<option value="">Todos os Vendedores</option>';
+                    salespeople.forEach(name => {
+                        const option = document.createElement('option');
+                        option.value = name;
+                        option.textContent = name;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error("Erro ao buscar vendedores:", error);
+            }
+        }
         function processAndFilterData() {
             const selectedVendedor = document.getElementById('filterVendedor').value;
             const selectedMes = document.getElementById('filterMes').value;
@@ -497,3 +532,4 @@
     </script>
 </body>
 </html>
+
