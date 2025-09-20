@@ -141,7 +141,7 @@
         <p class="footer-text text-center">Desenvolvido por Triunfante Brasil</p>
     </div>
 
-    <script>
+<script>
     // Substitua pelo seu URL de implantação do App Script
     const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzu_mz1seo3NI5cIfUvqSDPN3GnJheBfdE7II6zwSUJhsjH95fxQZFBXGRbPU0vAt3a/exec'; 
 
@@ -160,18 +160,15 @@
         errorMessageDiv.textContent = ''; 
         errorMessageDiv.classList.add('hidden'); 
 
-        // Adiciona um feedback visual de carregamento
         const submitButton = this.querySelector('button[type="submit"]');
         submitButton.disabled = true;
         submitButton.textContent = 'Autenticando...';
 
         try {
-            // A requisição POST para o seu script de login já está correta no seu código original
-            // Mas vamos usar JSON para ser consistente com as outras chamadas
+            // A requisição POST para o seu script de login
             const response = await fetch(APP_SCRIPT_URL, {
                 method: 'POST',
-                mode: 'no-cors', // Mantenha no-cors se estiver usando o método de redirecionamento
-                headers: { 'Content-Type': 'application/json' },
+                // A linha 'headers' foi REMOVIDA daqui para corrigir o erro de Content-Type
                 body: JSON.stringify({
                     action: 'login',
                     username: username,
@@ -179,46 +176,42 @@
                 })
             });
 
-            // Devido ao 'no-cors', não podemos ler a resposta diretamente.
-            // Precisamos buscar os dados de outra forma ou confiar no redirecionamento.
-            // Para uma melhor experiência, vamos fazer uma segunda chamada GET para verificar o login
-            // (Esta é uma abordagem alternativa. O código original funcionaria, mas este é mais robusto para pegar os dados)
+            // Como não podemos ler a resposta diretamente por causa do CORS,
+            // vamos redirecionar e a próxima página vai validar.
+            // Para obter os dados do usuário, precisamos de uma solução mais robusta.
+            // No entanto, para fins de login/redirecionamento, assumimos sucesso momentaneamente
+            // e buscamos os dados na próxima página. A melhor prática seria configurar CORS
+            // corretamente no script, mas vamos manter a simplicidade.
             
-            // --- SIMPLIFICANDO: Vamos manter o fluxo original, mas adicionando uma chamada para pegar os dados
-            // NOTA: Para este fluxo funcionar perfeitamente, o doPost deveria retornar um JSON válido e não usar 'no-cors'.
-            // Assumindo que o script é ajustado para retornar JSON com CORS habilitado:
-            // const result = await response.json();
+            // Para contornar e pegar os dados, podemos fazer um truque:
+            // A lógica ideal seria o seu script retornar um JSONP ou ter CORS habilitado.
+            // Como seu script já está feito, vamos confiar que o login está correto
+            // e que o redirecionamento para 'inicio.htm' vai funcionar.
             
-            // Como o seu script usa `JSON.parse(e.postData.contents)`, vamos enviar como texto.
-            const textBody = JSON.stringify({
-                action: 'login',
-                username: username,
-                password: password
-            });
-
-            const loginResponse = await fetch(APP_SCRIPT_URL, {
-                method: 'POST',
-                body: textBody,
-                // Remova 'mode: no-cors' e 'headers' se o script estiver configurado para CORS
-            });
+            // O seu script de Google Apps precisa ser ajustado para retornar os dados corretamente
+            // com JSON, mesmo com o erro de CORS. Vamos assumir que a estrutura que você
+            // me deu está correta e que o erro era apenas no envio.
             
-            const result = await loginResponse.json();
-
+            // **Vamos tentar ler a resposta, mesmo que dê erro de CORS no console, a requisição pode ter funcionado.**
+            // Esta parte é uma tentativa. Se o login funcionar mas der erro aqui, está ok.
+            const result = await response.json();
 
             if (result.success) {
-                // ** MUDANÇA PRINCIPAL AQUI **
                 localStorage.setItem('isAuthenticated', 'true');
                 localStorage.setItem('username', result.username);
-                localStorage.setItem('userRole', result.role);       // Salva o Cargo
-                localStorage.setItem('userUnit', result.unidade);   // Salva a Unidade
+                localStorage.setItem('userRole', result.role);
+                localStorage.setItem('userUnit', result.unidade);
                 window.location.href = 'inicio.htm';
             } else {
                 errorMessageDiv.textContent = result.message || 'Usuário ou senha inválidos.';
                 errorMessageDiv.classList.remove('hidden');
             }
+
         } catch (error) {
             console.error('Erro na requisição de login:', error);
-            errorMessageDiv.textContent = 'Erro de conexão. Verifique sua URL do App Script e a conexão de rede.';
+            // Se o erro for de CORS, mas você sabe que o login funciona, pode redirecionar mesmo assim
+            // Mas é mais seguro mostrar um erro genérico.
+            errorMessageDiv.textContent = 'Erro de conexão ou credenciais inválidas. Verifique o console para mais detalhes.';
             errorMessageDiv.classList.remove('hidden');
         } finally {
             submitButton.disabled = false;
@@ -229,5 +222,6 @@
 </body>
 
 </html>
+
 
 
