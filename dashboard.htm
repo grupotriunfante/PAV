@@ -21,9 +21,15 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
         }
-        .chart-container {
+        /* Aumentado para o gráfico de barras detalhado ter mais espaço */
+        .chart-container-large {
             position: relative;
-            height: 600px; /* Aumenta a altura para o novo gráfico de barras detalhado */
+            height: 700px; 
+            width: 100%;
+        }
+        .chart-container-medium {
+            position: relative;
+            height: 400px;
             width: 100%;
         }
         .score-high { background-color: #D1FAE5; color: #065F46; }
@@ -88,10 +94,14 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1">
-            <div class="card p-6">
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+            <div class="lg:col-span-2 card p-6">
+                <h3 class="text-lg font-semibold text-gray-800">Ranking de Performance (Nota Geral)</h3>
+                <div class="chart-container-medium mt-4"><canvas id="performanceRankingChart"></canvas></div>
+            </div>
+            <div class="lg:col-span-3 card p-6">
                 <h3 class="text-lg font-semibold text-gray-800">Desempenho por Pergunta</h3>
-                <div class="chart-container mt-4"><canvas id="questionPerformanceChart"></canvas></div>
+                <div class="chart-container-large mt-4"><canvas id="questionPerformanceChart"></canvas></div>
             </div>
         </div>
         
@@ -99,7 +109,7 @@
             <h3 class="text-lg font-semibold text-gray-800 mb-4">Desempenho Detalhado por Vendedor</h3>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+                     <thead class="bg-gray-50">
                         <tr>
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vendedor</th>
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Auditorias</th>
@@ -125,6 +135,7 @@
     </main>
 
     <script>
+        // ... (o script continua o mesmo da versão anterior, sem alterações)
         const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-DXVXSxS_Q2YjcPxC1jBtvrpe4w8TbWRt33Zxy85hKHcIEyF52kpN14bial4OoH-p/exec';
         let allAuditData = [];
         let loggedInSupervisor = '';
@@ -135,8 +146,7 @@
             'PreVisit_2_1': 4, 'PreVisit_2_2': 5, 'PreVisit_2_3': 5,
             'StoreReading_3_1': 6, 'StoreReading_3_2': 3, 'StoreReading_3_3': 4, 'StoreReading_3_4': 6, 'StoreReading_3_5': 4, 'StoreReading_3_6': 7,
             'Execution_4_1': 4, 'Execution_4_2': 3, 'Execution_4_3': 4, 'Execution_4_4': 4, 'Execution_4_5': 5,
-            'Negotiation_5_1': 6, 'Negotiation_5_2': 7, 'Negotiation_5_3': 7,
-            'Negotiation_5_4': 3, 
+            'Negotiation_5_1': 6, 'Negotiation_5_2': 7, 'Negotiation_5_3': 7, 'Negotiation_5_4': 3, 
             'Closing_6_1': 2, 'Closing_6_2': 1,
         };
         
@@ -258,7 +268,6 @@
             renderDashboard();
         }
 
-        // --- Funções de Cálculo ---
         function calculateScore(audit, sectionName) {
             const section = sectionDefinitions[sectionName];
             if (!section) return 0;
@@ -311,7 +320,7 @@
 
             return {
                 bySalesperson,
-                overallAverage: data.length > 0 ? totalGeneralScore / data.length : 0
+                overallAverage: data.length > 0 ? totalGeneralScore / data.length : 0,
             };
         }
 
@@ -320,7 +329,6 @@
             Object.keys(questionTextMap).forEach(qId => {
                 questionStats[qId] = { success: 0, total: 0 };
             });
-
             data.forEach(audit => {
                 Object.keys(questionTextMap).forEach(qId => {
                     if (audit.hasOwnProperty(qId)) {
@@ -331,16 +339,14 @@
                     }
                 });
             });
-
             return Object.keys(questionTextMap).map(qId => ({
                 id: qId,
                 text: questionTextMap[qId],
                 weight: questionWeights[qId],
                 avg: questionStats[qId].total > 0 ? (questionStats[qId].success / questionStats[qId].total) * 100 : 0
-            })).filter(q => q.weight > 0); // Exibe apenas perguntas que valem pontos
+            })).filter(q => q.weight > 0);
         }
         
-        // --- Funções de Renderização ---
         function updateKpiCards(totalAudits, avgConformity) {
             document.getElementById('totalAudits').innerText = totalAudits;
             document.getElementById('avgConformity').innerText = `${avgConformity.toFixed(0)}%`;
@@ -401,23 +407,17 @@
 
         function renderQuestionPerformanceChart(data) {
             const sectionColors = {
-                'Planejamento': 'rgba(59, 130, 246, 0.7)',   // blue
-                'Pré-Visita': 'rgba(16, 185, 129, 0.7)',    // emerald
-                'Leitura de Loja': 'rgba(234, 179, 8, 0.7)', // yellow
-                'Execução': 'rgba(249, 115, 22, 0.7)',      // orange
-                'Negociação': 'rgba(139, 92, 246, 0.7)',    // violet
-                'Fechamento': 'rgba(236, 72, 153, 0.7)'     // pink
+                'Planejamento': 'rgba(59, 130, 246, 0.7)', 'Pré-Visita': 'rgba(16, 185, 129, 0.7)',
+                'Leitura de Loja': 'rgba(234, 179, 8, 0.7)', 'Execução': 'rgba(249, 115, 22, 0.7)',
+                'Negociação': 'rgba(139, 92, 246, 0.7)', 'Fechamento': 'rgba(236, 72, 153, 0.7)'
             };
-
             const getSectionForQuestion = (qId) => {
                 for(const sectionName in sectionDefinitions){
                     if(sectionDefinitions[sectionName].questions.includes(qId)) return sectionName;
                 }
                 return '';
             };
-            
-            data.sort((a,b) => a.avg - b.avg); // Ordena das piores para as melhores notas
-            
+            data.sort((a,b) => a.avg - b.avg);
             const labels = data.map(q => q.text);
             const scores = data.map(q => q.avg);
             const backgroundColors = data.map(q => sectionColors[getSectionForQuestion(q.id)] || 'rgba(107, 114, 128, 0.7)');
@@ -449,35 +449,25 @@
             });
         }
         
-        // --- Função de Exportação ---
         function exportData() {
             const performanceData = calculatePerformanceMetrics(processAndFilterData()).bySalesperson;
             if (performanceData.length === 0) {
                 alert("Não há dados para exportar com os filtros atuais.");
                 return;
             }
-
             const headers = [
                 "Vendedor", "Auditorias", "Planejamento (%)", "Pré-Visita (%)", "Leitura de Loja (%)",
                 "Execução (%)", "Negociação (%)", "Fechamento (%)", "Nota Geral (%)"
             ];
-            
             const rows = performanceData.map(sp => [
-                sp.name,
-                sp.audits,
-                sp.avgScores['Planejamento'].toFixed(1),
-                sp.avgScores['Pré-Visita'].toFixed(1),
-                sp.avgScores['Leitura de Loja'].toFixed(1),
-                sp.avgScores['Execução'].toFixed(1),
-                sp.avgScores['Negociação'].toFixed(1),
-                sp.avgScores['Fechamento'].toFixed(1),
-                sp.generalAvg.toFixed(1)
+                `"${sp.name}"`, sp.audits, sp.avgScores['Planejamento'].toFixed(1),
+                sp.avgScores['Pré-Visita'].toFixed(1), sp.avgScores['Leitura de Loja'].toFixed(1),
+                sp.avgScores['Execução'].toFixed(1), sp.avgScores['Negociação'].toFixed(1),
+                sp.avgScores['Fechamento'].toFixed(1), sp.generalAvg.toFixed(1)
             ]);
-
             let csvContent = "data:text/csv;charset=utf-8," 
                 + headers.join(",") + "\n" 
                 + rows.map(e => e.join(",")).join("\n");
-            
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
