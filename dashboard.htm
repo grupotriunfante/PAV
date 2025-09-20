@@ -257,6 +257,8 @@
                 const response = await fetch(url);
                 if (!response.ok) throw new Error(`Erro de rede: ${response.statusText}`);
                 const result = await response.json();
+
+                console.log('Dados recebidos do script:', result.data);
                 
                 if (result.success) {
                     allAuditData = result.data.map(audit => {
@@ -509,3 +511,4 @@
     </script>
 </body>
 </html>
+
