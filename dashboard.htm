@@ -9,11 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body { font-family: 'Inter', sans-serif; }
-        .card {
-            background-color: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-        }
+        .card { background-color: white; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); }
         .chart-container { position: relative; height: 400px; width: 100%; }
         .score-high { background-color: #D1FAE5; color: #065F46; }
         .score-medium { background-color: #FEF3C7; color: #92400E; }
@@ -41,15 +37,11 @@
             <div class="flex flex-wrap items-end gap-4">
                 <div class="flex-grow min-w-[200px] manager-only">
                     <label for="filterSupervisor" class="text-sm font-medium text-gray-700">Supervisor</label>
-                    <select id="filterSupervisor" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
-                        <option value="">Todos os Supervisores</option>
-                    </select>
+                    <select id="filterSupervisor" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"><option value="">Todos</option></select>
                 </div>
                 <div class="flex-grow min-w-[200px]">
                     <label for="filterVendedor" class="text-sm font-medium text-gray-700">Vendedor</label>
-                    <select id="filterVendedor" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
-                        <option value="">Todos os Vendedores</option>
-                    </select>
+                    <select id="filterVendedor" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"><option value="">Todos</option></select>
                 </div>
                 <div class="flex-grow min-w-[150px]">
                     <label for="filterMes" class="text-sm font-medium text-gray-700">Mês</label>
@@ -71,29 +63,22 @@
             <div class="card p-6 flex items-center space-x-4">
                 <div class="bg-green-100 p-3 rounded-full"><svg class="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
                 <div>
-                    <p class="text-sm text-gray-500">Média de Conformidade</p>
-                    <p id="avgConformity" class="text-3xl font-bold text-gray-900">0%</p>
+                    <p class="text-sm text-gray-500">Média de Nota Geral</p>
+                    <p id="avgConformity" class="text-3xl font-bold text-gray-900">0</p>
                 </div>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
             <div class="lg:col-span-2 card p-6">
-                <h3 id="rankingTitle" class="text-lg font-semibold text-gray-800">Ranking de Performance (Nota Geral)</h3>
+                <h3 id="rankingTitle" class="text-lg font-semibold text-gray-800">Ranking de Performance</h3>
                 <div class="chart-container mt-4"><canvas id="performanceRankingChart"></canvas></div>
             </div>
             <div class="lg:col-span-3 card p-6">
                 <h3 class="text-lg font-semibold text-gray-800">Desempenho por Pergunta</h3>
                 <div class="mt-4 overflow-auto max-h-[360px]">
                      <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50 sticky top-0">
-                            <tr>
-                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Ação</th>
-                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Peso</th>
-                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Não Conforme</th>
-                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">% Conforme</th>
-                            </tr>
-                        </thead>
+                        <thead class="bg-gray-50 sticky top-0"><tr><th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Ação</th><th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Peso</th><th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Não Conforme</th><th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">% Conforme</th></tr></thead>
                         <tbody id="questionPerformanceTableBody" class="bg-white divide-y divide-gray-200"></tbody>
                     </table>
                 </div>
@@ -101,13 +86,10 @@
         </div>
         
         <div class="card p-6">
-            <h3 id="detailedTableTitle" class="text-lg font-semibold text-gray-800 mb-4">Desempenho Detalhado por Vendedor</h3>
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Desempenho Detalhado</h3>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
-                     <thead class="bg-gray-50">
-                        <tr id="detailedTableHeader">
-                            </tr>
-                    </thead>
+                     <thead class="bg-gray-50"><tr id="detailedTableHeader"></tr></thead>
                     <tbody id="detailedPerformanceTableBody" class="bg-white divide-y divide-gray-200">
                         <tr><td colspan="10" class="text-center text-gray-500 py-8">Carregando dados...</td></tr>
                     </tbody>
@@ -117,171 +99,112 @@
     </main>
 
     <script>
-        // ===================================================================================
-        // SCRIPT UNIFICADO - BASEADO NO SEU CÓDIGO ORIGINAL (dashboard (1).htm)
-        // ===================================================================================
-
         const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-DXVXSxS_Q2YjcPxC1jBtvrpe4w8TbWRt33Zxy85hKHcIEyF52kpN14bial4OoH-p/exec';
         let allAuditData = [];
         let chartInstances = {};
 
-        // 1. Objeto para guardar as informações do usuário logado
         const loggedInUser = {
             name: localStorage.getItem('username'),
             role: localStorage.getItem('userRole'),
             unit: localStorage.getItem('userUnit')
         };
 
-        // 2. CONFIGURAÇÕES - Exatamente como no seu arquivo original que funcionava
-        const questionWeights = {
-            'planejamento_1_1': 1, 'planejamento_1_2': 1, 'planejamento_1_3': 1, 'planejamento_1_4': 2, 'planejamento_1_5': 3, 'planejamento_1_6': 1, 'planejamento_1_7': 1, 'planejamento_1_8': 0, 'planejamento_1_9': 0,
-            'preVisit_2_1': 4, 'preVisit_2_2': 5, 'preVisit_2_3': 5,
-            'storeReading_3_1': 6, 'storeReading_3_2': 3, 'storeReading_3_3': 4, 'storeReading_3_4': 6, 'storeReading_3_5': 4, 'storeReading_3_6': 7,
-            'execution_4_1': 4, 'execution_4_2': 3, 'execution_4_3': 4, 'execution_4_4': 4, 'execution_4_5': 5,
-            'negotiation_5_1': 6, 'negotiation_5_2': 7, 'negotiation_5_3': 7, 'negotiation_5_4': 3, 
-            'closing_6_1': 2, 'closing_6_2': 1,
-        };
-        
-        const questionTextMap = {
-            'planejamento_1_1': '1.1 Bem-apresentado', 'planejamento_1_2': '1.2 Palm carregado', 'planejamento_1_3': '1.3 Carro limpo', 'planejamento_1_4': '1.4 Roteiro definido', 'planejamento_1_5': '1.5 Metas definidas', 'planejamento_1_6': '1.6 Materiais em mãos', 'planejamento_1_7': '1.7 Conhecimento campanhas',
-            'preVisit_2_1': '2.1 Verificou histórico', 'preVisit_2_2': '2.2 Criou estratégias', 'preVisit_2_3': '2.3 Itens focos do mês',
-            'storeReading_3_1': '3.1 Analisou corredores', 'storeReading_3_2': '3.2 Produtos precificados', 'storeReading_3_3': '3.3 Visitou estoque', 'storeReading_3_4': '3.4 Verificou rupturas', 'storeReading_3_5': '3.5 Checou lançamentos', 'storeReading_3_6': '3.6 Montou pré-pedido',
-            'execution_4_1': '4.1 Abasteceu a loja', 'execution_4_2': '4.2 Garantiu limpeza', 'execution_4_3': '4.3 Posicionou expositores', 'execution_4_4': '4.4 Aplicou Cross Merch.', 'execution_4_5': '4.5 Verificou validade (FIFO)',
-            'negotiation_5_1': '5.1 Iniciou negociação', 'negotiation_5_2': '5.2 Mostrou soluções', 'negotiation_5_3': '5.3 Apresentou levantamento', 'negotiation_5_4': '5.4 Reforçou parceria', 
-            'closing_6_1': '6.1 Repassou valor/prazo', 'closing_6_2': '6.2 Combinou retorno',
-        };
+        const questionWeights = { 'planejamento_1_1': 1, 'planejamento_1_2': 1, 'planejamento_1_3': 1, 'planejamento_1_4': 2, 'planejamento_1_5': 3, 'planejamento_1_6': 1, 'planejamento_1_7': 1, 'planejamento_1_8': 0, 'planejamento_1_9': 0, 'preVisit_2_1': 4, 'preVisit_2_2': 5, 'preVisit_2_3': 5, 'storeReading_3_1': 6, 'storeReading_3_2': 3, 'storeReading_3_3': 4, 'storeReading_3_4': 6, 'storeReading_3_5': 4, 'storeReading_3_6': 7, 'execution_4_1': 4, 'execution_4_2': 3, 'execution_4_3': 4, 'execution_4_4': 4, 'execution_4_5': 5, 'negotiation_5_1': 6, 'negotiation_5_2': 7, 'negotiation_5_3': 7, 'negotiation_5_4': 3, 'closing_6_1': 2, 'closing_6_2': 1 };
+        const questionTextMap = { 'planejamento_1_1': '1.1 Bem-apresentado', 'planejamento_1_2': '1.2 Palm carregado', 'planejamento_1_3': '1.3 Carro limpo', 'planejamento_1_4': '1.4 Roteiro definido', 'planejamento_1_5': '1.5 Metas definidas', 'planejamento_1_6': '1.6 Materiais em mãos', 'planejamento_1_7': '1.7 Conhecimento campanhas', 'preVisit_2_1': '2.1 Verificou histórico', 'preVisit_2_2': '2.2 Criou estratégias', 'preVisit_2_3': '2.3 Itens focos do mês', 'storeReading_3_1': '3.1 Analisou corredores', 'storeReading_3_2': '3.2 Produtos precificados', 'storeReading_3_3': '3.3 Visitou estoque', 'storeReading_3_4': '3.4 Verificou rupturas', 'storeReading_3_5': '3.5 Checou lançamentos', 'storeReading_3_6': '3.6 Montou pré-pedido', 'execution_4_1': '4.1 Abasteceu a loja', 'execution_4_2': '4.2 Garantiu limpeza', 'execution_4_3': '4.3 Posicionou expositores', 'execution_4_4': '4.4 Aplicou Cross Merch.', 'execution_4_5': '4.5 Verificou validade (FIFO)', 'negotiation_5_1': '5.1 Iniciou negociação', 'negotiation_5_2': '5.2 Mostrou soluções', 'negotiation_5_3': '5.3 Apresentou levantamento', 'negotiation_5_4': '5.4 Reforçou parceria', 'closing_6_1': '6.1 Repassou valor/prazo', 'closing_6_2': '6.2 Combinou retorno' };
+        const sectionDefinitions = { 'Planejamento': { questions: ['planejamento_1_1', 'planejamento_1_2', 'planejamento_1_3', 'planejamento_1_4', 'planejamento_1_5', 'planejamento_1_6', 'planejamento_1_7'], total: 10 }, 'Pré-Visita': { questions: ['preVisit_2_1', 'preVisit_2_2', 'preVisit_2_3'], total: 14 }, 'Leitura de Loja': { questions: ['storeReading_3_1', 'storeReading_3_2', 'storeReading_3_3', 'storeReading_3_4', 'storeReading_3_5', 'storeReading_3_6'], total: 30 }, 'Execução': { questions: ['execution_4_1', 'execution_4_2', 'execution_4_3', 'execution_4_4', 'execution_4_5'], total: 20 }, 'Negociação': { questions: ['negotiation_5_1', 'negotiation_5_2', 'negotiation_5_3'], total: 20 }, 'Fechamento': { questions: ['negotiation_5_4', 'closing_6_1', 'closing_6_2'], total: 6 } };
 
-        const sectionDefinitions = {
-            'Planejamento': {
-                questions: ['planejamento_1_1', 'planejamento_1_2', 'planejamento_1_3', 'planejamento_1_4', 'planejamento_1_5', 'planejamento_1_6', 'planejamento_1_7'],
-                total: 10
-            },
-            'Pré-Visita': {
-                questions: ['preVisit_2_1', 'preVisit_2_2', 'preVisit_2_3'],
-                total: 14
-            },
-            'Leitura de Loja': {
-                questions: ['storeReading_3_1', 'storeReading_3_2', 'storeReading_3_3', 'storeReading_3_4', 'storeReading_3_5', 'storeReading_3_6'],
-                total: 30
-            },
-            'Execução': {
-                questions: ['execution_4_1', 'execution_4_2', 'execution_4_3', 'execution_4_4', 'execution_4_5'],
-                total: 20
-            },
-            'Negociação': {
-                questions: ['negotiation_5_1', 'negotiation_5_2', 'negotiation_5_3'],
-                total: 20
-            },
-            'Fechamento': {
-                questions: ['negotiation_5_4', 'closing_6_1', 'closing_6_2'],
-                total: 6
-            }
-        };
-
-        // 3. INICIALIZAÇÃO - Lógica principal que roda ao carregar a página
-        document.addEventListener('DOMContentLoaded', async function() {
-            if (!localStorage.getItem('isAuthenticated') || !loggedInUser.name) {
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!loggedInUser.name) {
                 alert('Você precisa estar logado para acessar.');
                 window.location.href = 'index.htm';
                 return;
             }
-            
             setupUIForRole();
-            await fetchDataAndRenderDashboard();
-            
-            document.getElementById('applyFilters').addEventListener('click', () => renderDashboard(processAndFilterData()));
-            document.getElementById('resetFilters').addEventListener('click', resetFiltersAndRender);
+            await fetchDataAndRender();
+            document.getElementById('applyFilters').addEventListener('click', () => renderFilteredDashboard());
+            document.getElementById('resetFilters').addEventListener('click', resetAndRender);
             document.getElementById('backButton').addEventListener('click', () => window.location.href = 'inicio.htm');
             document.getElementById('logoutButton').addEventListener('click', () => {
                 localStorage.clear();
                 window.location.href = 'index.htm';
             });
         });
-        
-        // 4. LÓGICA DE INTERFACE - Adapta a tela para o perfil
+
         function setupUIForRole() {
             const title = document.getElementById('dashboardTitle');
             if (loggedInUser.role === 'Gerente') {
                 title.textContent = `Dashboard Gerencial - Unidade ${loggedInUser.unit}`;
                 document.querySelector('.manager-only').style.display = 'block';
-                document.getElementById('rankingTitle').textContent = 'Ranking de Supervisores (Nº de Auditorias)';
-            } else { // Supervisor
+                document.getElementById('rankingTitle').textContent = 'Ranking de Supervisores (Nº Auditorias)';
+            } else {
                 title.textContent = `Dashboard de Desempenho - ${loggedInUser.name}`;
-                document.getElementById('rankingTitle').textContent = 'Ranking de Vendedores (Nota Geral)';
             }
         }
-        
-        // 5. BUSCA DE DADOS - Puxa os dados do Google Script de forma dinâmica
-        async function fetchDataAndRenderDashboard() {
+
+        async function fetchDataAndRender() {
             document.body.style.cursor = 'wait';
             let url = `${APP_SCRIPT_URL}?action=getAuditData`;
-
             if (loggedInUser.role === 'Gerente') {
                 url += `&managerUnidade=${encodeURIComponent(loggedInUser.unit)}`;
             } else {
                 url += `&supervisorName=${encodeURIComponent(loggedInUser.name)}`;
             }
-
             try {
                 const response = await fetch(url);
-                if (!response.ok) throw new Error(`Erro de rede: ${response.statusText}`);
+                if (!response.ok) throw new Error('Falha na resposta da rede.');
                 const result = await response.json();
-                
                 if (result.success) {
                     allAuditData = result.data;
                     populateFilters(allAuditData);
                     renderDashboard(allAuditData);
-                } else { 
-                    throw new Error(result.message || 'Falha ao buscar dados.'); 
+                } else {
+                    throw new Error(result.message || 'Erro desconhecido ao buscar dados.');
                 }
             } catch (error) {
-                console.error('Erro ao buscar dados:', error);
-                alert(`Não foi possível carregar os dados. Erro: ${error.message}`);
-                document.getElementById('detailedPerformanceTableBody').innerHTML = `<tr><td colspan="10" class="text-center text-red-500 py-8">Falha na conexão. Verifique o console (F12) para mais detalhes.</td></tr>`;
+                console.error('Erro fatal ao buscar dados:', error);
+                alert(`Não foi possível carregar os dados: ${error.message}`);
             } finally {
                 document.body.style.cursor = 'default';
             }
         }
 
-        // 6. FILTROS
         function populateFilters(data) {
-            const salespeople = [...new Set(data.map(audit => audit.Vendedor).filter(Boolean))].sort();
-            const salespersonSelect = document.getElementById('filterVendedor');
-            salespersonSelect.innerHTML = '<option value="">Todos os Vendedores</option>';
-            salespeople.forEach(name => salespersonSelect.innerHTML += `<option value="${name}">${name}</option>`);
+            const salespeople = [...new Set(data.map(a => a.Vendedor).filter(Boolean))].sort();
+            const vendorsSelect = document.getElementById('filterVendedor');
+            vendorsSelect.innerHTML = '<option value="">Todos os Vendedores</option>';
+            salespeople.forEach(name => vendorsSelect.innerHTML += `<option value="${name}">${name}</option>`);
 
             if (loggedInUser.role === 'Gerente') {
-                const supervisors = [...new Set(data.map(audit => audit.Supervisor).filter(Boolean))].sort();
-                const supervisorSelect = document.getElementById('filterSupervisor');
-                supervisorSelect.innerHTML = '<option value="">Todos os Supervisores</option>';
-                supervisors.forEach(name => supervisorSelect.innerHTML += `<option value="${name}">${name}</option>`);
+                const supervisors = [...new Set(data.map(a => a.Supervisor).filter(Boolean))].sort();
+                const supervisorsSelect = document.getElementById('filterSupervisor');
+                supervisorsSelect.innerHTML = '<option value="">Todos os Supervisores</option>';
+                supervisors.forEach(name => supervisorsSelect.innerHTML += `<option value="${name}">${name}</option>`);
             }
         }
-        
-        function processAndFilterData() {
+
+        function renderFilteredDashboard() {
             const selectedSupervisor = document.getElementById('filterSupervisor').value;
             const selectedVendedor = document.getElementById('filterVendedor').value;
             const selectedMes = document.getElementById('filterMes').value;
 
-            return allAuditData.filter(audit => {
-                const matchesSupervisor = (loggedInUser.role !== 'Gerente' || !selectedSupervisor || audit.Supervisor === selectedSupervisor);
+            const filteredData = allAuditData.filter(audit => {
+                const matchesSupervisor = !selectedSupervisor || audit.Supervisor === selectedSupervisor;
                 const matchesVendedor = !selectedVendedor || audit.Vendedor === selectedVendedor;
                 const matchesMes = !selectedMes || (audit['Data Visita'] && audit['Data Visita'].startsWith(selectedMes));
                 return matchesSupervisor && matchesVendedor && matchesMes;
             });
+            renderDashboard(filteredData);
         }
-        
-        function resetFiltersAndRender() {
+
+        function resetAndRender() {
             document.getElementById('filterVendedor').value = '';
             document.getElementById('filterMes').value = '';
             if (loggedInUser.role === 'Gerente') document.getElementById('filterSupervisor').value = '';
             renderDashboard(allAuditData);
         }
 
-        // 7. RENDERIZAÇÃO - Controla o que é exibido na tela
         function renderDashboard(data) {
             const performanceData = calculatePerformanceMetrics(data);
-            
             updateKpiCards(data.length, performanceData.overallAverage);
             renderQuestionPerformanceTable(calculateQuestionPerformance(data));
             renderDetailedTable(performanceData.bySalesperson, loggedInUser.role === 'Gerente');
@@ -289,18 +212,15 @@
             if (loggedInUser.role === 'Gerente') {
                 renderRankingChart(performanceData.bySupervisor, 'Nº de Auditorias', 'auditCount');
             } else {
-                renderRankingChart(performanceData.bySalesperson, 'Nota Geral Média', 'generalAvg');
+                renderRankingChart(performanceData.bySalesperson, 'Nota Média', 'generalAvg');
             }
         }
 
-        // 8. CÁLCULOS - Lógica original preservada
         function calculateScore(audit, sectionName) {
             const section = sectionDefinitions[sectionName];
             if (!section) return 0;
-            let achievedScore = section.questions.reduce((sum, qId) => {
-                // CORREÇÃO: As chaves no JS e na planilha devem ser idênticas
-                const auditKey = Object.keys(audit).find(key => key.toLowerCase() === qId.toLowerCase());
-                if (auditKey && String(audit[auditKey]).trim().toLowerCase() === 'sim') {
+            const achievedScore = section.questions.reduce((sum, qId) => {
+                if (audit.hasOwnProperty(qId) && String(audit[qId]).toLowerCase() === 'sim') {
                     return sum + (questionWeights[qId] || 0);
                 }
                 return sum;
@@ -309,57 +229,51 @@
         }
 
         function calculatePerformanceMetrics(data) {
-            const performance = {};
-            const supervisorPerformance = {};
+            const bySalesperson = {};
+            const bySupervisor = {};
             let totalGeneralScore = 0;
 
             data.forEach(audit => {
                 const salesperson = audit.Vendedor;
                 const supervisor = audit.Supervisor;
                 if (!salesperson) return;
-                if (!performance[salesperson]) {
-                    performance[salesperson] = { 
-                        name: salesperson,
-                        supervisor: supervisor,
-                        auditCount: 0,
-                        scores: Object.keys(sectionDefinitions).reduce((acc, sec) => ({...acc, [sec]: []}), {}),
-                        generalScores: []
-                    };
-                }
-                if (supervisor && !supervisorPerformance[supervisor]) {
-                    supervisorPerformance[supervisor] = { name: supervisor, auditCount: 0 };
-                }
-
-                performance[salesperson].auditCount++;
-                if(supervisor) supervisorPerformance[supervisor].auditCount++;
-
-                let auditTotalAchievedPoints = 0;
-                Object.keys(sectionDefinitions).forEach(sec => {
-                    performance[salesperson].scores[sec].push(calculateScore(audit, sec));
-                });
+                
+                let auditTotalPoints = 0;
                 Object.keys(questionWeights).forEach(qId => {
-                    const auditKey = Object.keys(audit).find(key => key.toLowerCase() === qId.toLowerCase());
-                    if (auditKey && String(audit[auditKey]).trim().toLowerCase() === 'sim') {
-                        auditTotalAchievedPoints += questionWeights[qId];
+                    if (audit.hasOwnProperty(qId) && String(audit[qId]).toLowerCase() === 'sim') {
+                        auditTotalPoints += questionWeights[qId];
                     }
                 });
-                
-                performance[salesperson].generalScores.push(auditTotalAchievedPoints);
-                totalGeneralScore += auditTotalAchievedPoints;
+                totalGeneralScore += auditTotalPoints;
+
+                if (!bySalesperson[salesperson]) {
+                    bySalesperson[salesperson] = { name: salesperson, supervisor: supervisor, auditCount: 0, totalScores: [], sectionScoresSum: {} };
+                }
+                bySalesperson[salesperson].auditCount++;
+                bySalesperson[salesperson].totalScores.push(auditTotalPoints);
+                Object.keys(sectionDefinitions).forEach(sec => {
+                    if (!bySalesperson[salesperson].sectionScoresSum[sec]) bySalesperson[salesperson].sectionScoresSum[sec] = 0;
+                    bySalesperson[salesperson].sectionScoresSum[sec] += calculateScore(audit, sec);
+                });
+
+                if (supervisor) {
+                    if (!bySupervisor[supervisor]) bySupervisor[supervisor] = { name: supervisor, auditCount: 0 };
+                    bySupervisor[supervisor].auditCount++;
+                }
             });
 
-            const bySalesperson = Object.values(performance).map(sp => {
-                sp.avgScores = {};
-                Object.keys(sp.scores).forEach(sec => {
-                    sp.avgScores[sec] = sp.scores[sec].length > 0 ? sp.scores[sec].reduce((a, b) => a + b, 0) / sp.scores[sec].length : 0;
+            const processedSalespeople = Object.values(bySalesperson).map(sp => {
+                sp.generalAvg = sp.totalScores.length > 0 ? sp.totalScores.reduce((a, b) => a + b, 0) / sp.auditCount : 0;
+                sp.avgSectionScores = {};
+                Object.keys(sp.sectionScoresSum).forEach(sec => {
+                    sp.avgSectionScores[sec] = sp.sectionScoresSum[sec] / sp.auditCount;
                 });
-                sp.generalAvg = sp.generalScores.length > 0 ? sp.generalScores.reduce((a,b) => a+b, 0) / sp.generalScores.length : 0;
                 return sp;
             });
-            
+
             return {
-                bySalesperson: bySalesperson.sort((a, b) => b.generalAvg - a.generalAvg),
-                bySupervisor: Object.values(supervisorPerformance).sort((a,b) => b.auditCount - a.auditCount),
+                bySalesperson: processedSalespeople.sort((a, b) => b.generalAvg - a.generalAvg),
+                bySupervisor: Object.values(bySupervisor).sort((a, b) => b.auditCount - a.auditCount),
                 overallAverage: data.length > 0 ? totalGeneralScore / data.length : 0,
             };
         }
@@ -371,27 +285,23 @@
             });
             data.forEach(audit => {
                 Object.keys(questionTextMap).forEach(qId => {
-                    const auditKey = Object.keys(audit).find(key => key.toLowerCase() === qId.toLowerCase());
-                    if (auditKey) {
+                    if (audit.hasOwnProperty(qId)) {
                         stats[qId].total++;
-                        if (String(audit[auditKey]).trim().toLowerCase() === 'sim') {
-                            stats[qId].success++;
-                        }
+                        if (String(audit[qId]).toLowerCase() === 'sim') stats[qId].success++;
                     }
                 });
             });
             return Object.keys(questionTextMap).map(qId => ({
                 text: questionTextMap[qId],
                 weight: questionWeights[qId],
-                conformity: stats[qId].total > 0 ? (stats[qId].success / stats[qId].total) * 100 : 0,
-                nonConformity: stats[qId].total - stats[qId].success
-            })).filter(q => (questionWeights[qId] || 0) > 0);
+                nonConformity: stats[qId].total - stats[qId].success,
+                conformity: stats[qId].total > 0 ? (stats[qId].success / stats[qId].total) * 100 : 0
+            })).filter(q => questionWeights[qId] > 0);
         }
-        
-        // 9. FUNÇÕES DE EXIBIÇÃO
+
         function updateKpiCards(totalAudits, avgConformity) {
             document.getElementById('totalAudits').innerText = totalAudits;
-            document.getElementById('avgConformity').innerText = `${avgConformity.toFixed(0)}%`;
+            document.getElementById('avgConformity').innerText = Math.round(avgConformity);
         }
 
         function renderDetailedTable(data, isManagerView) {
@@ -403,26 +313,22 @@
             let headers = [];
             if (isManagerView) headers.push('Supervisor');
             headers.push('Vendedor', 'Auditorias', ...Object.keys(sectionDefinitions), 'Nota Geral');
-            
             tableHeader.innerHTML = headers.map(h => `<th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">${h}</th>`).join('');
 
             if (data.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="${headers.length}" class="text-center text-gray-500 py-8">Nenhum dado encontrado.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="${headers.length}" class="text-center text-gray-500 py-8">Nenhum dado encontrado para os filtros selecionados.</td></tr>`;
                 return;
             }
-
             const getScoreClass = score => score >= 90 ? 'score-high' : score >= 70 ? 'score-medium' : 'score-low';
-
             data.forEach(item => {
                 let cells = '';
                 if (isManagerView) cells += `<td class="px-4 py-4 font-medium text-gray-800">${item.supervisor}</td>`;
-                cells += `<td class="px-4 py-4 font-medium text-gray-900">${item.name}</td>
-                          <td class="px-4 py-4 text-center text-gray-500">${item.auditCount}</td>`;
+                cells += `<td class="px-4 py-4 font-medium text-gray-900">${item.name}</td><td class="px-4 py-4 text-center text-gray-500">${item.auditCount}</td>`;
                 Object.keys(sectionDefinitions).forEach(sec => {
-                    const score = item.avgScores[sec] || 0;
+                    const score = item.avgSectionScores[sec] || 0;
                     cells += `<td class="px-4 py-4 font-semibold text-center ${getScoreClass(score)}">${score.toFixed(0)}%</td>`;
                 });
-                cells += `<td class="px-4 py-4 font-bold text-center text-blue-700 ${getScoreClass(item.generalAvg)}">${item.generalAvg.toFixed(0)}%</td>`;
+                cells += `<td class="px-4 py-4 font-bold text-center text-blue-700 ${getScoreClass(item.generalAvg)}">${item.generalAvg.toFixed(0)}</td>`;
                 tableBody.innerHTML += `<tr class="hover:bg-gray-50">${cells}</tr>`;
             });
         }
@@ -432,23 +338,14 @@
             tableBody.innerHTML = '';
             const getScoreClass = score => score >= 90 ? 'score-high' : score >= 70 ? 'score-medium' : 'score-low';
             data.forEach(item => {
-                tableBody.innerHTML += `
-                    <tr>
-                        <td class="px-4 py-3 text-sm text-gray-700">${item.text}</td>
-                        <td class="px-4 py-3 text-sm text-gray-500 text-center">${item.weight}</td>
-                        <td class="px-4 py-3 text-sm font-bold text-center ${item.nonConformity > 0 ? 'text-red-600' : 'text-gray-500'}">${item.nonConformity}</td>
-                        <td class="px-4 py-3 text-sm font-semibold text-center ${getScoreClass(item.conformity)}">${item.conformity.toFixed(0)}%</td>
-                    </tr>`;
+                tableBody.innerHTML += `<tr><td class="px-4 py-3 text-sm text-gray-700">${item.text}</td><td class="px-4 py-3 text-sm text-gray-500 text-center">${item.weight}</td><td class="px-4 py-3 text-sm font-bold text-center ${item.nonConformity > 0 ? 'text-red-600' : 'text-gray-500'}">${item.nonConformity}</td><td class="px-4 py-3 text-sm font-semibold text-center ${getScoreClass(item.conformity)}">${item.conformity.toFixed(0)}%</td></tr>`;
             });
         }
         
         function renderRankingChart(data, label, dataKey) {
             const labels = data.map(item => item.name);
             const values = data.map(item => item[dataKey]);
-            const backgroundColors = dataKey === 'generalAvg' 
-                ? values.map(score => score >= 90 ? '#22C55E' : score >= 70 ? '#F97316' : '#EF4444')
-                : '#3b82f6';
-
+            const backgroundColors = dataKey === 'generalAvg' ? values.map(score => score >= 90 ? '#22C55E' : score >= 70 ? '#F97316' : '#EF4444') : '#3b82f6';
             renderChart('performanceRankingChart', 'bar', {
                 labels,
                 datasets: [{ label: label, data: values, backgroundColor: backgroundColors }]
