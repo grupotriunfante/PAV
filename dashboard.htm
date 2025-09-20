@@ -7,15 +7,33 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0/dist/chartjs-adapter-moment.min.js"></script>
     <style>
         body { font-family: 'Inter', sans-serif; }
-        .card { background-color: white; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); }
-        .chart-container { position: relative; height: 400px; width: 100%; }
+        .card {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+        }
+        .chart-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
         .score-high { background-color: #D1FAE5; color: #065F46; }
         .score-medium { background-color: #FEF3C7; color: #92400E; }
         .score-low { background-color: #FEE2E2; color: #991B1B; }
-        .table-section-header { background-color: #F3F4F6; font-weight: 600; color: #1F2937; }
-        .manager-only { display: none; }
+        .table-section-header {
+            background-color: #F3F4F6; /* gray-200 */
+            font-weight: 600; /* semibold */
+            color: #1F2937; /* gray-800 */
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -24,7 +42,7 @@
         
         <header class="flex flex-wrap justify-between items-center gap-4">
             <div>
-                <h1 id="dashboardTitle" class="text-3xl font-extrabold text-gray-900">Dashboard de Desempenho</h1>
+                <h1 class="text-3xl font-extrabold text-gray-900">Dashboard de Desempenho</h1>
                 <p class="text-gray-500 mt-1">Análise de performance das auditorias de campo.</p>
             </div>
             <div class="flex items-center space-x-4">
@@ -35,195 +53,275 @@
 
         <div class="card p-4">
             <div class="flex flex-wrap items-end gap-4">
-                <div class="flex-grow min-w-[200px] manager-only">
-                    <label for="filterSupervisor" class="text-sm font-medium text-gray-700">Supervisor</label>
-                    <select id="filterSupervisor" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"><option value="">Todos</option></select>
-                </div>
                 <div class="flex-grow min-w-[200px]">
                     <label for="filterVendedor" class="text-sm font-medium text-gray-700">Vendedor</label>
-                    <select id="filterVendedor" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"><option value="">Todos</option></select>
+                    <select id="filterVendedor" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Todos os Vendedores</option>
+                    </select>
                 </div>
                 <div class="flex-grow min-w-[150px]">
                     <label for="filterMes" class="text-sm font-medium text-gray-700">Mês</label>
-                    <input type="month" id="filterMes" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                    <input type="month" id="filterMes" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
-                <button id="applyFilters" class="py-2 px-6 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700">Aplicar</button>
-                <button id="resetFilters" class="py-2 px-6 bg-gray-600 text-white font-bold rounded-lg shadow-md hover:bg-gray-700">Limpar</button>
+                <button id="applyFilters" class="py-2 px-6 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition">Aplicar</button>
+                <button id="resetFilters" class="py-2 px-6 bg-gray-600 text-white font-bold rounded-lg shadow-md hover:bg-gray-700 transition">Limpar</button>
+                <button id="exportExcelBtn" class="py-2 px-6 bg-green-600 text-white font-bold rounded-lg shadow-md hover:bg-green-700 transition flex items-center gap-2">
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 2.75a.75.75 0 00-1.5 0v8.614L6.295 8.235a.75.75 0 10-1.09 1.03l4.25 4.5a.75.75 0 001.09 0l4.25-4.5a.75.75 0 00-1.09-1.03l-2.955 3.129V2.75z" /><path d="M3.5 12.75a.75.75 0 00-1.5 0v2.5A2.75 2.75 0 004.75 18h10.5A2.75 2.75 0 0018 15.25v-2.5a.75.75 0 00-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5z" /></svg>
+                    Exportar
+                </button>
             </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="card p-6 flex items-center space-x-4">
-                <div class="bg-blue-100 p-3 rounded-full"><svg class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg></div>
+                <div class="bg-blue-100 p-3 rounded-full">
+                    <svg class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                </div>
                 <div>
                     <p class="text-sm text-gray-500">Total de Auditorias</p>
                     <p id="totalAudits" class="text-3xl font-bold text-gray-900">0</p>
                 </div>
             </div>
             <div class="card p-6 flex items-center space-x-4">
-                <div class="bg-green-100 p-3 rounded-full"><svg class="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+                <div class="bg-green-100 p-3 rounded-full">
+                    <svg class="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
                 <div>
-                    <p class="text-sm text-gray-500">Média de Nota Geral</p>
-                    <p id="avgConformity" class="text-3xl font-bold text-gray-900">0</p>
+                    <p class="text-sm text-gray-500">Média de Conformidade</p>
+                    <p id="avgConformity" class="text-3xl font-bold text-gray-900">0%</p>
                 </div>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
             <div class="lg:col-span-2 card p-6">
-                <h3 id="rankingTitle" class="text-lg font-semibold text-gray-800">Ranking de Performance</h3>
+                <h3 class="text-lg font-semibold text-gray-800">Ranking de Performance (Nota Geral)</h3>
                 <div class="chart-container mt-4"><canvas id="performanceRankingChart"></canvas></div>
             </div>
             <div class="lg:col-span-3 card p-6">
                 <h3 class="text-lg font-semibold text-gray-800">Desempenho por Pergunta</h3>
                 <div class="mt-4 overflow-auto max-h-[360px]">
                      <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50 sticky top-0"><tr><th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Ação</th><th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Peso</th><th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Não Conforme</th><th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">% Conforme</th></tr></thead>
-                        <tbody id="questionPerformanceTableBody" class="bg-white divide-y divide-gray-200"></tbody>
+                        <thead class="bg-gray-50 sticky top-0">
+                            <tr>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ação</th>
+                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Peso</th>
+                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Não Conforme</th>
+                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">% Conforme</th>
+                            </tr>
+                        </thead>
+                        <tbody id="questionPerformanceTableBody" class="bg-white divide-y divide-gray-200">
+                           </tbody>
                     </table>
                 </div>
             </div>
         </div>
         
         <div class="card p-6">
-            <h3 id="detailedTableTitle" class="text-lg font-semibold text-gray-800 mb-4">Desempenho Detalhado</h3>
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Desempenho Detalhado por Vendedor</h3>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
-                     <thead class="bg-gray-50"><tr id="detailedTableHeader"></tr></thead>
-                    <tbody id="detailedPerformanceTableBody" class="bg-white divide-y divide-gray-200">
-                        <tr><td colspan="10" class="text-center text-gray-500 py-8">Carregando dados...</td></tr>
+                     <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vendedor</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Auditorias</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Planejamento <span class="font-normal text-gray-400">(Peso 10)</span></th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pré-Visita <span class="font-normal text-gray-400">(Peso 14)</span></th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Leitura de Loja <span class="font-normal text-gray-400">(Peso 30)</span></th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Execução <span class="font-normal text-gray-400">(Peso 20)</span></th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Negociação <span class="font-normal text-gray-400">(Peso 20)</span></th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fechamento <span class="font-normal text-gray-400">(Peso 6)</span></th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nota Geral</th>
+                        </tr>
+                    </thead>
+                    <tbody id="salespersonPerformanceTableBody" class="bg-white divide-y divide-gray-200">
+                        <tr><td colspan="9" class="text-center text-gray-500 py-8">Carregando dados...</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
+        
+        <footer class="text-center text-gray-500 text-sm mt-4">
+            Desenvolvido por Triunfante Brasil
+        </footer>
     </main>
 
     <script>
         const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-DXVXSxS_Q2YjcPxC1jBtvrpe4w8TbWRt33Zxy85hKHcIEyF52kpN14bial4OoH-p/exec';
         let allAuditData = [];
+        let loggedInSupervisor = '';
         let chartInstances = {};
 
-        const loggedInUser = {
-            name: localStorage.getItem('username'),
-            role: localStorage.getItem('userRole'),
-            unit: localStorage.getItem('userUnit')
+        const questionWeights = {
+            'Planejamento_1_1': 1, 'Planejamento_1_2': 1, 'Planejamento_1_3': 1, 'Planejamento_1_4': 2, 'Planejamento_1_5': 3, 'Planejamento_1_6': 1, 'Planejamento_1_7': 1, 'Planejamento_1_8': 0, 'Planejamento_1_9': 0,
+            'PreVisit_2_1': 4, 'PreVisit_2_2': 5, 'PreVisit_2_3': 5,
+            'StoreReading_3_1': 6, 'StoreReading_3_2': 3, 'StoreReading_3_3': 4, 'StoreReading_3_4': 6, 'StoreReading_3_5': 4, 'StoreReading_3_6': 7,
+            'Execution_4_1': 4, 'Execution_4_2': 3, 'Execution_4_3': 4, 'Execution_4_4': 4, 'Execution_4_5': 5,
+            'Negotiation_5_1': 6, 'Negotiation_5_2': 7, 'Negotiation_5_3': 7, 'Negotiation_5_4': 3, 
+            'Closing_6_1': 2, 'Closing_6_2': 1,
         };
         
-        // As chaves aqui (ex: 'PreVisit_2_1') DEVEM ser idênticas aos cabeçalhos da sua planilha Google
-        const questionWeights = { 'Planejamento_1_1': 1, 'Planejamento_1_2': 1, 'Planejamento_1_3': 1, 'Planejamento_1_4': 2, 'Planejamento_1_5': 3, 'Planejamento_1_6': 1, 'Planejamento_1_7': 1, 'Planejamento_1_8': 0, 'Planejamento_1_9': 0, 'PreVisit_2_1': 4, 'PreVisit_2_2': 5, 'PreVisit_2_3': 5, 'StoreReading_3_1': 6, 'StoreReading_3_2': 3, 'StoreReading_3_3': 4, 'StoreReading_3_4': 6, 'StoreReading_3_5': 4, 'StoreReading_3_6': 7, 'Execution_4_1': 4, 'Execution_4_2': 3, 'Execution_4_3': 4, 'Execution_4_4': 4, 'Execution_4_5': 5, 'Negotiation_5_1': 6, 'Negotiation_5_2': 7, 'Negotiation_5_3': 7, 'Negotiation_5_4': 3, 'Closing_6_1': 2, 'Closing_6_2': 1 };
-        const questionTextMap = { 'Planejamento_1_1': '1.1 Bem-apresentado', 'Planejamento_1_2': '1.2 Palm carregado', 'Planejamento_1_3': '1.3 Carro limpo', 'Planejamento_1_4': '1.4 Roteiro definido', 'Planejamento_1_5': '1.5 Metas definidas', 'Planejamento_1_6': '1.6 Materiais em mãos', 'Planejamento_1_7': '1.7 Conhecimento campanhas', 'PreVisit_2_1': '2.1 Verificou histórico', 'PreVisit_2_2': '2.2 Criou estratégias', 'PreVisit_2_3': '2.3 Itens focos do mês', 'StoreReading_3_1': '3.1 Analisou corredores', 'StoreReading_3_2': '3.2 Produtos precificados', 'StoreReading_3_3': '3.3 Visitou estoque', 'StoreReading_3_4': '3.4 Verificou rupturas', 'StoreReading_3_5': '3.5 Checou lançamentos', 'StoreReading_3_6': '3.6 Montou pré-pedido', 'Execution_4_1': '4.1 Abasteceu a loja', 'Execution_4_2': '4.2 Garantiu limpeza', 'Execution_4_3': '4.3 Posicionou expositores', 'Execution_4_4': '4.4 Aplicou Cross Merch.', 'Execution_4_5': '4.5 Verificou validade (FIFO)', 'Negotiation_5_1': '5.1 Iniciou negociação', 'Negotiation_5_2': '5.2 Mostrou soluções', 'Negotiation_5_3': '5.3 Apresentou levantamento', 'Negotiation_5_4': '5.4 Reforçou parceria', 'Closing_6_1': '6.1 Repassou valor/prazo', 'Closing_6_2': '6.2 Combinou retorno' };
-        const sectionDefinitions = { 'Planejamento': { questions: ['Planejamento_1_1', 'Planejamento_1_2', 'Planejamento_1_3', 'Planejamento_1_4', 'Planejamento_1_5', 'Planejamento_1_6', 'Planejamento_1_7'], total: 10 }, 'Pré-Visita': { questions: ['PreVisit_2_1', 'PreVisit_2_2', 'PreVisit_2_3'], total: 14 }, 'Leitura de Loja': { questions: ['StoreReading_3_1', 'StoreReading_3_2', 'StoreReading_3_3', 'StoreReading_3_4', 'StoreReading_3_5', 'StoreReading_3_6'], total: 30 }, 'Execução': { questions: ['Execution_4_1', 'Execution_4_2', 'Execution_4_3', 'Execution_4_4', 'Execution_4_5'], total: 20 }, 'Negociação': { questions: ['Negotiation_5_1', 'Negotiation_5_2', 'Negotiation_5_3'], total: 20 }, 'Fechamento': { questions: ['Negotiation_5_4', 'Closing_6_1', 'Closing_6_2'], total: 6 } };
+        const questionTextMap = {
+            'Planejamento_1_1': '1.1 Bem-apresentado', 'Planejamento_1_2': '1.2 Palm carregado', 'Planejamento_1_3': '1.3 Carro limpo', 'Planejamento_1_4': '1.4 Roteiro definido', 'Planejamento_1_5': '1.5 Metas definidas', 'Planejamento_1_6': '1.6 Materiais em mãos', 'Planejamento_1_7': '1.7 Conhecimento campanhas',
+            'PreVisit_2_1': '2.1 Verificou histórico', 'PreVisit_2_2': '2.2 Criou estratégias', 'PreVisit_2_3': '2.3 Itens focos do mês',
+            'StoreReading_3_1': '3.1 Analisou corredores', 'StoreReading_3_2': '3.2 Produtos precificados', 'StoreReading_3_3': '3.3 Visitou estoque', 'StoreReading_3_4': '3.4 Verificou rupturas', 'StoreReading_3_5': '3.5 Checou lançamentos', 'StoreReading_3_6': '3.6 Montou pré-pedido',
+            'Execution_4_1': '4.1 Abasteceu a loja', 'Execution_4_2': '4.2 Garantiu limpeza', 'Execution_4_3': '4.3 Posicionou expositores', 'Execution_4_4': '4.4 Aplicou Cross Merch.', 'Execution_4_5': '4.5 Verificou validade (FIFO)',
+            'Negotiation_5_1': '5.1 Iniciou negociação', 'Negotiation_5_2': '5.2 Mostrou soluções', 'Negotiation_5_3': '5.3 Apresentou levantamento', 'Negotiation_5_4': '5.4 Reforçou parceria', 
+            'Closing_6_1': '6.1 Repassou valor/prazo', 'Closing_6_2': '6.2 Combinou retorno',
+        };
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            if (!loggedInUser.name) {
+        const sectionDefinitions = {
+            'Planejamento': {
+                questions: ['Planejamento_1_1', 'Planejamento_1_2', 'Planejamento_1_3', 'Planejamento_1_4', 'Planejamento_1_5', 'Planejamento_1_6', 'Planejamento_1_7'],
+                total: 10
+            },
+            'Pré-Visita': {
+                questions: ['PreVisit_2_1', 'PreVisit_2_2', 'PreVisit_2_3'],
+                total: 14
+            },
+            'Leitura de Loja': {
+                questions: ['StoreReading_3_1', 'StoreReading_3_2', 'StoreReading_3_3', 'StoreReading_3_4', 'StoreReading_3_5', 'StoreReading_3_6'],
+                total: 30
+            },
+            'Execução': {
+                questions: ['Execution_4_1', 'Execution_4_2', 'Execution_4_3', 'Execution_4_4', 'Execution_4_5'],
+                total: 20
+            },
+            'Negociação': {
+                questions: ['Negotiation_5_1', 'Negotiation_5_2', 'Negotiation_5_3'],
+                total: 20
+            },
+            'Fechamento': {
+                questions: ['Negotiation_5_4', 'Closing_6_1', 'Closing_6_2'],
+                total: 6
+            }
+        };
+
+        const TOTAL_POINTS_ALL_SECTIONS = 100;
+        
+        document.addEventListener('DOMContentLoaded', async function() {
+            // ... (Lógica de inicialização e eventos)
+            loggedInSupervisor = localStorage.getItem('username');
+            if (!localStorage.getItem('isAuthenticated') || !loggedInSupervisor) {
                 alert('Você precisa estar logado para acessar.');
                 window.location.href = 'index.htm';
                 return;
             }
-            setupUIForRole();
-            await fetchDataAndRender();
-            document.getElementById('applyFilters').addEventListener('click', () => renderFilteredDashboard());
-            document.getElementById('resetFilters').addEventListener('click', resetAndRender);
+            
+            await fetchDataAndRenderDashboard();
+            
+            document.getElementById('applyFilters').addEventListener('click', renderDashboard);
+            document.getElementById('resetFilters').addEventListener('click', resetFiltersAndRender);
             document.getElementById('backButton').addEventListener('click', () => window.location.href = 'inicio.htm');
             document.getElementById('logoutButton').addEventListener('click', () => {
                 localStorage.clear();
                 window.location.href = 'index.htm';
             });
+            document.getElementById('exportExcelBtn').addEventListener('click', exportData);
         });
 
-        function setupUIForRole() {
-            const title = document.getElementById('dashboardTitle');
-            if (loggedInUser.role === 'Gerente') {
-                title.textContent = `Dashboard Gerencial - Unidade ${loggedInUser.unit}`;
-                document.querySelector('.manager-only').style.display = 'block';
-                document.getElementById('rankingTitle').textContent = 'Ranking de Supervisores (Nº Auditorias)';
-                document.getElementById('detailedTableTitle').textContent = 'Desempenho Detalhado (Todos os Vendedores)';
-            } else {
-                title.textContent = `Dashboard de Desempenho - ${loggedInUser.name}`;
-                document.getElementById('rankingTitle').textContent = 'Ranking de Vendedores (Nota Geral)';
-            }
-        }
-
-        async function fetchDataAndRender() {
-            document.body.style.cursor = 'wait';
-            let url = `${APP_SCRIPT_URL}?action=getAuditData`;
-            if (loggedInUser.role === 'Gerente') {
-                url += `&managerUnidade=${encodeURIComponent(loggedInUser.unit)}`;
-            } else {
-                url += `&supervisorName=${encodeURIComponent(loggedInUser.name)}`;
-            }
+async function fetchDataAndRenderDashboard() {
             try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error('Falha na resposta da rede.');
+                const role = localStorage.getItem('role');
+                const unidade = localStorage.getItem('unidade');
+                const username = localStorage.getItem('username');
+
+                let fetchUrl = `${APP_SCRIPT_URL}?action=getAuditData`;
+
+                // Constrói a URL de acordo com o cargo
+                if (role === 'Gerente') {
+                    fetchUrl += `&managerUnidade=${encodeURIComponent(unidade)}`;
+                } else { // Assume Supervisor como padrão
+                    fetchUrl += `&supervisorName=${encodeURIComponent(username)}`;
+                }
+
+                const response = await fetch(fetchUrl);
                 const result = await response.json();
+
                 if (result.success) {
                     allAuditData = result.data;
-                    populateFilters(allAuditData);
-                    renderDashboard(allAuditData);
+                    // O filtro de vendedor também precisa ser populado de acordo com o cargo
+                    await populateSalespersonFilter(); 
+                    renderDashboard();
                 } else {
-                    throw new Error(result.message || 'Erro ao buscar dados.');
+                    throw new Error(result.message);
                 }
             } catch (error) {
-                console.error('Erro fatal ao buscar dados:', error);
-                alert(`Não foi possível carregar os dados: ${error.message}. Verifique o console (F12) para mais detalhes.`);
-            } finally {
-                document.body.style.cursor = 'default';
-            }
-        }
-
-        function populateFilters(data) {
-            const salespeople = [...new Set(data.map(a => a.Vendedor).filter(Boolean))].sort();
-            const vendorsSelect = document.getElementById('filterVendedor');
-            vendorsSelect.innerHTML = '<option value="">Todos os Vendedores</option>';
-            salespeople.forEach(name => vendorsSelect.innerHTML += `<option value="${name}">${name}</option>`);
-
-            if (loggedInUser.role === 'Gerente') {
-                const supervisors = [...new Set(data.map(a => a.Supervisor).filter(Boolean))].sort();
-                const supervisorsSelect = document.getElementById('filterSupervisor');
-                supervisorsSelect.innerHTML = '<option value="">Todos os Supervisores</option>';
-                supervisors.forEach(name => supervisorsSelect.innerHTML += `<option value="${name}">${name}</option>`);
-            }
-        }
-
-        function renderFilteredDashboard() {
-            const selectedSupervisor = document.getElementById('filterSupervisor').value;
-            const selectedVendedor = document.getElementById('filterVendedor').value;
-            const selectedMes = document.getElementById('filterMes').value;
-            const filteredData = allAuditData.filter(audit => {
-                const matchesSupervisor = !selectedSupervisor || audit.Supervisor === selectedSupervisor;
-                const matchesVendedor = !selectedVendedor || audit.Vendedor === selectedVendedor;
-                const matchesMes = !selectedMes || (audit['Data Visita'] && audit['Data Visita'].startsWith(selectedMes));
-                return matchesSupervisor && matchesVendedor && matchesMes;
-            });
-            renderDashboard(filteredData);
-        }
-
-        function resetAndRender() {
-            document.getElementById('filterVendedor').value = '';
-            document.getElementById('filterMes').value = '';
-            if (loggedInUser.role === 'Gerente') document.getElementById('filterSupervisor').value = '';
-            renderDashboard(allAuditData);
-        }
-
-        function renderDashboard(data) {
-            const performanceData = calculatePerformanceMetrics(data);
-            updateKpiCards(data.length, performanceData.overallAverage);
-            renderQuestionPerformanceTable(calculateQuestionPerformance(data));
-            renderDetailedTable(performanceData.bySalesperson, loggedInUser.role === 'Gerente');
-            
-            if (loggedInUser.role === 'Gerente') {
-                renderRankingChart(performanceData.bySupervisor, 'Nº de Auditorias', 'auditCount');
-            } else {
-                renderRankingChart(performanceData.bySalesperson, 'Nota Média', 'generalAvg');
+                console.error('Erro ao buscar dados do dashboard:', error);
+                document.getElementById('salespersonPerformanceTableBody').innerHTML = `<tr><td colspan="9" class="text-center text-red-500 py-8">Erro de conexão: ${error.message}</td></tr>`;
             }
         }
         
-        // FUNÇÕES DE CÁLCULO E RENDERIZAÇÃO (BASEADAS NO SEU CÓDIGO ORIGINAL)
+        // A função de popular o filtro de vendedor também precisa ser atualizada
+        async function populateSalespersonFilter() {
+            const role = localStorage.getItem('role');
+            const unidade = localStorage.getItem('unidade');
+            const username = localStorage.getItem('username');
+
+            let fetchUrl = `${APP_SCRIPT_URL}?action=getSalespersons`;
+            if (role === 'Gerente') {
+                fetchUrl += `&managerUnidade=${encodeURIComponent(unidade)}`;
+            } else {
+                fetchUrl += `&supervisorName=${encodeURIComponent(username)}`;
+            }
+            
+            try {
+                const response = await fetch(fetchUrl);
+                const result = await response.json();
+                if(result.success) {
+                    const salespeople = result.salespersons.map(p => p.name).sort();
+                    const select = document.getElementById('filterVendedor');
+                    select.innerHTML = '<option value="">Todos os Vendedores</option>';
+                    salespeople.forEach(name => {
+                        const option = document.createElement('option');
+                        option.value = name;
+                        option.textContent = name;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error("Erro ao buscar vendedores:", error);
+            }
+        }
+        function processAndFilterData() {
+            const selectedVendedor = document.getElementById('filterVendedor').value;
+            const selectedMes = document.getElementById('filterMes').value;
+            return allAuditData.filter(audit => {
+                const matchesVendedor = !selectedVendedor || audit.Vendedor === selectedVendedor;
+                let matchesMes = true;
+                if (selectedMes) {
+                    const auditDate = moment(audit['Data Visita'], 'YYYY-MM-DD');
+                    const filterDate = moment(selectedMes);
+                    matchesMes = auditDate.isValid() && auditDate.isSame(filterDate, 'month');
+                }
+                return matchesVendedor && matchesMes;
+            });
+        }
+        
+        function renderDashboard() {
+            const filteredData = processAndFilterData();
+            
+            const performanceData = calculatePerformanceMetrics(filteredData);
+            const questionPerformance = calculateQuestionPerformance(filteredData);
+
+            updateKpiCards(filteredData.length, performanceData.overallAverage);
+            renderPerformanceRankingChart(performanceData.bySalesperson);
+            renderQuestionPerformanceTable(questionPerformance); // ATUALIZADO
+            renderSalespersonPerformanceTable(performanceData.bySalesperson);
+        }
+
+        function resetFiltersAndRender() {
+            document.getElementById('filterVendedor').value = '';
+            document.getElementById('filterMes').value = '';
+            renderDashboard();
+        }
+
+        // --- Funções de Cálculo ---
         function calculateScore(audit, sectionName) {
             const section = sectionDefinitions[sectionName];
             if (!section) return 0;
-            const achievedScore = section.questions.reduce((sum, qId) => {
-                if (audit.hasOwnProperty(qId) && String(audit[qId]).toLowerCase() === 'sim') {
+            let achievedScore = section.questions.reduce((sum, qId) => {
+                if (audit.hasOwnProperty(qId) && String(audit[qId]).trim().toLowerCase() === 'sim') {
                     return sum + (questionWeights[qId] || 0);
                 }
                 return sum;
@@ -232,140 +330,204 @@
         }
 
         function calculatePerformanceMetrics(data) {
-            const bySalesperson = {};
-            const bySupervisor = {};
+            const performance = {};
             let totalGeneralScore = 0;
-
             data.forEach(audit => {
                 const salesperson = audit.Vendedor;
-                const supervisor = audit.Supervisor;
                 if (!salesperson) return;
-
-                if (!bySalesperson[salesperson]) {
-                    bySalesperson[salesperson] = { name: salesperson, supervisor: supervisor, auditCount: 0, scores: {}, generalScores: [] };
+                if (!performance[salesperson]) {
+                    performance[salesperson] = { 
+                        auditCount: 0,
+                        scores: Object.keys(sectionDefinitions).reduce((acc, sec) => ({...acc, [sec]: []}), {}),
+                        generalScores: []
+                    };
                 }
-                bySalesperson[salesperson].auditCount++;
-                
-                let auditTotalPoints = 0;
+                performance[salesperson].auditCount++;
+                let auditTotalAchievedPoints = 0;
+                Object.keys(sectionDefinitions).forEach(sec => {
+                    performance[salesperson].scores[sec].push(calculateScore(audit, sec));
+                });
                 Object.keys(questionWeights).forEach(qId => {
-                    if (audit.hasOwnProperty(qId) && String(audit[qId]).toLowerCase() === 'sim') {
-                        auditTotalPoints += questionWeights[qId];
+                    if (audit.hasOwnProperty(qId) && String(audit[qId]).trim().toLowerCase() === 'sim') {
+                        auditTotalAchievedPoints += questionWeights[qId];
                     }
                 });
-                bySalesperson[salesperson].generalScores.push(auditTotalPoints);
-                totalGeneralScore += auditTotalPoints;
-
-                Object.keys(sectionDefinitions).forEach(secName => {
-                    if (!bySalesperson[salesperson].scores[secName]) bySalesperson[salesperson].scores[secName] = [];
-                    bySalesperson[salesperson].scores[secName].push(calculateScore(audit, secName));
-                });
-
-                if (supervisor) {
-                    if (!bySupervisor[supervisor]) bySupervisor[supervisor] = { name: supervisor, auditCount: 0 };
-                    bySupervisor[supervisor].auditCount++;
-                }
+                const generalScore = auditTotalAchievedPoints;
+                performance[salesperson].generalScores.push(generalScore);
+                totalGeneralScore += generalScore;
             });
 
-            const processedSalespeople = Object.values(bySalesperson).map(sp => {
-                sp.generalAvg = sp.generalScores.length > 0 ? sp.generalScores.reduce((a, b) => a + b, 0) / sp.auditCount : 0;
-                sp.avgSectionScores = {};
-                Object.keys(sectionDefinitions).forEach(secName => {
-                    const scores = sp.scores[secName] || [];
-                    sp.avgSectionScores[secName] = scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
+            const bySalesperson = Object.keys(performance).map(name => {
+                const avgScores = {};
+                Object.keys(performance[name].scores).forEach(sec => {
+                    const scores = performance[name].scores[sec];
+                    avgScores[sec] = scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
                 });
-                return sp;
-            });
+                const generalAvg = performance[name].generalScores.length > 0 ? performance[name].generalScores.reduce((a,b) => a+b, 0) / performance[name].generalScores.length : 0;
+                return { name, audits: performance[name].auditCount, avgScores, generalAvg };
+            }).sort((a, b) => b.generalAvg - a.generalAvg);
 
             return {
-                bySalesperson: processedSalespeople.sort((a, b) => b.generalAvg - a.generalAvg),
-                bySupervisor: Object.values(bySupervisor).sort((a, b) => b.auditCount - a.auditCount),
+                bySalesperson,
                 overallAverage: data.length > 0 ? totalGeneralScore / data.length : 0,
             };
         }
 
         function calculateQuestionPerformance(data) {
-            const stats = {};
-            Object.keys(questionTextMap).forEach(qId => { stats[qId] = { success: 0, total: 0 }; });
+            const questionStats = {};
+            Object.keys(questionTextMap).forEach(qId => {
+                questionStats[qId] = { success: 0, total: 0 };
+            });
             data.forEach(audit => {
                 Object.keys(questionTextMap).forEach(qId => {
                     if (audit.hasOwnProperty(qId)) {
-                        stats[qId].total++;
-                        if (String(audit[qId]).toLowerCase() === 'sim') stats[qId].success++;
+                        questionStats[qId].total++;
+                        if (String(audit[qId]).trim().toLowerCase() === 'sim') {
+                            questionStats[qId].success++;
+                        }
                     }
                 });
             });
-            return Object.keys(questionTextMap).map(qId => ({
-                id: qId,
-                text: questionTextMap[qId],
-                weight: questionWeights[qId],
-                nonConformity: stats[qId].total - stats[qId].success,
-                conformity: stats[qId].total > 0 ? (stats[qId].success / stats[qId].total) * 100 : 0
-            }))
-            // A LINHA ABAIXO FOI CORRIGIDA. Troquei 'questionWeights[qId]' por 'q.weight'
-            .filter(q => q.weight > 0);
+            return Object.keys(questionTextMap).map(qId => {
+                const stats = questionStats[qId];
+                return {
+                    id: qId,
+                    text: questionTextMap[qId],
+                    weight: questionWeights[qId],
+                    conformity: stats.total > 0 ? (stats.success / stats.total) * 100 : 0,
+                    nonConformity: stats.total - stats.success
+                }
+            }).filter(q => q.weight > 0);
         }
-
+        
+        // --- Funções de Renderização ---
         function updateKpiCards(totalAudits, avgConformity) {
             document.getElementById('totalAudits').innerText = totalAudits;
-            document.getElementById('avgConformity').innerText = Math.round(avgConformity);
+            document.getElementById('avgConformity').innerText = `${avgConformity.toFixed(0)}%`;
         }
 
-        function renderDetailedTable(data, isManagerView) {
-            const tableHeader = document.getElementById('detailedTableHeader');
-            const tableBody = document.getElementById('detailedPerformanceTableBody');
-            tableHeader.innerHTML = '';
+        function renderSalespersonPerformanceTable(data) {
+            // ... (sem alterações)
+            const tableBody = document.getElementById('salespersonPerformanceTableBody');
             tableBody.innerHTML = '';
-
-            let headers = [];
-            if (isManagerView) headers.push('Supervisor');
-            headers.push('Vendedor', 'Auditorias', ...Object.keys(sectionDefinitions).map(s => `${s} (Peso ${sectionDefinitions[s].total})`), 'Nota Geral');
-            tableHeader.innerHTML = headers.map(h => `<th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">${h}</th>`).join('');
-
             if (data.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="${headers.length}" class="text-center text-gray-500 py-8">Nenhum dado encontrado.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="9" class="text-center text-gray-500 py-8">Nenhum dado encontrado para os filtros selecionados.</td></tr>`;
                 return;
             }
-            const getScoreClass = score => score >= 90 ? 'score-high' : score >= 70 ? 'score-medium' : 'score-low';
-            data.forEach(item => {
-                let cells = '';
-                if (isManagerView) cells += `<td class="px-4 py-4 font-medium text-gray-800">${item.supervisor}</td>`;
-                cells += `<td class="px-4 py-4 font-medium text-gray-900">${item.name}</td><td class="px-4 py-4 text-center text-gray-500">${item.auditCount}</td>`;
+            const getScoreClass = (score) => {
+                if (score >= 90) return 'score-high';
+                if (score >= 70) return 'score-medium';
+                return 'score-low';
+            };
+            data.forEach(sp => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50';
+                let cells = `<td class="px-4 py-4 font-medium text-gray-900">${sp.name}</td>
+                             <td class="px-4 py-4 text-gray-500">${sp.audits}</td>`;
                 Object.keys(sectionDefinitions).forEach(sec => {
-                    const score = item.avgSectionScores[sec] || 0;
+                    const score = sp.avgScores[sec];
                     cells += `<td class="px-4 py-4 font-semibold text-center ${getScoreClass(score)}">${score.toFixed(0)}%</td>`;
                 });
-                cells += `<td class="px-4 py-4 font-bold text-center text-blue-700 ${getScoreClass(item.generalAvg)}">${item.generalAvg.toFixed(0)}</td>`;
-                tableBody.innerHTML += `<tr class="hover:bg-gray-50">${cells}</tr>`;
+                cells += `<td class="px-4 py-4 font-bold text-center text-blue-700 ${getScoreClass(sp.generalAvg)}">${sp.generalAvg.toFixed(0)}%</td>`;
+                row.innerHTML = cells;
+                tableBody.appendChild(row);
             });
         }
         
-        function renderQuestionPerformanceTable(data) {
-            const tableBody = document.getElementById('questionPerformanceTableBody');
-            tableBody.innerHTML = '';
-            const getScoreClass = score => score >= 90 ? 'score-high' : score >= 70 ? 'score-medium' : 'score-low';
-            data.forEach(item => {
-                tableBody.innerHTML += `<tr><td class="px-4 py-3 text-sm text-gray-700">${item.text}</td><td class="px-4 py-3 text-sm text-gray-500 text-center">${item.weight}</td><td class="px-4 py-3 text-sm font-bold text-center ${item.nonConformity > 0 ? 'text-red-600' : 'text-gray-500'}">${item.nonConformity}</td><td class="px-4 py-3 text-sm font-semibold text-center ${getScoreClass(item.conformity)}">${item.conformity.toFixed(0)}%</td></tr>`;
-            });
-        }
-        
-        function renderRankingChart(data, label, dataKey) {
-            const labels = data.map(item => item.name);
-            const values = data.map(item => item[dataKey]);
-            const backgroundColors = dataKey === 'generalAvg' ? values.map(score => score >= 90 ? '#22C55E' : score >= 70 ? '#F97316' : '#EF4444') : '#3b82f6';
-            renderChart('performanceRankingChart', 'bar', {
-                labels,
-                datasets: [{ label: label, data: values, backgroundColor: backgroundColors }]
-            }, {
-                indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-                scales: { x: { beginAtZero: true, max: dataKey === 'generalAvg' ? 100 : undefined } },
-                plugins: { legend: { display: false } }
-            });
-        }
-
         function renderChart(chartId, type, data, options) {
             if (chartInstances[chartId]) chartInstances[chartId].destroy();
             const ctx = document.getElementById(chartId).getContext('2d');
             chartInstances[chartId] = new Chart(ctx, { type, data, options });
+        }
+        
+        function renderPerformanceRankingChart(data) {
+            // ... (sem alterações)
+            const labels = data.map(sp => sp.name);
+            const scores = data.map(sp => sp.generalAvg);
+            const backgroundColors = scores.map(score => score >= 90 ? '#22C55E' : score >= 70 ? '#F97316' : '#EF4444');
+            renderChart('performanceRankingChart', 'bar', {
+                labels,
+                datasets: [{ label: 'Nota Geral Média', data: scores, backgroundColor: backgroundColors }]
+            }, {
+                indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                scales: { x: { beginAtZero: true, max: 100 } },
+                plugins: { legend: { display: false } }
+            });
+        }
+        
+        // NOVA FUNÇÃO PARA RENDERIZAR A TABELA DE PERGUNTAS
+        function renderQuestionPerformanceTable(data) {
+            const tableBody = document.getElementById('questionPerformanceTableBody');
+            tableBody.innerHTML = '';
+            if (data.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="4" class="text-center text-gray-500 py-4">Nenhum dado de pergunta para exibir.</td></tr>`;
+                return;
+            }
+
+            const getScoreClass = (score) => {
+                if (score >= 90) return 'score-high';
+                if (score >= 70) return 'score-medium';
+                return 'score-low';
+            };
+            
+            let currentSection = '';
+            data.forEach(item => {
+                // Adiciona o cabeçalho da seção
+                const itemSection = Object.keys(sectionDefinitions).find(sec => sectionDefinitions[sec].questions.includes(item.id));
+                if (itemSection && itemSection !== currentSection) {
+                    currentSection = itemSection;
+                    const sectionRow = document.createElement('tr');
+                    sectionRow.innerHTML = `<td colspan="4" class="px-4 py-2 table-section-header">${currentSection} <span class="font-normal">(Peso Total: ${sectionDefinitions[currentSection].total})</span></td>`;
+                    tableBody.appendChild(sectionRow);
+                }
+
+                // Adiciona a linha da pergunta
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-4 py-3 text-sm text-gray-700">${item.text}</td>
+                    <td class="px-4 py-3 text-sm text-gray-500 text-center">${item.weight}</td>
+                    <td class="px-4 py-3 text-sm font-bold text-center ${item.nonConformity > 0 ? 'text-red-600' : 'text-gray-500'}">${item.nonConformity}</td>
+                    <td class="px-4 py-3 text-sm font-semibold text-center ${getScoreClass(item.conformity)}">${item.conformity.toFixed(0)}%</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // FUNÇÃO DE EXPORTAÇÃO ATUALIZADA
+        function exportData() {
+            const dataToExport = processAndFilterData();
+            if (dataToExport.length === 0) {
+                alert("Não há dados para exportar com os filtros atuais.");
+                return;
+            }
+
+            // Pega todos os cabeçalhos possíveis
+            const headers = Object.keys(allAuditData[0] || {});
+            
+            const rows = dataToExport.map(audit => {
+                return headers.map(header => {
+                    let cell = audit[header] === undefined || audit[header] === null ? '' : String(audit[header]);
+                    // Escapa aspas e envolve células com vírgulas em aspas
+                    cell = cell.replace(/"/g, '""');
+                    if (cell.includes(',')) {
+                        cell = `"${cell}"`;
+                    }
+                    return cell;
+                }).join(',');
+            });
+
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF" // \uFEFF for UTF-8 BOM
+                + headers.join(",") + "\n" 
+                + rows.join("\n");
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            const timestamp = new Date().toISOString().slice(0,10);
+            link.setAttribute("download", `relatorio_auditorias_${timestamp}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
     </script>
 </body>
