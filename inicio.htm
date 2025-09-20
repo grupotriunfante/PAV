@@ -37,33 +37,34 @@
         <p class="text-gray-500 text-sm mt-8">Desenvolvido por Triunfante Brasil</p>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Verificação de autenticação simples: verifica se há um item no localStorage
-            const isAuthenticated = localStorage.getItem('isAuthenticated'); 
-            const username = localStorage.getItem('username'); // Recupera o nome de usuário se armazenado
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Verifica se o usuário está autenticado
+        const isAuthenticated = localStorage.getItem('isAuthenticated'); 
+        
+        // ** Pega o nome de usuário salvo na chave 'username' **
+        const username = localStorage.getItem('username'); 
 
-            if (!isAuthenticated) {
-                // Se não autenticado, redireciona para a página de login
-                alert('Você precisa estar logado para acessar esta página.');
-                window.location.href = 'login.htm'; 
-            } else {
-                // Opcional: Personalize a mensagem de boas-vindas
-                const welcomeMessage = document.querySelector('h1');
-                if (username) {
-                    welcomeMessage.textContent = `Bem-vindo(a), ${username}!`;
-                }
+        if (!isAuthenticated) {
+            alert('Você precisa estar logado para acessar esta página.');
+            window.location.href = 'index.htm'; 
+        } else {
+            // Personaliza a mensagem de boas-vindas
+            const welcomeMessage = document.querySelector('h1');
+            if (username) {
+                // Se o username existe, exibe a mensagem
+                welcomeMessage.textContent = `Bem-vindo(a), ${username}!`;
             }
+        }
 
-            // Lógica para o botão de Sair (Logout)
-            document.getElementById('logoutButton').addEventListener('click', function() {
-                localStorage.removeItem('isAuthenticated'); // Remove o status de autenticação
-                localStorage.removeItem('username'); // Remove o nome de usuário
-                alert('Você foi desconectado(a).');
-                // Redireciona para a página 'index.htm' conforme solicitado
-                window.location.href = 'index.htm'; 
-            });
+        // Lógica para o botão de Sair (Logout)
+        document.getElementById('logoutButton').addEventListener('click', function() {
+            localStorage.clear(); // Limpa todas as informações
+            alert('Você foi desconectado(a).');
+            window.location.href = 'index.htm'; 
         });
-    </script>
+    });
+</script>
 </body>
+
 </html>
