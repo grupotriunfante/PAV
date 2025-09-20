@@ -3,610 +3,492 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard de Auditorias (Performance por Vendedor)</title>
+    <title>Dashboard de Desempenho de Auditorias</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0/dist/chartjs-adapter-moment.min.js"></script>
-
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .container {
-            max-width: 1200px; /* Largura máxima para o conteúdo central */
-        }
+        body { font-family: 'Inter', sans-serif; }
         .card {
             background-color: white;
-            padding: 1.5rem; /* p-6 */
             border-radius: 0.75rem; /* rounded-xl */
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease-in-out;
         }
-        .table-header th {
-            text-align: left;
-            padding: 0.75rem 1rem; /* Ajustado para caber mais colunas */
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: #6B7280; /* text-gray-500 */
-            text-transform: uppercase;
-            letter-spacing: 0.05em; /* tracking-wider */
-            white-space: nowrap; /* Impede quebra de linha nos cabeçalhos */
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
         }
-        .table-body td {
-            padding: 1rem 1rem; /* Ajustado */
-            font-size: 0.875rem; /* text-sm */
-            color: #4B5563; /* text-gray-700 */
-            white-space: nowrap; /* Impede quebra de linha nos dados */
-        }
-        .note-general {
-            color: #3B82F6; /* blue-500 */
-            font-weight: 600;
-        }
-        /* Ajuste para o contêiner do gráfico de pizza para ter altura fixa */
-        .chart-pizza-container {
+        .chart-container {
+            position: relative;
+            height: 400px;
             width: 100%;
-            max-width: 500px; /* Limita a largura para o gráfico de pizza não ficar muito grande */
-            margin: 0 auto; /* Centraliza */
         }
-
-        /* Estilos para os novos cards de indicadores */
-        .indicator-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 1.5rem;
-            border-radius: 0.75rem;
-            background-color: white;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            border-left-width: 8px; /* Para a barra lateral colorida */
-        }
-        .indicator-card.blue { border-left-color: #3B82F6; /* blue-500 */ }
-        .indicator-card.green { border-left-color: #22C55E; /* green-500 */ }
-        .indicator-card.orange { border-left-color: #F97316; /* orange-500 */ }
-        .indicator-card .value {
-            font-size: 2.5rem; /* text-4xl */
-            font-weight: 700; /* font-bold */
-            color: #1F2937; /* gray-900 */
-            margin-top: 0.5rem;
-        }
-        .indicator-card .label {
-            font-size: 1.125rem; /* text-lg */
-            font-weight: 600; /* font-semibold */
-            color: #4B5563; /* gray-700 */
-        }
+        /* Cores para a tabela de desempenho */
+        .score-high { background-color: #D1FAE5; color: #065F46; } /* green-100, green-800 */
+        .score-medium { background-color: #FEF3C7; color: #92400E; } /* amber-100, amber-800 */
+        .score-low { background-color: #FEE2E2; color: #991B1B; } /* red-100, red-800 */
     </style>
 </head>
-<body class="bg-gradient-to-br from-gray-100 to-blue-200 min-h-screen flex flex-col items-center p-4">
+<body class="bg-gray-50">
 
-    <div class="container w-full bg-white p-8 rounded-xl shadow-2xl flex flex-col items-center space-y-8 mt-8 mb-8">
-        <div class="w-full flex justify-start mb-4">
-            <button id="backButton" class="py-2 px-6 bg-gray-600 text-white font-bold rounded-lg shadow-md hover:bg-gray-700 transition duration-300 ease-in-out transform hover:-translate-y-1">
-                Voltar
-            </button>
+    <main class="container mx-auto p-4 md:p-8 space-y-8">
+        
+        <header class="flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-extrabold text-gray-900">Dashboard de Desempenho</h1>
+                <p class="text-gray-500 mt-1">Análise de performance das auditorias de campo.</p>
+            </div>
+            <div class="flex items-center space-x-4">
+                 <button id="backButton" class="py-2 px-4 bg-white text-gray-700 font-semibold rounded-lg border border-gray-300 hover:bg-gray-100 transition">Voltar</button>
+                 <button id="logoutButton" class="py-2 px-4 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition">Sair</button>
+            </div>
+        </header>
+
+        <div class="card p-4">
+            <div class="flex flex-wrap items-end gap-4">
+                <div class="flex-grow">
+                    <label for="filterVendedor" class="text-sm font-medium text-gray-700">Vendedor</label>
+                    <select id="filterVendedor" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Todos os Vendedores</option>
+                    </select>
+                </div>
+                <div class="flex-grow">
+                    <label for="filterMes" class="text-sm font-medium text-gray-700">Mês</label>
+                    <input type="month" id="filterMes" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <button id="applyFilters" class="py-2 px-6 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition">Aplicar</button>
+                <button id="resetFilters" class="py-2 px-6 bg-gray-600 text-white font-bold rounded-lg shadow-md hover:bg-gray-700 transition">Limpar</button>
+            </div>
         </div>
 
-        <h1 class="text-4xl font-extrabold text-blue-800 mb-4 text-center">Indicadores de Desempenho</h1>
-        <p class="text-gray-700 text-lg text-center mb-6">Visão geral e desempenho dos vendedores.</p>
-
-        <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="indicator-card blue">
-                <div class="label">Total de Auditorias Realizadas</div>
-                <div id="totalAudits" class="value">0</div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="card p-6 flex items-center space-x-4">
+                <div class="bg-blue-100 p-3 rounded-full">
+                    <svg class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Total de Auditorias</p>
+                    <p id="totalAudits" class="text-3xl font-bold text-gray-900">0</p>
+                </div>
             </div>
-            <div class="indicator-card green">
-                <div class="label">Média Geral de Conformidade</div>
-                <div id="avgConformity" class="value">0%</div>
+            <div class="card p-6 flex items-center space-x-4">
+                <div class="bg-green-100 p-3 rounded-full">
+                    <svg class="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Média de Conformidade</p>
+                    <p id="avgConformity" class="text-3xl font-bold text-gray-900">0%</p>
+                </div>
             </div>
-            <div class="indicator-card orange">
-                <div class="label">Média de Itens Críticos Reprovados</div>
-                <div id="avgCriticalRejected" class="value">0.0</div>
+            <div class="card p-6 flex items-center space-x-4">
+                 <div class="bg-red-100 p-3 rounded-full">
+                    <svg class="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Média de Falhas Críticas</p>
+                    <p id="avgCriticalRejected" class="text-3xl font-bold text-gray-900">0.0</p>
+                </div>
             </div>
         </div>
 
-        <div class="w-full flex flex-wrap justify-center gap-4 mb-8">
-            <div class="flex flex-col">
-                <label for="filterMes" class="text-gray-700 font-semibold mb-1">Filtrar por Mês:</label>
-                <input type="month" id="filterMes" class="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="card p-6">
+                <h3 class="text-lg font-semibold text-gray-800">Ranking de Performance (Nota Geral)</h3>
+                <div class="chart-container mt-4"><canvas id="performanceRankingChart"></canvas></div>
             </div>
-            <button id="applyFilters" class="mt-auto py-2 px-6 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition duration-300 ease-in-out">
-                Aplicar Filtro
-            </button>
-            <button id="resetFilters" class="mt-auto py-2 px-6 bg-gray-400 text-white font-bold rounded-lg shadow-md hover:bg-gray-500 transition duration-300 ease-in-out">
-                Limpar Filtro
-            </button>
+            <div class="card p-6">
+                <h3 class="text-lg font-semibold text-gray-800">Pontos Fracos por Etapa (Média Geral)</h3>
+                <div class="chart-container mt-4"><canvas id="problemAreasChart"></canvas></div>
+            </div>
+        </div>
+        
+        <div class="card p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Principais Falhas em Itens Críticos</h3>
+            <div id="topFailingItems" class="space-y-3 text-gray-700">
+                <p>Nenhuma falha crítica encontrada ou dados insuficientes.</p>
+            </div>
         </div>
 
-        <div class="w-full card mt-8">
-            <h3 class="text-xl font-semibold text-gray-800 mb-4">Notas Médias dos Vendedores</h3>
+        <div class="card p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Desempenho Detalhado por Vendedor</h3>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50 table-header">
+                    <thead class="bg-gray-50">
                         <tr>
-                            <th>Vendedor</th>
-                            <th>Auditorias</th>
-                            <th>Média Planejamento (%)</th>
-                            <th>Média Pré-Visita (%)</th>
-                            <th>Média Leitura de Loja (%)</th>
-                            <th>Média Execução (%)</th>
-                            <th>Média Negociação (%)</th>
-                            <th>Média Fechamento (%)</th>
-                            <th>Nota Geral (%)</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vendedor</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Auditorias</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Planejamento</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pré-Visita</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Leitura de Loja</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Execução</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Negociação</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fechamento</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nota Geral</th>
                         </tr>
                     </thead>
-                    <tbody id="salespersonPerformanceTableBody" class="bg-white divide-y divide-gray-200 table-body">
-                        <tr><td colspan="9" class="text-center text-gray-500 py-4">Carregando dados...</td></tr>
+                    <tbody id="salespersonPerformanceTableBody" class="bg-white divide-y divide-gray-200">
+                        <tr><td colspan="9" class="text-center text-gray-500 py-8">Carregando dados...</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
-
-        <div class="w-full card mt-8">
-            <h3 class="text-xl font-semibold text-gray-800 mb-4 text-center">Distribuição de Auditorias por Vendedor</h3>
-            <div class="chart-pizza-container">
-                <canvas id="auditDistributionChart"></canvas>
-            </div>
-        </div>
-                
-        <button id="logoutButton" class="mt-8 py-3 px-8 bg-red-600 text-white font-bold rounded-lg shadow-md hover:bg-red-700 transition duration-300 ease-in-out transform hover:-translate-y-1">
-            Sair
-        </button>
-
-        <p class="text-gray-500 text-sm mt-8">Desenvolvido por Triunfante Brasil</p>
-    </div>
+        
+        <footer class="text-center text-gray-500 text-sm mt-4">
+            Desenvolvido por Triunfante Brasil
+        </footer>
+    </main>
 
     <script>
-        // Substitua pelo seu URL de implantação do App Script
-        const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-DXVXSxS_Q2YjcPxC1jBtvrpe4w8TbWRt33Zxy85hKHcIEyF52kpN14bial4OoH-p/exec'; // ATUALIZE ESTE URL APÓS A IMPLANTAÇÃO DO SEU APP SCRIPT
+        // ... (seu objeto sectionWeights e CRITICAL_QUESTIONS permanecem os mesmos) ...
+        const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-DXVXSxS_Q2YjcPxC1jBtvrpe4w8TbWRt33Zxy85hKHcIEyF52kpN14bial4OoH-p/exec';
 
-        let allAuditData = []; // Armazenará todos os dados brutos da auditoria (do supervisor logado)
-        let loggedInSupervisor = ''; // Variável para armazenar o nome do supervisor logado
+        let allAuditData = [];
+        let loggedInSupervisor = '';
+        let chartInstances = {}; // Objeto para armazenar todas as instâncias de gráficos
 
-        let auditDistributionChartInstance; // Instância do Chart.js para o gráfico de pizza
-
-        // --- Mapeamento de Perguntas e Pesos por SEÇÃO ---
-        // É CRUCIAL que estes nomes de perguntas correspondam EXATAMENTE aos cabeçalhos das suas colunas na planilha de Auditorias.
+        // Seu objeto sectionWeights e CRITICAL_QUESTIONS vai aqui...
         const sectionWeights = {
             'Planejamento': {
-                questions: ['Planejamento_1_1', 'Planejamento_1_2', 'Planejamento_1_3', 'Planejamento_1_4', 'Planejamento_1_5', 'Planejamento_1_6'],
-                weights: {
-                    'Planejamento_1_1': 1,
-                    'Planejamento_1_2': 1,
-                    'Planejamento_1_3': 2, // Corrigido para 2 pontos, conforme a imagem inicial
-                    'Planejamento_1_4': 3,
-                    'Planejamento_1_5': 1,
-                    'Planejamento_1_6': 1
-                },
-                total: 9 // Soma dos pesos do Planejamento (1+1+2+3+1+1 = 9)
+                questions: ['P1.1', 'P1.2', 'P1.3', 'P1.4', 'P1.5', 'P1.6', 'P1.7', 'P1.8', 'P1.9'],
+                total: 9 
             },
-            'Pre-Visita': {
-                questions: ['PreVisit_2_1', 'PreVisit_2_2', 'PreVisit_2_3'],
-                weights: {
-                    'PreVisit_2_1': 4,
-                    'PreVisit_2_2': 5,
-                    'PreVisit_2_3': 5
-                },
-                total: 14 // Soma dos pesos da Pré-Visita
+            'Pré-Visita': {
+                questions: ['P2.1', 'P2.2', 'P2.3'],
+                total: 3
             },
             'Leitura de Loja': {
-                questions: ['StoreReading_3_1', 'StoreReading_3_2', 'StoreReading_3_3', 'StoreReading_3_4', 'StoreReading_3_5', 'StoreReading_3_6'],
-                weights: {
-                    'StoreReading_3_1': 6,
-                    'StoreReading_3_2': 3,
-                    'StoreReading_3_3': 4,
-                    'StoreReading_3_4': 6,
-                    'StoreReading_3_5': 4,
-                    'StoreReading_3_6': 7
-                },
-                total: 30 // Soma dos pesos da Leitura de Loja
+                questions: ['L3.1', 'L3.2', 'L3.3', 'L3.4', 'L3.5', 'L3.6'],
+                total: 6
             },
-            'Execucao': {
-                questions: ['Execution_4_1', 'Execution_4_2', 'Execution_4_3', 'Execution_4_4', 'Execution_4_5'],
-                weights: {
-                    'Execution_4_1': 4,
-                    'Execution_4_2': 3,
-                    'Execution_4_3': 4,
-                    'Execution_4_4': 4,
-                    'Execution_4_5': 5
-                },
-                total: 20 // Soma dos pesos da Execução
+            'Execução': {
+                questions: ['E4.1', 'E4.2', 'E4.3', 'E4.4', 'E4.5'],
+                total: 5
             },
-            'Negociacao': {
-                questions: ['Negotiation_5_1', 'Negotiation_5_2', 'Negotiation_5_3'],
-                weights: {
-                    'Negotiation_5_1': 6,
-                    'Negotiation_5_2': 7,
-                    'Negotiation_5_3': 7
-                },
-                total: 20 // Soma dos pesos da Negociação
+            'Negociação': {
+                questions: ['N5.1', 'N5.2', 'N5.3', 'N5.4'],
+                total: 4
             },
             'Fechamento': {
-                questions: ['Closing_6_1', 'Closing_6_2', 'Closing_6_3'],
-                weights: {
-                    'Closing_6_1': 3,
-                    'Closing_6_2': 2,
-                    'Closing_6_3': 1 // Confirmado
-                },
-                total: 6 // Soma dos pesos do Fechamento
+                questions: ['F6.1', 'F6.2'],
+                total: 2
             }
         };
 
-        // A soma total dos pontos das seções é 9 + 14 + 30 + 20 + 20 + 6 = 99.
-        // Se a pontuação máxima da auditoria for 100, pode ser necessário ajustar um peso para que a soma seja 100.
-        // O cálculo no dashboard usará este total como base para o percentual geral.
         const TOTAL_POINTS_ALL_SECTIONS = Object.values(sectionWeights).reduce((sum, section) => sum + section.total, 0);
 
-        // --- DEFINA AQUI QUAIS SÃO AS PERGUNTAS CRÍTICAS ---
-        // Estas são as perguntas que, se respondidas como "Não", contam como "Itens Críticos Reprovados".
-        // Adaptado para usar os nomes das colunas da planilha.
-        const CRITICAL_QUESTIONS = [
-            'StoreReading_3_1', // Analisou todos os corredores
-            'StoreReading_3_4', // Verificou rupturas e sugeriu novos produtos
-            'Execution_4_1', // Abasteceu a loja com produtos do estoque
-            'Execution_4_2', // Garantiu limpeza e organização nos expositores
-            'Negotiation_5_2', // Mostrou soluções aplicadas (preço, validade, organização)
-            'Negotiation_5_3', // Apresentou levantamento de estoque
-            'Closing_6_1'  // Reforçou parceria com o cliente
-        ];
+        const CRITICAL_QUESTIONS_MAP = {
+            'L3.1': "Analisou todos os corredores",
+            'L3.4': "Verificou rupturas",
+            'E4.1': "Abasteceu a loja",
+            'E4.2': "Garantiu limpeza",
+            'N5.2': "Mostrou soluções aplicadas",
+            'N5.3': "Apresentou levantamento de estoque",
+            'F6.1': "Combinou valor e prazo"
+        };
 
 
         document.addEventListener('DOMContentLoaded', async function() {
-            // 1. Verifica autenticação e obtém o nome do supervisor logado
-            const isAuthenticated = localStorage.getItem('isAuthenticated');
-            const username = localStorage.getItem('username'); // Assume que 'username' é o nome do supervisor
-
-            if (!isAuthenticated || !username) {
-                // Usando um modal customizado em vez de alert()
-                showCustomAlert('Você precisa estar logado para acessar esta página.', function() {
-                    window.location.href = 'inicio.htm'; // Redireciona para sua página de login
-                });
+            loggedInSupervisor = localStorage.getItem('username');
+            if (!localStorage.getItem('isAuthenticated') || !loggedInSupervisor) {
+                alert('Você precisa estar logado para acessar.');
+                window.location.href = 'index.htm'; // Redireciona para sua página de login
                 return;
             }
-            loggedInSupervisor = username; // Armazena o nome do supervisor globalmente
-
-            // 2. Carregar dados iniciais (já filtrados pelo supervisor no App Script)
+            
             await fetchDataAndRenderDashboard();
             
-            // Event Listeners para os filtros e botões de navegação
             document.getElementById('applyFilters').addEventListener('click', renderDashboard);
             document.getElementById('resetFilters').addEventListener('click', resetFiltersAndRender);
-            document.getElementById('backButton').addEventListener('click', function() {
-                window.location.href = 'inicio.htm'; // Redireciona para a página principal/anterior
-            });
-            document.getElementById('logoutButton').addEventListener('click', function() {
-                localStorage.removeItem('isAuthenticated');
-                localStorage.removeItem('username');
-                showCustomAlert('Você foi desconectado(a).', function() {
-                    window.location.href = 'index.htm';
-                });
+            document.getElementById('backButton').addEventListener('click', () => window.location.href = 'inicio.htm');
+            document.getElementById('logoutButton').addEventListener('click', () => {
+                localStorage.clear();
+                window.location.href = 'index.htm';
             });
         });
 
         async function fetchDataAndRenderDashboard() {
             try {
-                // Fetch de dados de auditoria, enviando o nome do supervisor
                 const response = await fetch(`${APP_SCRIPT_URL}?action=getAuditData&supervisorName=${encodeURIComponent(loggedInSupervisor)}`);
                 const result = await response.json();
-
                 if (result.success) {
                     allAuditData = result.data;
-                    console.log("Dados de auditoria recebidos:", allAuditData); // LOG: Dados brutos recebidos
-                    renderDashboard(); // Renderiza o dashboard com os dados já filtrados
+                    populateSalespersonFilter(allAuditData);
+                    renderDashboard();
                 } else {
-                    console.error('Erro ao buscar dados de auditoria:', result.message);
-                    showCustomAlert('Erro ao carregar dados de auditoria: ' + result.message);
-                    document.getElementById('salespersonPerformanceTableBody').innerHTML = `<tr><td colspan="9" class="text-center text-red-500 py-4">Erro ao carregar dados: ${result.message}</td></tr>`;
-                    // Também limpar ou mostrar erro nos cards
-                    document.getElementById('totalAudits').innerText = 'Erro';
-                    document.getElementById('avgConformity').innerText = 'Erro';
-                    document.getElementById('avgCriticalRejected').innerText = 'Erro';
+                    throw new Error(result.message);
                 }
             } catch (error) {
-                console.error('Erro na requisição da API de auditoria:', error);
-                showCustomAlert('Erro de conexão ao carregar dados de auditoria. Verifique a URL do App Script e a conexão.');
-                document.getElementById('salespersonPerformanceTableBody').innerHTML = `<tr><td colspan="9" class="text-center text-red-500 py-4">Erro de conexão.</td></tr>`;
-                // Também limpar ou mostrar erro nos cards
-                document.getElementById('totalAudits').innerText = 'Erro';
-                document.getElementById('avgConformity').innerText = 'Erro';
-                document.getElementById('avgCriticalRejected').innerText = 'Erro';
+                console.error('Erro ao buscar dados:', error);
+                document.getElementById('salespersonPerformanceTableBody').innerHTML = `<tr><td colspan="9" class="text-center text-red-500 py-8">Erro de conexão: ${error.message}</td></tr>`;
             }
         }
 
-        /**
-         * Calcula a pontuação percentual de uma seção específica ou a nota geral de uma auditoria.
-         * @param {Object} audit - O objeto de auditoria (uma linha da planilha).
-         * @param {string} [sectionName] - Opcional. O nome da seção (ex: 'Planejamento', 'Pre-Visita'). Se não for fornecido, calcula a nota geral.
-         * @returns {number} A pontuação percentual para a seção ou a nota geral.
-         */
-        function calculateScore(audit, sectionName) {
-            let totalPossibleForCalculation = 0;
-            let achievedScore = 0;
-            let questionsToConsider = [];
-            let weightsToConsider = {};
-
-            if (sectionName && sectionWeights[sectionName]) {
-                const section = sectionWeights[sectionName];
-                questionsToConsider = section.questions;
-                weightsToConsider = section.weights;
-                totalPossibleForCalculation = section.total;
-            } else { // Calcular nota geral
-                for (const sec in sectionWeights) {
-                    questionsToConsider = questionsToConsider.concat(sectionWeights[sec].questions);
-                    Object.assign(weightsToConsider, sectionWeights[sec].weights);
-                }
-                totalPossibleForCalculation = TOTAL_POINTS_ALL_SECTIONS;
-            }
-            
-            console.log(`--- Calculando score para ${sectionName || 'Geral'} ---`); // LOG: Início do cálculo
-            questionsToConsider.forEach(questionId => {
-                const auditValue = audit.hasOwnProperty(questionId) ? String(audit[questionId]).trim().toLowerCase() : ''; // Normaliza o valor
-                const expectedSim = 'sim';
-
-                console.log(`  Pergunta: ${questionId}, Valor na auditoria: '${auditValue}', Esperado: '${expectedSim}'`); // LOG: Valor de cada pergunta
-
-                if (auditValue === expectedSim) {
-                    const weight = weightsToConsider[questionId] || 0;
-                    achievedScore += weight;
-                    console.log(`    MATCH! Adicionando peso: ${weight}. Score atual: ${achievedScore}`); // LOG: Match e adição de peso
-                }
+        function populateSalespersonFilter(data) {
+            const salespeople = [...new Set(data.map(audit => audit.Vendedor).filter(Boolean))].sort();
+            const select = document.getElementById('filterVendedor');
+            select.innerHTML = '<option value="">Todos os Vendedores</option>';
+            salespeople.forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                select.appendChild(option);
             });
-            console.log(`Total possível para ${sectionName || 'Geral'}: ${totalPossibleForCalculation}, Score alcançado: ${achievedScore}`); // LOG: Totais
-            const percentage = totalPossibleForCalculation > 0 ? (achievedScore / totalPossibleForCalculation) * 100 : 0;
-            console.log(`Percentual calculado: ${percentage}%`); // LOG: Percentual final
-            return percentage;
         }
-
-        /**
-         * Calcula o número de itens críticos reprovados em uma única auditoria.
-         * @param {Object} audit - O objeto de auditoria.
-         * @returns {number} O número de itens críticos respondidos como "Não".
-         */
-        function calculateCriticalRejected(audit) {
-            let criticalRejectedCount = 0;
-            const expectedNao = 'não'; // Ou 'nao' se for o caso na planilha
-
-            console.log(`--- Calculando itens críticos reprovados ---`); // LOG: Início do cálculo crítico
-            CRITICAL_QUESTIONS.forEach(questionId => {
-                const auditValue = audit.hasOwnProperty(questionId) ? String(audit[questionId]).trim().toLowerCase() : ''; // Normaliza o valor
-                console.log(`  Pergunta Crítica: ${questionId}, Valor na auditoria: '${auditValue}', Esperado: '${expectedNao}'`); // LOG: Valor de cada pergunta crítica
-
-                if (auditValue === expectedNao) {
-                    criticalRejectedCount++;
-                    console.log(`    CRÍTICO REPROVADO! Contador atual: ${criticalRejectedCount}`); // LOG: Item crítico reprovado
-                }
-            });
-            console.log(`Total de itens críticos reprovados: ${criticalRejectedCount}`); // LOG: Total de críticos
-            return criticalRejectedCount;
-        }
-
-        function processAndFilterData(data) {
+        
+        function processAndFilterData() {
+            const selectedVendedor = document.getElementById('filterVendedor').value;
             const selectedMes = document.getElementById('filterMes').value;
 
-            return data.filter(audit => {
+            return allAuditData.filter(audit => {
+                const matchesVendedor = !selectedVendedor || audit.Vendedor === selectedVendedor;
                 let matchesMes = true;
-
                 if (selectedMes) {
-                    // Assumindo que 'Data Visita' vem como "DD/MM/YYYY"
-                    // É importante que o formato da data na planilha seja consistente.
-                    const auditDate = moment(audit['Data Visita'], 'DD/MM/YYYY'); 
-                    const filterDate = moment(selectedMes); 
-                    
-                    matchesMes = auditDate.isValid() && auditDate.year() === filterDate.year() &&
-                                 auditDate.month() === filterDate.month();
+                    const auditDate = moment(audit['Data Visita'], 'YYYY-MM-DD');
+                    const filterDate = moment(selectedMes);
+                    matchesMes = auditDate.isValid() && auditDate.isSame(filterDate, 'month');
                 }
-                return matchesMes;
+                return matchesVendedor && matchesMes;
             });
         }
-
+        
         function renderDashboard() {
-            const filteredData = processAndFilterData(allAuditData);
-
-            // Variáveis para os cards de indicadores
-            const totalAuditsCount = filteredData.length;
-            let totalGeneralScore = 0;
-            let totalCriticalRejectedItems = 0;
-
-            // Estrutura para agregar as notas por vendedor e seção
-            const salespersonPerformance = {};
+            const filteredData = processAndFilterData();
             
-            filteredData.forEach(audit => {
-                const salesperson = audit['Vendedor'];
-                if (!salesperson || String(salesperson).trim() === '') {
-                    console.warn("Auditoria ignorada: Nome do vendedor vazio ou inválido.", audit); // LOG: Vendedor inválido
-                    return; // Pula se o nome do vendedor for vazio ou string vazia
-                }
+            // Cálculos
+            const performanceData = calculatePerformanceMetrics(filteredData);
+            const problemAreas = calculateProblemAreas(filteredData);
+            const failingItems = calculateFailingItems(filteredData);
 
-                if (!salespersonPerformance[salesperson]) {
-                    salespersonPerformance[salesperson] = {
-                        auditCount: 0,
-                        scores: {
-                            'Planejamento': { sum: 0, count: 0 },
-                            'Pre-Visita': { sum: 0, count: 0 },
-                            'Leitura de Loja': { sum: 0, count: 0 },
-                            'Execucao': { sum: 0, count: 0 },
-                            'Negociacao': { sum: 0, count: 0 },
-                            'Fechamento': { sum: 0, count: 0 },
-                            'Geral': { sum: 0, count: 0 }
-                        }
-                    };
-                }
-
-                salespersonPerformance[salesperson].auditCount++;
-                
-                // Calcular e somar pontuações por seção e geral para cada auditoria
-                for (const sectionName in sectionWeights) {
-                    const score = calculateScore(audit, sectionName);
-                    salespersonPerformance[salesperson].scores[sectionName].sum += score;
-                    salespersonPerformance[salesperson].scores[sectionName].count++;
-                }
-                // Nota Geral da auditoria
-                const generalScore = calculateScore(audit);
-                salespersonPerformance[salesperson].scores['Geral'].sum += generalScore;
-                salespersonPerformance[salesperson].scores['Geral'].count++;
-
-                // Acumular dados para os cards de indicadores
-                totalGeneralScore += generalScore;
-                totalCriticalRejectedItems += calculateCriticalRejected(audit);
-            });
-
-            // Atualizar os cards de indicadores
-            document.getElementById('totalAudits').innerText = totalAuditsCount;
-            const avgConformity = totalAuditsCount > 0 ? (totalGeneralScore / totalAuditsCount).toFixed(0) : 0;
-            document.getElementById('avgConformity').innerText = `${avgConformity}%`;
-            const avgCriticalRejected = totalAuditsCount > 0 ? (totalCriticalRejectedItems / totalAuditsCount).toFixed(1) : 0.0;
-            document.getElementById('avgCriticalRejected').innerText = `${avgCriticalRejected}`;
-
-
-            // Preparar dados para a tabela e o gráfico
-            const dataForTableAndChart = Object.keys(salespersonPerformance).map(name => {
-                const spData = salespersonPerformance[name];
-                const avgScores = {};
-                for (const sectionName in spData.scores) {
-                    const s = spData.scores[sectionName];
-                    avgScores[sectionName] = s.count > 0 ? (s.sum / s.count).toFixed(0) : 0; // Arredonda para inteiro
-                }
-                return {
-                    name: name,
-                    audits: spData.auditCount,
-                    avgScores: avgScores
-                };
-            }).sort((a, b) => b.avgScores['Geral'] - a.avgScores['Geral']); // Ordena pela Nota Geral
-
-            // 2. Renderizar Tabela de Notas Médias dos Vendedores
-            renderSalespersonPerformanceTable(dataForTableAndChart);
-
-            // 3. Renderizar Gráfico de Pizza de Distribuição de Auditorias
-            renderAuditDistributionChart(dataForTableAndChart);
+            // Renderização
+            updateKpiCards(filteredData.length, performanceData.overallAverage, performanceData.avgCriticalRejected);
+            renderPerformanceRankingChart(performanceData.bySalesperson);
+            renderProblemAreasChart(problemAreas);
+            renderTopFailingItems(failingItems);
+            renderSalespersonPerformanceTable(performanceData.bySalesperson);
         }
 
         function resetFiltersAndRender() {
+            document.getElementById('filterVendedor').value = '';
             document.getElementById('filterMes').value = '';
             renderDashboard();
         }
 
+        // --- Funções de Cálculo ---
+        function calculateScore(audit, sectionName) {
+            const section = sectionWeights[sectionName];
+            if (!section) return 0;
+
+            let achievedScore = section.questions.reduce((sum, qId) => {
+                return (String(audit[qId]).trim().toLowerCase() === 'sim') ? sum + 1 : sum;
+            }, 0);
+            
+            return section.total > 0 ? (achievedScore / section.total) * 100 : 0;
+        }
+
+        function calculatePerformanceMetrics(data) {
+            const performance = {};
+            let totalGeneralScore = 0;
+            let totalCriticalRejected = 0;
+
+            data.forEach(audit => {
+                const salesperson = audit.Vendedor;
+                if (!salesperson) return;
+
+                if (!performance[salesperson]) {
+                    performance[salesperson] = { 
+                        auditCount: 0,
+                        scores: Object.keys(sectionWeights).reduce((acc, sec) => ({...acc, [sec]: []}), {}),
+                        generalScores: []
+                    };
+                }
+                
+                performance[salesperson].auditCount++;
+                let auditTotalScore = 0;
+                Object.keys(sectionWeights).forEach(sec => {
+                    const sectionScore = calculateScore(audit, sec);
+                    performance[salesperson].scores[sec].push(sectionScore);
+                    auditTotalScore += (sectionScore * sectionWeights[sec].total / 100);
+                });
+
+                const generalScore = (auditTotalScore / TOTAL_POINTS_ALL_SECTIONS) * 100;
+                performance[salesperson].generalScores.push(generalScore);
+                totalGeneralScore += generalScore;
+                
+                totalCriticalRejected += Object.keys(CRITICAL_QUESTIONS_MAP).reduce((count, qId) => {
+                    return String(audit[qId]).trim().toLowerCase() === 'não' ? count + 1 : count;
+                }, 0);
+            });
+
+            const bySalesperson = Object.keys(performance).map(name => {
+                const avgScores = {};
+                Object.keys(performance[name].scores).forEach(sec => {
+                    const scores = performance[name].scores[sec];
+                    avgScores[sec] = scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
+                });
+                const generalAvg = performance[name].generalScores.length > 0 ? performance[name].generalScores.reduce((a,b) => a+b, 0) / performance[name].generalScores.length : 0;
+                return { name, audits: performance[name].auditCount, avgScores, generalAvg };
+            }).sort((a, b) => b.generalAvg - a.generalAvg);
+
+            return {
+                bySalesperson,
+                overallAverage: data.length > 0 ? totalGeneralScore / data.length : 0,
+                avgCriticalRejected: data.length > 0 ? totalCriticalRejected / data.length : 0
+            };
+        }
+
+        function calculateProblemAreas(data) {
+            const areaScores = Object.keys(sectionWeights).reduce((acc, sec) => ({...acc, [sec]: []}), {});
+            data.forEach(audit => {
+                Object.keys(sectionWeights).forEach(sec => {
+                    areaScores[sec].push(calculateScore(audit, sec));
+                });
+            });
+
+            const labels = Object.keys(areaScores);
+            const averages = labels.map(label => {
+                const scores = areaScores[label];
+                return scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
+            });
+
+            return { labels, averages };
+        }
+        
+        function calculateFailingItems(data) {
+            const failingCounts = Object.keys(CRITICAL_QUESTIONS_MAP).reduce((acc, qId) => ({...acc, [qId]: 0}), {});
+            data.forEach(audit => {
+                Object.keys(failingCounts).forEach(qId => {
+                    if (String(audit[qId]).trim().toLowerCase() === 'não') {
+                        failingCounts[qId]++;
+                    }
+                });
+            });
+            return Object.entries(failingCounts)
+                .map(([qId, count]) => ({'name': CRITICAL_QUESTIONS_MAP[qId], count}))
+                .filter(item => item.count > 0)
+                .sort((a, b) => b.count - a.count);
+        }
+
+
         // --- Funções de Renderização ---
+        function updateKpiCards(totalAudits, avgConformity, avgCritical) {
+            document.getElementById('totalAudits').innerText = totalAudits;
+            document.getElementById('avgConformity').innerText = `${avgConformity.toFixed(0)}%`;
+            document.getElementById('avgCriticalRejected').innerText = avgCritical.toFixed(1);
+        }
 
-        function renderSalespersonPerformanceTable(salespersons) {
+        function renderSalespersonPerformanceTable(data) {
             const tableBody = document.getElementById('salespersonPerformanceTableBody');
-            tableBody.innerHTML = ''; // Limpa a tabela
-
-            if (salespersons.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="9" class="text-center text-gray-500 py-4">Nenhum dado de auditoria encontrado para o período ou vendedores.</td></tr>`;
+            tableBody.innerHTML = '';
+            if (data.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="9" class="text-center text-gray-500 py-8">Nenhum dado encontrado para os filtros selecionados.</td></tr>`;
                 return;
             }
+            
+            const getScoreClass = (score) => {
+                if (score >= 90) return 'score-high';
+                if (score >= 70) return 'score-medium';
+                return 'score-low';
+            };
 
-            salespersons.forEach(sp => {
+            data.forEach(sp => {
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-50';
-                row.innerHTML = `
-                    <td class="px-6 py-4">${sp.name}</td>
-                    <td class="px-6 py-4">${sp.audits}</td>
-                    <td class="px-6 py-4">${sp.avgScores['Planejamento']}%</td>
-                    <td class="px-6 py-4">${sp.avgScores['Pre-Visita']}%</td>
-                    <td class="px-6 py-4">${sp.avgScores['Leitura de Loja']}%</td>
-                    <td class="px-6 py-4">${sp.avgScores['Execucao']}%</td>
-                    <td class="px-6 py-4">${sp.avgScores['Negociacao']}%</td>
-                    <td class="px-6 py-4">${sp.avgScores['Fechamento']}%</td>
-                    <td class="px-6 py-4 font-semibold note-general">${sp.avgScores['Geral']}%</td>
-                `;
+                let cells = `<td class="px-4 py-4 font-medium text-gray-900">${sp.name}</td>
+                             <td class="px-4 py-4 text-gray-500">${sp.audits}</td>`;
+                
+                Object.keys(sectionWeights).forEach(sec => {
+                    const score = sp.avgScores[sec];
+                    cells += `<td class="px-4 py-4 font-semibold text-center ${getScoreClass(score)}">${score.toFixed(0)}%</td>`;
+                });
+
+                cells += `<td class="px-4 py-4 font-bold text-center text-blue-700 ${getScoreClass(sp.generalAvg)}">${sp.generalAvg.toFixed(0)}%</td>`;
+                row.innerHTML = cells;
                 tableBody.appendChild(row);
             });
         }
-
-        function renderAuditDistributionChart(salespersons) {
-            const ctx = document.getElementById('auditDistributionChart').getContext('2d');
-
-            const labels = salespersons.map(sp => sp.name);
-            const auditCounts = salespersons.map(sp => sp.audits);
-
-            // Gerar cores dinamicamente para o gráfico de pizza
-            const backgroundColors = [];
-            const borderColors = [];
-            const predefinedColors = [
-                'rgba(255, 99, 132, 0.7)', // Vermelho
-                'rgba(54, 162, 235, 0.7)', // Azul
-                'rgba(255, 206, 86, 0.7)', // Amarelo
-                'rgba(75, 192, 192, 0.7)', // Verde Água
-                'rgba(153, 102, 255, 0.7)', // Roxo
-                'rgba(255, 159, 64, 0.7)', // Laranja
-                'rgba(199, 199, 199, 0.7)', // Cinza
-                'rgba(83, 102, 255, 0.7)', // Azul claro
-                'rgba(255, 83, 187, 0.7)', // Rosa
-                'rgba(0, 204, 102, 0.7)' // Verde esmeralda
-            ];
-
-            for (let i = 0; i < labels.length; i++) {
-                const colorIndex = i % predefinedColors.length;
-                backgroundColors.push(predefinedColors[colorIndex]);
-                borderColors.push(predefinedColors[colorIndex].replace('0.7)', '1)')); // Borda sólida
+        
+        function renderChart(chartId, type, data, options) {
+            if (chartInstances[chartId]) {
+                chartInstances[chartId].destroy();
             }
+            const ctx = document.getElementById(chartId).getContext('2d');
+            chartInstances[chartId] = new Chart(ctx, { type, data, options });
+        }
 
-            if (auditDistributionChartInstance) {
-                auditDistributionChartInstance.destroy(); // Destrói a instância anterior do gráfico
-            }
-            auditDistributionChartInstance = new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Número de Auditorias',
-                        data: auditCounts,
-                        backgroundColor: backgroundColors,
-                        borderColor: borderColors,
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'right', // Posição da legenda à direita para melhor visualização
-                            labels: {
-                                boxWidth: 20 // Largura da caixa de cor na legenda
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.label || '';
-                                    const value = context.parsed || 0;
-                                    const total = context.dataset.data.reduce((sum, current) => sum + current, 0);
-                                    const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                                    return `${label}: ${value} (${percentage}%)`;
-                                }
-                            }
-                        }
+        function renderPerformanceRankingChart(data) {
+            const labels = data.map(sp => sp.name);
+            const scores = data.map(sp => sp.generalAvg);
+            const backgroundColors = scores.map(score => score >= 90 ? '#22C55E' : score >= 70 ? '#F97316' : '#EF4444');
+
+            renderChart('performanceRankingChart', 'bar', {
+                labels,
+                datasets: [{
+                    label: 'Nota Geral Média',
+                    data: scores,
+                    backgroundColor: backgroundColors,
+                    borderColor: backgroundColors,
+                    borderWidth: 1
+                }]
+            }, {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: { x: { beginAtZero: true, max: 100 } },
+                plugins: { legend: { display: false } }
+            });
+        }
+
+        function renderProblemAreasChart(data) {
+            renderChart('problemAreasChart', 'radar', {
+                labels: data.labels,
+                datasets: [{
+                    label: 'Média de Conformidade por Etapa',
+                    data: data.averages,
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                    borderColor: 'rgba(59, 130, 246, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                }]
+            }, {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        angleLines: { color: 'rgba(0, 0, 0, 0.1)' },
+                        grid: { color: 'rgba(0, 0, 0, 0.1)' },
+                        pointLabels: { font: { size: 12 } },
+                        ticks: { backdropColor: 'white', color: 'black' }
                     }
-                }
+                },
+                plugins: { legend: { display: false } }
             });
         }
+        
+        function renderTopFailingItems(items) {
+            const container = document.getElementById('topFailingItems');
+            container.innerHTML = '';
+            if (items.length === 0) {
+                 container.innerHTML = '<p class="text-gray-500">Nenhuma falha em itens críticos registrada para o período selecionado.</p>';
+                 return;
+            }
 
-        /**
-         * Função para exibir um alerta customizado em vez de `alert()`.
-         * @param {string} message A mensagem a ser exibida.
-         * @param {function} [callback] Uma função a ser executada após o alerta ser fechado.
-         */
-        function showCustomAlert(message, callback) {
-            const alertModal = document.createElement('div');
-            alertModal.className = 'fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50';
-            alertModal.innerHTML = `
-                <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
-                    <p class="text-lg font-semibold text-gray-800 mb-4">${message}</p>
-                    <button id="alertCloseButton" class="py-2 px-4 bg-blue-600 text-white font-bold rounded-md hover:bg-blue-700 transition duration-300">OK</button>
-                </div>
-            `;
-            document.body.appendChild(alertModal);
-
-            document.getElementById('alertCloseButton').addEventListener('click', function() {
-                document.body.removeChild(alertModal);
-                if (callback) {
-                    callback();
-                }
+            const list = document.createElement('ul');
+            list.className = 'space-y-2';
+            items.slice(0, 3).forEach(item => { // Mostra apenas os top 3
+                const li = document.createElement('li');
+                li.className = 'flex justify-between items-center bg-gray-50 p-3 rounded-md';
+                li.innerHTML = `<span class="font-medium text-gray-800">${item.name}</span>
+                                <span class="font-bold text-red-600 bg-red-100 px-3 py-1 rounded-full text-sm">${item.count} falha(s)</span>`;
+                list.appendChild(li);
             });
+            container.appendChild(list);
         }
+
     </script>
 </body>
 </html>
