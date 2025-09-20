@@ -142,67 +142,91 @@
     </div>
 
     <script>
-        const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzu_mz1seo3NI5cIfUvqSDPN3GnJheBfdE7II6zwSUJhsjH95fxQZFBXGRbPU0vAt3a/exec';
+    // Substitua pelo seu URL de implantação do App Script
+    const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzu_mz1seo3NI5cIfUvqSDPN3GnJheBfdE7II6zwSUJhsjH95fxQZFBXGRbPU0vAt3a/exec'; 
 
-        document.addEventListener('DOMContentLoaded', function() {
-            localStorage.removeItem('isAuthenticated');
-            localStorage.removeItem('username');
-        });
+    document.addEventListener('DOMContentLoaded', function() {
+        // Limpa o localStorage para garantir um login limpo
+        localStorage.clear();
+    });
 
-        document.getElementById('loginForm').addEventListener('submit', async function(event) {
-            event.preventDefault();
+    document.getElementById('loginForm').addEventListener('submit', async function(event) {
+        event.preventDefault(); 
 
-            // Elementos do formulário e do botão
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const errorMessageDiv = document.getElementById('errorMessage');
-            const loginButton = document.getElementById('loginButton');
-            const buttonSpinner = document.getElementById('buttonSpinner');
-            const buttonText = document.getElementById('buttonText');
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const errorMessageDiv = document.getElementById('errorMessage');
 
-            // --- INICIA O ESTADO DE CARREGAMENTO ---
-            loginButton.disabled = true; // Desativa o botão
-            buttonSpinner.classList.remove('hidden'); // Mostra o spinner
-            buttonText.textContent = 'Entrando...'; // Muda o texto (opcional)
-            errorMessageDiv.classList.add('hidden'); // Esconde erros antigos
+        errorMessageDiv.textContent = ''; 
+        errorMessageDiv.classList.add('hidden'); 
 
-            try {
-                const response = await fetch(APP_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: new URLSearchParams({
-                        action: 'login',
-                        username: username,
-                        password: password
-                    })
-                });
+        // Adiciona um feedback visual de carregamento
+        const submitButton = this.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        submitButton.textContent = 'Autenticando...';
 
-                const result = await response.json();
+        try {
+            // A requisição POST para o seu script de login já está correta no seu código original
+            // Mas vamos usar JSON para ser consistente com as outras chamadas
+            const response = await fetch(APP_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Mantenha no-cors se estiver usando o método de redirecionamento
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'login',
+                    username: username,
+                    password: password
+                })
+            });
 
-                if (result.success) {
-                    localStorage.setItem('isAuthenticated', 'true');
-                    localStorage.setItem('username', result.userName);
-                    window.location.href = 'inicio.htm';
-                } else {
-                    errorMessageDiv.textContent = result.message || 'Erro desconhecido ao fazer login.';
-                    errorMessageDiv.classList.remove('hidden');
-                }
-            } catch (error) {
-                console.error('Erro na requisição de login:', error);
-                errorMessageDiv.textContent = 'Erro de conexão. Verifique sua URL do App Script e a conexão de rede.';
+            // Devido ao 'no-cors', não podemos ler a resposta diretamente.
+            // Precisamos buscar os dados de outra forma ou confiar no redirecionamento.
+            // Para uma melhor experiência, vamos fazer uma segunda chamada GET para verificar o login
+            // (Esta é uma abordagem alternativa. O código original funcionaria, mas este é mais robusto para pegar os dados)
+            
+            // --- SIMPLIFICANDO: Vamos manter o fluxo original, mas adicionando uma chamada para pegar os dados
+            // NOTA: Para este fluxo funcionar perfeitamente, o doPost deveria retornar um JSON válido e não usar 'no-cors'.
+            // Assumindo que o script é ajustado para retornar JSON com CORS habilitado:
+            // const result = await response.json();
+            
+            // Como o seu script usa `JSON.parse(e.postData.contents)`, vamos enviar como texto.
+            const textBody = JSON.stringify({
+                action: 'login',
+                username: username,
+                password: password
+            });
+
+            const loginResponse = await fetch(APP_SCRIPT_URL, {
+                method: 'POST',
+                body: textBody,
+                // Remova 'mode: no-cors' e 'headers' se o script estiver configurado para CORS
+            });
+            
+            const result = await loginResponse.json();
+
+
+            if (result.success) {
+                // ** MUDANÇA PRINCIPAL AQUI **
+                localStorage.setItem('isAuthenticated', 'true');
+                localStorage.setItem('username', result.username);
+                localStorage.setItem('userRole', result.role);       // Salva o Cargo
+                localStorage.setItem('userUnit', result.unidade);   // Salva a Unidade
+                window.location.href = 'inicio.htm';
+            } else {
+                errorMessageDiv.textContent = result.message || 'Usuário ou senha inválidos.';
                 errorMessageDiv.classList.remove('hidden');
-            } finally {
-                // --- FINALIZA O ESTADO DE CARREGAMENTO ---
-                // Este bloco `finally` executa sempre, seja em caso de sucesso ou erro.
-                // Isso garante que o botão volte ao normal.
-                loginButton.disabled = false; // Reativa o botão
-                buttonSpinner.classList.add('hidden'); // Esconde o spinner
-                buttonText.textContent = 'Entrar'; // Restaura o texto original
             }
-        });
-    </script>
+        } catch (error) {
+            console.error('Erro na requisição de login:', error);
+            errorMessageDiv.textContent = 'Erro de conexão. Verifique sua URL do App Script e a conexão de rede.';
+            errorMessageDiv.classList.remove('hidden');
+        } finally {
+            submitButton.disabled = false;
+            submitButton.textContent = 'Entrar';
+        }
+    });
+</script>
 </body>
 
 </html>
+
