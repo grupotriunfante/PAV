@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,8 +15,8 @@
             --light-gray: #e0e0e0;
             --dark-gray: #555;
             --border-radius: 8px;
-            --box-shadow-light: 0 4px 12px rgba(0,0,0,0.08);
-            --box-shadow-medium: 0 6px 16px rgba(0,0,0,0.12);
+            --box-shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --box-shadow-medium: 0 6px 16px rgba(0, 0, 0, 0.12);
         }
 
         body {
@@ -121,7 +122,7 @@
             gap: 25px;
             margin-left: auto;
         }
-        
+
         .radio-options label {
             cursor: pointer;
             display: flex;
@@ -151,7 +152,7 @@
             background-color: #fff;
             cursor: pointer;
         }
-        
+
         .image-preview {
             display: flex;
             flex-wrap: wrap;
@@ -160,6 +161,7 @@
             padding-top: 15px;
             border-top: 1px solid var(--light-gray);
         }
+
         .preview-item {
             position: relative;
             width: 110px;
@@ -168,11 +170,13 @@
             border-radius: var(--border-radius);
             overflow: hidden;
         }
+
         .preview-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
+
         .preview-item .file-name {
             position: absolute;
             bottom: 0;
@@ -187,6 +191,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
+
         .remove-btn {
             position: absolute;
             top: 5px;
@@ -205,7 +210,10 @@
             justify-content: center;
             line-height: 1;
         }
-        .remove-btn:hover { background-color: rgba(255, 0, 0, 0.8); }
+
+        .remove-btn:hover {
+            background-color: rgba(255, 0, 0, 0.8);
+        }
 
         .submit-button {
             display: block;
@@ -220,12 +228,17 @@
             cursor: pointer;
             margin-top: 40px;
         }
-        
-        .hidden-field { display: none; }
-        
+
+        .hidden-field {
+            display: none;
+        }
+
         .loading-overlay {
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background-color: rgba(255, 255, 255, 0.8);
             display: flex;
             justify-content: center;
@@ -235,20 +248,33 @@
             visibility: hidden;
             transition: opacity 0.3s ease;
         }
-        .loading-overlay.visible { opacity: 1; visibility: visible; }
+
+        .loading-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
         .spinner {
             border: 8px solid #f3f3f3;
             border-top: 8px solid var(--primary-color);
             border-radius: 50%;
-            width: 60px; height: 60px;
+            width: 60px;
+            height: 60px;
             animation: spin 1s linear infinite;
         }
+
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <a href="inicio.htm" class="back-button">Voltar</a>
@@ -266,7 +292,7 @@
         </div>
         <div class="info-field">
             <label for="clientCnpj">CNPJ do Cliente:</label>
-            <input type="text" id="clientCnpj" name="clientCnpj" placeholder="00.000.000/0000-00" required>
+            <input type="text" id="clientCnpj" name="clientCnpj" placeholder="00.000.000/0000-00" required maxlength="18">
         </div>
         <div class="info-field">
             <label for="clientName">Nome do Cliente:</label>
@@ -298,8 +324,8 @@
                     <li class="audit-item">
                         <span class="question-text"><span class="question-number">1.3.</span> Carro limpo, organizado e com materiais de execução?</span>
                         <div class="radio-options">
-                           <label><input type="radio" name="planejamento_1_3" value="sim" required> Sim</label>
-                           <label><input type="radio" name="planejamento_1_3" value="nao"> Não</label>
+                            <label><input type="radio" name="planejamento_1_3" value="sim" required> Sim</label>
+                            <label><input type="radio" name="planejamento_1_3" value="nao"> Não</label>
                         </div>
                     </li>
                     <li class="audit-item">
@@ -435,8 +461,8 @@
                     <li class="audit-item">
                         <span class="question-text"><span class="question-number">4.1.</span> Abasteceu a loja com produtos do estoque?</span>
                         <div class="radio-options">
-                           <label><input type="radio" name="execution_4_1" value="sim" data-target-field="execution_4_1_img_container"> Sim</label>
-                           <label><input type="radio" name="execution_4_1" value="nao" data-target-field="execution_4_1_img_container"> Não</label>
+                            <label><input type="radio" name="execution_4_1" value="sim" data-target-field="execution_4_1_img_container"> Sim</label>
+                            <label><input type="radio" name="execution_4_1" value="nao" data-target-field="execution_4_1_img_container"> Não</label>
                         </div>
                         <div class="required-media-field hidden-field" id="execution_4_1_img_container">
                             <label for="execution_4_1_img">Anexar imagens (Máx. 5). Clique para adicionar mais fotos.</label>
@@ -528,8 +554,8 @@
                     <li class="audit-item">
                         <span class="question-text"><span class="question-number">6.1.</span> Combinou valor do pedido, prazo e entrega?</span>
                         <div class="radio-options">
-                           <label><input type="radio" name="closing_6_1" value="sim" required> Sim</label>
-                           <label><input type="radio" name="closing_6_1" value="nao"> Não</label>
+                            <label><input type="radio" name="closing_6_1" value="sim" required> Sim</label>
+                            <label><input type="radio" name="closing_6_1" value="nao"> Não</label>
                         </div>
                     </li>
                     <li class="audit-item">
@@ -541,7 +567,6 @@
                     </li>
                 </ul>
             </section>
-
             <button type="submit" class="submit-button">Finalizar Acompanhamento</button>
         </form>
     </div>
@@ -555,7 +580,36 @@
         const GOOGLE_APP_SCRIPT_URL_POST = 'https://script.google.com/macros/s/AKfycbw-DXVXSxS_Q2YjcPxC1jBtvrpe4w8TbWRt33Zxy85hKHcIEyF52kpN14bial4OoH-p/exec';
 
         document.addEventListener('DOMContentLoaded', () => {
-            
+
+            // ===== INÍCIO DA ALTERAÇÃO: SCRIPT PARA FORMATAR CNPJ =====
+            const cnpjInput = document.getElementById('clientCnpj');
+            if (cnpjInput) {
+                cnpjInput.addEventListener('input', function(e) {
+                    // 1. Remove tudo que não for dígito
+                    let value = e.target.value.replace(/\D/g, '');
+
+                    // 2. Limita o valor a 14 dígitos
+                    if (value.length > 14) {
+                        value = value.substring(0, 14);
+                    }
+
+                    // 3. Aplica a máscara XX.XXX.XXX/XXXX-XX
+                    if (value.length > 12) {
+                        value = value.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
+                    } else if (value.length > 8) {
+                        value = value.replace(/^(\d{2})(\d{3})(\d{3})(\d{1,4})/, '$1.$2.$3/$4');
+                    } else if (value.length > 5) {
+                        value = value.replace(/^(\d{2})(\d{3})(\d{1,3})/, '$1.$2.$3');
+                    } else if (value.length > 2) {
+                        value = value.replace(/^(\d{2})(\d{1,3})/, '$1.$2');
+                    }
+
+                    // 4. Atualiza o valor do campo
+                    e.target.value = value;
+                });
+            }
+            // ===== FIM DA ALTERAÇÃO =====
+
             // --- Lógica do Supervisor e Vendedor ---
             const supervisorNameInput = document.getElementById('supervisorName');
             const salespersonSelect = document.getElementById('salespersonName');
@@ -633,9 +687,12 @@
             // --- Lógica para adicionar e gerenciar múltiplos arquivos ---
             const fileInputs = document.querySelectorAll('#auditForm input[type="file"]');
             const imageLimits = {
-                'storeReading_3_1_img': 10, 'storeReading_3_2_img': 5,
-                'execution_4_1_img': 5, 'execution_4_2_img': 5, 
-                'execution_4_3_img': 5, 'execution_4_4_img': 5
+                'storeReading_3_1_img': 10,
+                'storeReading_3_2_img': 5,
+                'execution_4_1_img': 5,
+                'execution_4_2_img': 5,
+                'execution_4_3_img': 5,
+                'execution_4_4_img': 5
             };
 
             fileInputs.forEach(input => {
@@ -652,13 +709,13 @@
                     }
                     currentFiles.push(...newFiles);
                     renderPreview(input.id);
-                    event.target.value = ''; 
+                    event.target.value = '';
                 });
             });
 
             const renderPreview = (inputId) => {
                 const previewContainer = document.getElementById(`${inputId}_preview`);
-                previewContainer.innerHTML = ''; 
+                previewContainer.innerHTML = '';
 
                 uploadedFiles[inputId].forEach((file, index) => {
                     const reader = new FileReader();
@@ -691,12 +748,35 @@
             // --- Lógica de Envio do Formulário ---
             const form = document.getElementById('auditForm');
             const questionWeights = {
-                'planejamento_1_1': 1, 'planejamento_1_2': 1, 'planejamento_1_3': 1, 'planejamento_1_4': 1, 'planejamento_1_5': 1, 'planejamento_1_6': 1, 'planejamento_1_7': 1, 'planejamento_1_8': 1, 'planejamento_1_9': 1,
-                'preVisit_2_1': 1, 'preVisit_2_2': 1, 'preVisit_2_3': 1,
-                'storeReading_3_1': 1, 'storeReading_3_2': 1, 'storeReading_3_3': 1, 'storeReading_3_4': 1, 'storeReading_3_5': 1, 'storeReading_3_6': 1,
-                'execution_4_1': 1, 'execution_4_2': 1, 'execution_4_3': 1, 'execution_4_4': 1, 'execution_4_5': 1,
-                'negotiation_5_1': 1, 'negotiation_5_2': 1, 'negotiation_5_3': 1, 'negotiation_5_4': 1,
-                'closing_6_1': 1, 'closing_6_2': 1
+                'planejamento_1_1': 1,
+                'planejamento_1_2': 1,
+                'planejamento_1_3': 1,
+                'planejamento_1_4': 1,
+                'planejamento_1_5': 1,
+                'planejamento_1_6': 1,
+                'planejamento_1_7': 1,
+                'planejamento_1_8': 1,
+                'planejamento_1_9': 1,
+                'preVisit_2_1': 1,
+                'preVisit_2_2': 1,
+                'preVisit_2_3': 1,
+                'storeReading_3_1': 1,
+                'storeReading_3_2': 1,
+                'storeReading_3_3': 1,
+                'storeReading_3_4': 1,
+                'storeReading_3_5': 1,
+                'storeReading_3_6': 1,
+                'execution_4_1': 1,
+                'execution_4_2': 1,
+                'execution_4_3': 1,
+                'execution_4_4': 1,
+                'execution_4_5': 1,
+                'negotiation_5_1': 1,
+                'negotiation_5_2': 1,
+                'negotiation_5_3': 1,
+                'negotiation_5_4': 1,
+                'closing_6_1': 1,
+                'closing_6_2': 1
             };
 
             form.addEventListener('submit', async function(event) {
@@ -707,7 +787,9 @@
                 const auditData = {
                     supervisorName: supervisorNameInput.value,
                     salespersonName: salespersonSelect.value,
-                    clientCnpj: document.getElementById('clientCnpj').value,
+                    // ===== INÍCIO DA ALTERAÇÃO: Envia apenas os números do CNPJ =====
+                    clientCnpj: document.getElementById('clientCnpj').value.replace(/\D/g, ''),
+                    // ===== FIM DA ALTERAÇÃO =====
                     clientName: document.getElementById('clientName').value,
                     visitDate: document.getElementById('visitDate').value,
                     submissionTimestamp: new Date().toISOString()
@@ -726,7 +808,7 @@
                     }
                 }
                 auditData.totalScore = totalScore;
-                
+
                 // Validação manual de imagens obrigatórias
                 for (const inputId in imageLimits) {
                     const radioGroupName = inputId.replace('_img', '');
@@ -753,12 +835,18 @@
                         }
                     }
                 }
-                
+
                 try {
                     await fetch(GOOGLE_APP_SCRIPT_URL_POST, {
-                        method: 'POST', mode: 'no-cors',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ action: 'submitAudit', data: auditData })
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            action: 'submitAudit',
+                            data: auditData
+                        })
                     });
                     alert('Auditoria enviada com sucesso!');
                     form.reset();
@@ -786,4 +874,5 @@
         });
     </script>
 </body>
+
 </html>
