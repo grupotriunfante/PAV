@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -118,52 +119,56 @@
         <p class="footer-text text-center">Desenvolvido por Triunfante Brasil</p>
     </div>
 
- <script>
-        const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzu_mz1seo3NI5cIfUvqSDPN3GnJheBfdE7II6zwSUJhsjH95fxQZFBXGRbPU0vAt3a/exec';
+    <script>
+        // Substitua pelo seu URL de implantação do App Script
+        const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzu_mz1seo3NI5cIfUvqSDPN3GnJheBfdE7II6zwSUJhsjH95fxQZFBXGRbPU0vAt3a/exec'; // Certifique-se de que este é o URL correto
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Limpa o localStorage ao carregar a página de login para evitar logins "presos"
+            localStorage.removeItem('isAuthenticated');
+            localStorage.removeItem('username');
+        });
 
         document.getElementById('loginForm').addEventListener('submit', async function(event) {
-            event.preventDefault(); 
+            event.preventDefault(); // Impede o envio padrão do formulário
+
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             const errorMessageDiv = document.getElementById('errorMessage');
-            errorMessageDiv.classList.add('hidden');
+
+            errorMessageDiv.textContent = ''; // Limpa mensagens de erro anteriores
+            errorMessageDiv.classList.add('hidden'); // Esconde a div de erro
 
             try {
-                // A forma de enviar os dados foi alterada para JSON, que é mais robusta
                 const response = await fetch(APP_SCRIPT_URL, {
                     method: 'POST',
-                    mode: 'no-cors', // Mantenha no-cors se estiver funcionando
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded' // Formato para doPost com e.parameter
+                    },
+                    body: new URLSearchParams({ // Envia os parâmetros no formato de formulário
                         action: 'login',
                         username: username,
                         password: password
                     })
                 });
-                
-                // Em modo 'no-cors', a resposta não pode ser lida. Assumimos sucesso e o script redireciona.
-                // O ideal seria poder ler o JSON, mas isso exige um deploy mais complexo.
-                // Para simplificar, vamos salvar os dados e redirecionar, confiando na validação do script.
-                
-                // ATENÇÃO: Como não podemos ler a resposta, vamos salvar o que o usuário digitou
-                // assumindo que o login foi bem-sucedido. A verificação real de cargo acontecerá no dashboard.
-                // O script precisa retornar os dados para uma solução 100% segura.
-                // Por ora, vamos simplificar:
-                alert('Tentando fazer login...');
-                localStorage.setItem('isAuthenticated', 'true');
-                localStorage.setItem('username', username); 
-                // Como não podemos ler o cargo e unidade aqui, o dashboard terá que buscá-los.
-                // Esta é uma limitação do modo 'no-cors'.
-                
-                window.location.href = 'inicio.htm';
 
+                const result = await response.json();
+
+                if (result.success) {
+                    // Armazena o nome do usuário logado no localStorage
+                    localStorage.setItem('isAuthenticated', 'true');
+                    localStorage.setItem('username', result.userName); // Usa o userName retornado pelo App Script
+                    window.location.href = 'inicio.htm'; // Redireciona para o inicio
+                } else {
+                    errorMessageDiv.textContent = result.message || 'Erro desconhecido ao fazer login.';
+                    errorMessageDiv.classList.remove('hidden');
+                }
             } catch (error) {
                 console.error('Erro na requisição de login:', error);
-                errorMessageDiv.textContent = 'Erro de conexão.';
+                errorMessageDiv.textContent = 'Erro de conexão. Verifique sua URL do App Script e a conexão de rede.';
                 errorMessageDiv.classList.remove('hidden');
             }
         });
     </script>
 </body>
 </html>
-
