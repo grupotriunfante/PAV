@@ -137,6 +137,8 @@
             unit: localStorage.getItem('userUnit')
         };
         
+        // ** INÍCIO DO CÓDIGO CORRIGIDO **
+
         const questionWeights = {
             'planejamento_1_1': 1, 'planejamento_1_2': 1, 'planejamento_1_3': 1, 'planejamento_1_4': 1, 'planejamento_1_5': 1, 'planejamento_1_6': 1, 'planejamento_1_7': 1, 'planejamento_1_8': 1, 'planejamento_1_9': 1,
             'preVisit_2_1': 1, 'preVisit_2_2': 1, 'preVisit_2_3': 1,
@@ -203,10 +205,8 @@
         for (const sectionName in sectionDefinitions) {
             sectionDefinitions[sectionName].total = sectionDefinitions[sectionName].questions.reduce((sum, qId) => sum + (questionWeights[qId] || 0), 0);
         }
-        // (Omitidos para brevidade, mas devem estar aqui no seu código final)
-        const questionWeights = { 'Planejamento_1_1': 1, /* ... */ 'Closing_6_2': 1 };
-        const questionTextMap = { 'Planejamento_1_1': '1.1 Bem-apresentado', /* ... */ };
-        const sectionDefinitions = { 'Planejamento': { questions: [/*...*/], total: 10 }, /* ... */ };
+
+        // ** FIM DO CÓDIGO CORRIGIDO **
 
 
         document.addEventListener('DOMContentLoaded', async function() {
@@ -267,11 +267,14 @@
                             let sectionAchieved = 0;
                             const sectionDef = sectionDefinitions[sectionName];
                             sectionDef.questions.forEach(qId => {
+                                // ** CORREÇÃO IMPORTANTE AQUI: A chave no objeto 'audit' pode ser diferente **
+                                // A planilha salva com 'preVisit_2_1' mas o JS precisa ser consistente.
+                                // O ideal é que a planilha e o JS usem a mesma chave. Vamos assumir que a planilha usa a chave do formulário.
                                 if (String(audit[qId]).trim().toLowerCase() === 'sim') {
                                     sectionAchieved += questionWeights[qId] || 0;
                                 }
                             });
-                            audit.sectionScores[sectionName] = (sectionAchieved / sectionDef.total) * 100;
+                            audit.sectionScores[sectionName] = sectionDef.total > 0 ? (sectionAchieved / sectionDef.total) * 100 : 0;
                             totalPoints += sectionAchieved;
                         }
                         audit.generalScore = totalPoints; // Pontuação total de 100
@@ -506,5 +509,3 @@
     </script>
 </body>
 </html>
-
-
