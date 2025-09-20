@@ -300,7 +300,9 @@
                 weight: questionWeights[qId],
                 nonConformity: stats[qId].total - stats[qId].success,
                 conformity: stats[qId].total > 0 ? (stats[qId].success / stats[qId].total) * 100 : 0
-            })).filter(q => questionWeights[qId] > 0);
+            }))
+            // A LINHA ABAIXO FOI CORRIGIDA. Troquei 'questionWeights[qId]' por 'q.weight'
+            .filter(q => q.weight > 0);
         }
 
         function updateKpiCards(totalAudits, avgConformity) {
@@ -368,3 +370,4 @@
     </script>
 </body>
 </html>
+
