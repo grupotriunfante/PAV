@@ -21,13 +21,7 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
         }
-        /* Aumentado para o gráfico de barras detalhado ter mais espaço */
-        .chart-container-large {
-            position: relative;
-            height: 700px; 
-            width: 100%;
-        }
-        .chart-container-medium {
+        .chart-container {
             position: relative;
             height: 400px;
             width: 100%;
@@ -35,6 +29,11 @@
         .score-high { background-color: #D1FAE5; color: #065F46; }
         .score-medium { background-color: #FEF3C7; color: #92400E; }
         .score-low { background-color: #FEE2E2; color: #991B1B; }
+        .table-section-header {
+            background-color: #F3F4F6; /* gray-200 */
+            font-weight: 600; /* semibold */
+            color: #1F2937; /* gray-800 */
+        }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -97,11 +96,24 @@
         <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
             <div class="lg:col-span-2 card p-6">
                 <h3 class="text-lg font-semibold text-gray-800">Ranking de Performance (Nota Geral)</h3>
-                <div class="chart-container-medium mt-4"><canvas id="performanceRankingChart"></canvas></div>
+                <div class="chart-container mt-4"><canvas id="performanceRankingChart"></canvas></div>
             </div>
             <div class="lg:col-span-3 card p-6">
                 <h3 class="text-lg font-semibold text-gray-800">Desempenho por Pergunta</h3>
-                <div class="chart-container-large mt-4"><canvas id="questionPerformanceChart"></canvas></div>
+                <div class="mt-4 overflow-auto max-h-[360px]">
+                     <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50 sticky top-0">
+                            <tr>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ação</th>
+                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Peso</th>
+                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Não Conforme</th>
+                                <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">% Conforme</th>
+                            </tr>
+                        </thead>
+                        <tbody id="questionPerformanceTableBody" class="bg-white divide-y divide-gray-200">
+                           </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         
@@ -135,7 +147,6 @@
     </main>
 
     <script>
-        // ... (o script continua o mesmo da versão anterior, sem alterações)
         const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-DXVXSxS_Q2YjcPxC1jBtvrpe4w8TbWRt33Zxy85hKHcIEyF52kpN14bial4OoH-p/exec';
         let allAuditData = [];
         let loggedInSupervisor = '';
@@ -151,13 +162,12 @@
         };
         
         const questionTextMap = {
-            'Planejamento_1_1': 'Bem-apresentado', 'Planejamento_1_2': 'Palm carregado', 'Planejamento_1_3': 'Carro limpo', 'Planejamento_1_4': 'Roteiro definido', 'Planejamento_1_5': 'Metas definidas', 'Planejamento_1_6': 'Materiais em mãos', 'Planejamento_1_7': 'Conhecimento campanhas',
-            'PreVisit_2_1': 'Verificou histórico', 'PreVisit_2_2': 'Criou estratégias', 'PreVisit_2_3': 'Itens focos do mês',
-            'StoreReading_3_1': 'Analisou corredores', 'StoreReading_3_2': 'Produtos precificados', 'StoreReading_3_3': 'Visitou estoque', 'StoreReading_3_4': 'Verificou rupturas', 'StoreReading_3_5': 'Checou lançamentos', 'StoreReading_3_6': 'Montou pré-pedido',
-            'Execution_4_1': 'Abasteceu a loja', 'Execution_4_2': 'Garantiu limpeza', 'Execution_4_3': 'Posicionou expositores', 'Execution_4_4': 'Aplicou Cross Merch.', 'Execution_4_5': 'Verificou validade (FIFO)',
-            'Negotiation_5_1': 'Iniciou negociação', 'Negotiation_5_2': 'Mostrou soluções', 'Negotiation_5_3': 'Apresentou levantamento',
-            'Negotiation_5_4': 'Reforçou parceria', 
-            'Closing_6_1': 'Repassou valor/prazo', 'Closing_6_2': 'Combinou retorno',
+            'Planejamento_1_1': '1.1 Bem-apresentado', 'Planejamento_1_2': '1.2 Palm carregado', 'Planejamento_1_3': '1.3 Carro limpo', 'Planejamento_1_4': '1.4 Roteiro definido', 'Planejamento_1_5': '1.5 Metas definidas', 'Planejamento_1_6': '1.6 Materiais em mãos', 'Planejamento_1_7': '1.7 Conhecimento campanhas',
+            'PreVisit_2_1': '2.1 Verificou histórico', 'PreVisit_2_2': '2.2 Criou estratégias', 'PreVisit_2_3': '2.3 Itens focos do mês',
+            'StoreReading_3_1': '3.1 Analisou corredores', 'StoreReading_3_2': '3.2 Produtos precificados', 'StoreReading_3_3': '3.3 Visitou estoque', 'StoreReading_3_4': '3.4 Verificou rupturas', 'StoreReading_3_5': '3.5 Checou lançamentos', 'StoreReading_3_6': '3.6 Montou pré-pedido',
+            'Execution_4_1': '4.1 Abasteceu a loja', 'Execution_4_2': '4.2 Garantiu limpeza', 'Execution_4_3': '4.3 Posicionou expositores', 'Execution_4_4': '4.4 Aplicou Cross Merch.', 'Execution_4_5': '4.5 Verificou validade (FIFO)',
+            'Negotiation_5_1': '5.1 Iniciou negociação', 'Negotiation_5_2': '5.2 Mostrou soluções', 'Negotiation_5_3': '5.3 Apresentou levantamento', 'Negotiation_5_4': '5.4 Reforçou parceria', 
+            'Closing_6_1': '6.1 Repassou valor/prazo', 'Closing_6_2': '6.2 Combinou retorno',
         };
 
         const sectionDefinitions = {
@@ -190,6 +200,7 @@
         const TOTAL_POINTS_ALL_SECTIONS = 100;
         
         document.addEventListener('DOMContentLoaded', async function() {
+            // ... (Lógica de inicialização e eventos)
             loggedInSupervisor = localStorage.getItem('username');
             if (!localStorage.getItem('isAuthenticated') || !loggedInSupervisor) {
                 alert('Você precisa estar logado para acessar.');
@@ -210,6 +221,7 @@
         });
 
         async function fetchDataAndRenderDashboard() {
+            // ... (Lógica de busca de dados)
             try {
                 const response = await fetch(`${APP_SCRIPT_URL}?action=getAuditData&supervisorName=${encodeURIComponent(loggedInSupervisor)}`);
                 const result = await response.json();
@@ -253,12 +265,13 @@
         
         function renderDashboard() {
             const filteredData = processAndFilterData();
+            
             const performanceData = calculatePerformanceMetrics(filteredData);
             const questionPerformance = calculateQuestionPerformance(filteredData);
 
             updateKpiCards(filteredData.length, performanceData.overallAverage);
             renderPerformanceRankingChart(performanceData.bySalesperson);
-            renderQuestionPerformanceChart(questionPerformance);
+            renderQuestionPerformanceTable(questionPerformance); // ATUALIZADO
             renderSalespersonPerformanceTable(performanceData.bySalesperson);
         }
 
@@ -268,6 +281,7 @@
             renderDashboard();
         }
 
+        // --- Funções de Cálculo ---
         function calculateScore(audit, sectionName) {
             const section = sectionDefinitions[sectionName];
             if (!section) return 0;
@@ -339,20 +353,26 @@
                     }
                 });
             });
-            return Object.keys(questionTextMap).map(qId => ({
-                id: qId,
-                text: questionTextMap[qId],
-                weight: questionWeights[qId],
-                avg: questionStats[qId].total > 0 ? (questionStats[qId].success / questionStats[qId].total) * 100 : 0
-            })).filter(q => q.weight > 0);
+            return Object.keys(questionTextMap).map(qId => {
+                const stats = questionStats[qId];
+                return {
+                    id: qId,
+                    text: questionTextMap[qId],
+                    weight: questionWeights[qId],
+                    conformity: stats.total > 0 ? (stats.success / stats.total) * 100 : 0,
+                    nonConformity: stats.total - stats.success
+                }
+            }).filter(q => q.weight > 0);
         }
         
+        // --- Funções de Renderização ---
         function updateKpiCards(totalAudits, avgConformity) {
             document.getElementById('totalAudits').innerText = totalAudits;
             document.getElementById('avgConformity').innerText = `${avgConformity.toFixed(0)}%`;
         }
 
         function renderSalespersonPerformanceTable(data) {
+            // ... (sem alterações)
             const tableBody = document.getElementById('salespersonPerformanceTableBody');
             tableBody.innerHTML = '';
             if (data.length === 0) {
@@ -384,95 +404,92 @@
             const ctx = document.getElementById(chartId).getContext('2d');
             chartInstances[chartId] = new Chart(ctx, { type, data, options });
         }
-
+        
         function renderPerformanceRankingChart(data) {
+            // ... (sem alterações)
             const labels = data.map(sp => sp.name);
             const scores = data.map(sp => sp.generalAvg);
             const backgroundColors = scores.map(score => score >= 90 ? '#22C55E' : score >= 70 ? '#F97316' : '#EF4444');
             renderChart('performanceRankingChart', 'bar', {
                 labels,
-                datasets: [{
-                    label: 'Nota Geral Média',
-                    data: scores,
-                    backgroundColor: backgroundColors,
-                }]
+                datasets: [{ label: 'Nota Geral Média', data: scores, backgroundColor: backgroundColors }]
             }, {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
+                indexAxis: 'y', responsive: true, maintainAspectRatio: false,
                 scales: { x: { beginAtZero: true, max: 100 } },
                 plugins: { legend: { display: false } }
             });
         }
+        
+        // NOVA FUNÇÃO PARA RENDERIZAR A TABELA DE PERGUNTAS
+        function renderQuestionPerformanceTable(data) {
+            const tableBody = document.getElementById('questionPerformanceTableBody');
+            tableBody.innerHTML = '';
+            if (data.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="4" class="text-center text-gray-500 py-4">Nenhum dado de pergunta para exibir.</td></tr>`;
+                return;
+            }
 
-        function renderQuestionPerformanceChart(data) {
-            const sectionColors = {
-                'Planejamento': 'rgba(59, 130, 246, 0.7)', 'Pré-Visita': 'rgba(16, 185, 129, 0.7)',
-                'Leitura de Loja': 'rgba(234, 179, 8, 0.7)', 'Execução': 'rgba(249, 115, 22, 0.7)',
-                'Negociação': 'rgba(139, 92, 246, 0.7)', 'Fechamento': 'rgba(236, 72, 153, 0.7)'
+            const getScoreClass = (score) => {
+                if (score >= 90) return 'score-high';
+                if (score >= 70) return 'score-medium';
+                return 'score-low';
             };
-            const getSectionForQuestion = (qId) => {
-                for(const sectionName in sectionDefinitions){
-                    if(sectionDefinitions[sectionName].questions.includes(qId)) return sectionName;
+            
+            let currentSection = '';
+            data.forEach(item => {
+                // Adiciona o cabeçalho da seção
+                const itemSection = Object.keys(sectionDefinitions).find(sec => sectionDefinitions[sec].questions.includes(item.id));
+                if (itemSection && itemSection !== currentSection) {
+                    currentSection = itemSection;
+                    const sectionRow = document.createElement('tr');
+                    sectionRow.innerHTML = `<td colspan="4" class="px-4 py-2 table-section-header">${currentSection} <span class="font-normal">(Peso Total: ${sectionDefinitions[currentSection].total})</span></td>`;
+                    tableBody.appendChild(sectionRow);
                 }
-                return '';
-            };
-            data.sort((a,b) => a.avg - b.avg);
-            const labels = data.map(q => q.text);
-            const scores = data.map(q => q.avg);
-            const backgroundColors = data.map(q => sectionColors[getSectionForQuestion(q.id)] || 'rgba(107, 114, 128, 0.7)');
 
-            renderChart('questionPerformanceChart', 'bar', {
-                labels,
-                datasets: [{
-                    label: 'Média de Acerto',
-                    data: scores,
-                    backgroundColor: backgroundColors,
-                }]
-            }, {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: { x: { beginAtZero: true, max: 100, ticks: { callback: (value) => value + '%' } } },
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                const index = context.dataIndex;
-                                const item = data[index];
-                                return ` Média: ${item.avg.toFixed(1)}% (Peso: ${item.weight})`;
-                            }
-                        }
-                    }
-                }
+                // Adiciona a linha da pergunta
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="px-4 py-3 text-sm text-gray-700">${item.text}</td>
+                    <td class="px-4 py-3 text-sm text-gray-500 text-center">${item.weight}</td>
+                    <td class="px-4 py-3 text-sm font-bold text-center ${item.nonConformity > 0 ? 'text-red-600' : 'text-gray-500'}">${item.nonConformity}</td>
+                    <td class="px-4 py-3 text-sm font-semibold text-center ${getScoreClass(item.conformity)}">${item.conformity.toFixed(0)}%</td>
+                `;
+                tableBody.appendChild(row);
             });
         }
-        
+
+        // FUNÇÃO DE EXPORTAÇÃO ATUALIZADA
         function exportData() {
-            const performanceData = calculatePerformanceMetrics(processAndFilterData()).bySalesperson;
-            if (performanceData.length === 0) {
+            const dataToExport = processAndFilterData();
+            if (dataToExport.length === 0) {
                 alert("Não há dados para exportar com os filtros atuais.");
                 return;
             }
-            const headers = [
-                "Vendedor", "Auditorias", "Planejamento (%)", "Pré-Visita (%)", "Leitura de Loja (%)",
-                "Execução (%)", "Negociação (%)", "Fechamento (%)", "Nota Geral (%)"
-            ];
-            const rows = performanceData.map(sp => [
-                `"${sp.name}"`, sp.audits, sp.avgScores['Planejamento'].toFixed(1),
-                sp.avgScores['Pré-Visita'].toFixed(1), sp.avgScores['Leitura de Loja'].toFixed(1),
-                sp.avgScores['Execução'].toFixed(1), sp.avgScores['Negociação'].toFixed(1),
-                sp.avgScores['Fechamento'].toFixed(1), sp.generalAvg.toFixed(1)
-            ]);
-            let csvContent = "data:text/csv;charset=utf-8," 
+
+            // Pega todos os cabeçalhos possíveis
+            const headers = Object.keys(allAuditData[0] || {});
+            
+            const rows = dataToExport.map(audit => {
+                return headers.map(header => {
+                    let cell = audit[header] === undefined || audit[header] === null ? '' : String(audit[header]);
+                    // Escapa aspas e envolve células com vírgulas em aspas
+                    cell = cell.replace(/"/g, '""');
+                    if (cell.includes(',')) {
+                        cell = `"${cell}"`;
+                    }
+                    return cell;
+                }).join(',');
+            });
+
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF" // \uFEFF for UTF-8 BOM
                 + headers.join(",") + "\n" 
-                + rows.map(e => e.join(",")).join("\n");
+                + rows.join("\n");
+            
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
             const timestamp = new Date().toISOString().slice(0,10);
-            link.setAttribute("download", `desempenho_vendedores_${timestamp}.csv`);
+            link.setAttribute("download", `relatorio_auditorias_${timestamp}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
