@@ -19,11 +19,11 @@
         }
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
         }
         .chart-container {
             position: relative;
-            height: 400px;
+            height: 600px; /* Aumenta a altura para o novo gráfico de barras detalhado */
             width: 100%;
         }
         .score-high { background-color: #D1FAE5; color: #065F46; }
@@ -35,7 +35,7 @@
 
     <main class="container mx-auto p-4 md:p-8 space-y-8">
         
-        <header class="flex justify-between items-center">
+        <header class="flex flex-wrap justify-between items-center gap-4">
             <div>
                 <h1 class="text-3xl font-extrabold text-gray-900">Dashboard de Desempenho</h1>
                 <p class="text-gray-500 mt-1">Análise de performance das auditorias de campo.</p>
@@ -48,22 +48,26 @@
 
         <div class="card p-4">
             <div class="flex flex-wrap items-end gap-4">
-                <div class="flex-grow">
+                <div class="flex-grow min-w-[200px]">
                     <label for="filterVendedor" class="text-sm font-medium text-gray-700">Vendedor</label>
                     <select id="filterVendedor" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="">Todos os Vendedores</option>
                     </select>
                 </div>
-                <div class="flex-grow">
+                <div class="flex-grow min-w-[150px]">
                     <label for="filterMes" class="text-sm font-medium text-gray-700">Mês</label>
                     <input type="month" id="filterMes" class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
                 <button id="applyFilters" class="py-2 px-6 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 transition">Aplicar</button>
                 <button id="resetFilters" class="py-2 px-6 bg-gray-600 text-white font-bold rounded-lg shadow-md hover:bg-gray-700 transition">Limpar</button>
+                <button id="exportExcelBtn" class="py-2 px-6 bg-green-600 text-white font-bold rounded-lg shadow-md hover:bg-green-700 transition flex items-center gap-2">
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 2.75a.75.75 0 00-1.5 0v8.614L6.295 8.235a.75.75 0 10-1.09 1.03l4.25 4.5a.75.75 0 001.09 0l4.25-4.5a.75.75 0 00-1.09-1.03l-2.955 3.129V2.75z" /><path d="M3.5 12.75a.75.75 0 00-1.5 0v2.5A2.75 2.75 0 004.75 18h10.5A2.75 2.75 0 0018 15.25v-2.5a.75.75 0 00-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5z" /></svg>
+                    Exportar
+                </button>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="card p-6 flex items-center space-x-4">
                 <div class="bg-blue-100 p-3 rounded-full">
                     <svg class="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
@@ -82,35 +86,15 @@
                     <p id="avgConformity" class="text-3xl font-bold text-gray-900">0%</p>
                 </div>
             </div>
-            <div class="card p-6 flex items-center space-x-4">
-                 <div class="bg-red-100 p-3 rounded-full">
-                    <svg class="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
-                </div>
-                <div>
-                    <p class="text-sm text-gray-500">Média de Falhas Críticas</p>
-                    <p id="avgCriticalRejected" class="text-3xl font-bold text-gray-900">0.0</p>
-                </div>
-            </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1">
             <div class="card p-6">
-                <h3 class="text-lg font-semibold text-gray-800">Ranking de Performance (Nota Geral)</h3>
-                <div class="chart-container mt-4"><canvas id="performanceRankingChart"></canvas></div>
-            </div>
-            <div class="card p-6">
-                <h3 class="text-lg font-semibold text-gray-800">Pontos Fracos por Etapa (Média Geral)</h3>
-                <div class="chart-container mt-4"><canvas id="problemAreasChart"></canvas></div>
+                <h3 class="text-lg font-semibold text-gray-800">Desempenho por Pergunta</h3>
+                <div class="chart-container mt-4"><canvas id="questionPerformanceChart"></canvas></div>
             </div>
         </div>
         
-        <div class="card p-6">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">Principais Falhas em Itens Críticos</h3>
-            <div id="topFailingItems" class="space-y-3 text-gray-700">
-                <p>Nenhuma falha crítica encontrada ou dados insuficientes.</p>
-            </div>
-        </div>
-
         <div class="card p-6">
             <h3 class="text-lg font-semibold text-gray-800 mb-4">Desempenho Detalhado por Vendedor</h3>
             <div class="overflow-x-auto">
@@ -119,12 +103,12 @@
                         <tr>
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vendedor</th>
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Auditorias</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Planejamento</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pré-Visita</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Leitura de Loja</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Execução</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Negociação</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fechamento</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Planejamento <span class="font-normal text-gray-400">(Peso 10)</span></th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pré-Visita <span class="font-normal text-gray-400">(Peso 14)</span></th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Leitura de Loja <span class="font-normal text-gray-400">(Peso 30)</span></th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Execução <span class="font-normal text-gray-400">(Peso 20)</span></th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Negociação <span class="font-normal text-gray-400">(Peso 20)</span></th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fechamento <span class="font-normal text-gray-400">(Peso 6)</span></th>
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nota Geral</th>
                         </tr>
                     </thead>
@@ -146,48 +130,54 @@
         let loggedInSupervisor = '';
         let chartInstances = {};
 
-        // ========================================================================
-        // ============= CORREÇÃO: Usando os nomes EXATOS das colunas =============
-        // ========================================================================
-        const sectionWeights = {
+        const questionWeights = {
+            'Planejamento_1_1': 1, 'Planejamento_1_2': 1, 'Planejamento_1_3': 1, 'Planejamento_1_4': 2, 'Planejamento_1_5': 3, 'Planejamento_1_6': 1, 'Planejamento_1_7': 1, 'Planejamento_1_8': 0, 'Planejamento_1_9': 0,
+            'PreVisit_2_1': 4, 'PreVisit_2_2': 5, 'PreVisit_2_3': 5,
+            'StoreReading_3_1': 6, 'StoreReading_3_2': 3, 'StoreReading_3_3': 4, 'StoreReading_3_4': 6, 'StoreReading_3_5': 4, 'StoreReading_3_6': 7,
+            'Execution_4_1': 4, 'Execution_4_2': 3, 'Execution_4_3': 4, 'Execution_4_4': 4, 'Execution_4_5': 5,
+            'Negotiation_5_1': 6, 'Negotiation_5_2': 7, 'Negotiation_5_3': 7,
+            'Negotiation_5_4': 3, 
+            'Closing_6_1': 2, 'Closing_6_2': 1,
+        };
+        
+        const questionTextMap = {
+            'Planejamento_1_1': 'Bem-apresentado', 'Planejamento_1_2': 'Palm carregado', 'Planejamento_1_3': 'Carro limpo', 'Planejamento_1_4': 'Roteiro definido', 'Planejamento_1_5': 'Metas definidas', 'Planejamento_1_6': 'Materiais em mãos', 'Planejamento_1_7': 'Conhecimento campanhas',
+            'PreVisit_2_1': 'Verificou histórico', 'PreVisit_2_2': 'Criou estratégias', 'PreVisit_2_3': 'Itens focos do mês',
+            'StoreReading_3_1': 'Analisou corredores', 'StoreReading_3_2': 'Produtos precificados', 'StoreReading_3_3': 'Visitou estoque', 'StoreReading_3_4': 'Verificou rupturas', 'StoreReading_3_5': 'Checou lançamentos', 'StoreReading_3_6': 'Montou pré-pedido',
+            'Execution_4_1': 'Abasteceu a loja', 'Execution_4_2': 'Garantiu limpeza', 'Execution_4_3': 'Posicionou expositores', 'Execution_4_4': 'Aplicou Cross Merch.', 'Execution_4_5': 'Verificou validade (FIFO)',
+            'Negotiation_5_1': 'Iniciou negociação', 'Negotiation_5_2': 'Mostrou soluções', 'Negotiation_5_3': 'Apresentou levantamento',
+            'Negotiation_5_4': 'Reforçou parceria', 
+            'Closing_6_1': 'Repassou valor/prazo', 'Closing_6_2': 'Combinou retorno',
+        };
+
+        const sectionDefinitions = {
             'Planejamento': {
-                questions: ['Planejamento_1_1', 'Planejamento_1_2', 'Planejamento_1_3', 'Planejamento_1_4', 'Planejamento_1_5', 'Planejamento_1_6', 'Planejamento_1_7', 'Planejamento_1_8', 'Planejamento_1_9'],
-                total: 9 
+                questions: ['Planejamento_1_1', 'Planejamento_1_2', 'Planejamento_1_3', 'Planejamento_1_4', 'Planejamento_1_5', 'Planejamento_1_6', 'Planejamento_1_7'],
+                total: 10
             },
             'Pré-Visita': {
                 questions: ['PreVisit_2_1', 'PreVisit_2_2', 'PreVisit_2_3'],
-                total: 3
+                total: 14
             },
             'Leitura de Loja': {
                 questions: ['StoreReading_3_1', 'StoreReading_3_2', 'StoreReading_3_3', 'StoreReading_3_4', 'StoreReading_3_5', 'StoreReading_3_6'],
-                total: 6
+                total: 30
             },
             'Execução': {
                 questions: ['Execution_4_1', 'Execution_4_2', 'Execution_4_3', 'Execution_4_4', 'Execution_4_5'],
-                total: 5
+                total: 20
             },
             'Negociação': {
-                questions: ['Negotiation_5_1', 'Negotiation_5_2', 'Negotiation_5_3', 'Negotiation_5_4'],
-                total: 4
+                questions: ['Negotiation_5_1', 'Negotiation_5_2', 'Negotiation_5_3'],
+                total: 20
             },
             'Fechamento': {
-                questions: ['Closing_6_1', 'Closing_6_2'],
-                total: 2
+                questions: ['Negotiation_5_4', 'Closing_6_1', 'Closing_6_2'],
+                total: 6
             }
         };
 
-        const TOTAL_POINTS_ALL_SECTIONS = Object.values(sectionWeights).reduce((sum, section) => sum + section.total, 0);
-
-        const CRITICAL_QUESTIONS_MAP = {
-            'StoreReading_3_1': "Analisou todos os corredores",
-            'StoreReading_3_4': "Verificou rupturas",
-            'Execution_4_1': "Abasteceu a loja",
-            'Execution_4_2': "Garantiu limpeza",
-            'Negotiation_5_2': "Mostrou soluções aplicadas",
-            'Negotiation_5_3': "Apresentou levantamento de estoque",
-            'Closing_6_1': "Combinou valor e prazo"
-        };
-        // ========================================================================
+        const TOTAL_POINTS_ALL_SECTIONS = 100;
         
         document.addEventListener('DOMContentLoaded', async function() {
             loggedInSupervisor = localStorage.getItem('username');
@@ -206,6 +196,7 @@
                 localStorage.clear();
                 window.location.href = 'index.htm';
             });
+            document.getElementById('exportExcelBtn').addEventListener('click', exportData);
         });
 
         async function fetchDataAndRenderDashboard() {
@@ -216,9 +207,7 @@
                     allAuditData = result.data;
                     populateSalespersonFilter(allAuditData);
                     renderDashboard();
-                } else {
-                    throw new Error(result.message);
-                }
+                } else { throw new Error(result.message); }
             } catch (error) {
                 console.error('Erro ao buscar dados:', error);
                 document.getElementById('salespersonPerformanceTableBody').innerHTML = `<tr><td colspan="9" class="text-center text-red-500 py-8">Erro de conexão: ${error.message}</td></tr>`;
@@ -240,7 +229,6 @@
         function processAndFilterData() {
             const selectedVendedor = document.getElementById('filterVendedor').value;
             const selectedMes = document.getElementById('filterMes').value;
-
             return allAuditData.filter(audit => {
                 const matchesVendedor = !selectedVendedor || audit.Vendedor === selectedVendedor;
                 let matchesMes = true;
@@ -255,15 +243,12 @@
         
         function renderDashboard() {
             const filteredData = processAndFilterData();
-            
             const performanceData = calculatePerformanceMetrics(filteredData);
-            const problemAreas = calculateProblemAreas(filteredData);
-            const failingItems = calculateFailingItems(filteredData);
+            const questionPerformance = calculateQuestionPerformance(filteredData);
 
-            updateKpiCards(filteredData.length, performanceData.overallAverage, performanceData.avgCriticalRejected);
+            updateKpiCards(filteredData.length, performanceData.overallAverage);
             renderPerformanceRankingChart(performanceData.bySalesperson);
-            renderProblemAreasChart(problemAreas);
-            renderTopFailingItems(failingItems);
+            renderQuestionPerformanceChart(questionPerformance);
             renderSalespersonPerformanceTable(performanceData.bySalesperson);
         }
 
@@ -275,54 +260,43 @@
 
         // --- Funções de Cálculo ---
         function calculateScore(audit, sectionName) {
-            const section = sectionWeights[sectionName];
+            const section = sectionDefinitions[sectionName];
             if (!section) return 0;
-
             let achievedScore = section.questions.reduce((sum, qId) => {
                 if (audit.hasOwnProperty(qId) && String(audit[qId]).trim().toLowerCase() === 'sim') {
-                    return sum + 1;
+                    return sum + (questionWeights[qId] || 0);
                 }
                 return sum;
             }, 0);
-            
             return section.total > 0 ? (achievedScore / section.total) * 100 : 0;
         }
 
         function calculatePerformanceMetrics(data) {
             const performance = {};
             let totalGeneralScore = 0;
-            let totalCriticalRejected = 0;
-
             data.forEach(audit => {
                 const salesperson = audit.Vendedor;
                 if (!salesperson) return;
-
                 if (!performance[salesperson]) {
                     performance[salesperson] = { 
                         auditCount: 0,
-                        scores: Object.keys(sectionWeights).reduce((acc, sec) => ({...acc, [sec]: []}), {}),
+                        scores: Object.keys(sectionDefinitions).reduce((acc, sec) => ({...acc, [sec]: []}), {}),
                         generalScores: []
                     };
                 }
-                
                 performance[salesperson].auditCount++;
-                let auditTotalPoints = 0;
-                Object.keys(sectionWeights).forEach(sec => {
-                    const sectionScorePercent = calculateScore(audit, sec);
-                    performance[salesperson].scores[sec].push(sectionScorePercent);
-                    auditTotalPoints += (sectionScorePercent / 100) * sectionWeights[sec].total;
+                let auditTotalAchievedPoints = 0;
+                Object.keys(sectionDefinitions).forEach(sec => {
+                    performance[salesperson].scores[sec].push(calculateScore(audit, sec));
                 });
-
-                const generalScore = (auditTotalPoints / TOTAL_POINTS_ALL_SECTIONS) * 100;
+                Object.keys(questionWeights).forEach(qId => {
+                    if (audit.hasOwnProperty(qId) && String(audit[qId]).trim().toLowerCase() === 'sim') {
+                        auditTotalAchievedPoints += questionWeights[qId];
+                    }
+                });
+                const generalScore = auditTotalAchievedPoints;
                 performance[salesperson].generalScores.push(generalScore);
                 totalGeneralScore += generalScore;
-                
-                totalCriticalRejected += Object.keys(CRITICAL_QUESTIONS_MAP).reduce((count, qId) => {
-                    if (audit.hasOwnProperty(qId) && String(audit[qId]).trim().toLowerCase() === 'não') {
-                        return count + 1;
-                    }
-                    return count;
-                }, 0);
             });
 
             const bySalesperson = Object.keys(performance).map(name => {
@@ -337,48 +311,39 @@
 
             return {
                 bySalesperson,
-                overallAverage: data.length > 0 ? totalGeneralScore / data.length : 0,
-                avgCriticalRejected: data.length > 0 ? totalCriticalRejected / data.length : 0
+                overallAverage: data.length > 0 ? totalGeneralScore / data.length : 0
             };
         }
 
-        function calculateProblemAreas(data) {
-            const areaScores = Object.keys(sectionWeights).reduce((acc, sec) => ({...acc, [sec]: []}), {});
-            data.forEach(audit => {
-                Object.keys(sectionWeights).forEach(sec => {
-                    areaScores[sec].push(calculateScore(audit, sec));
-                });
+        function calculateQuestionPerformance(data) {
+            const questionStats = {};
+            Object.keys(questionTextMap).forEach(qId => {
+                questionStats[qId] = { success: 0, total: 0 };
             });
 
-            const labels = Object.keys(areaScores);
-            const averages = labels.map(label => {
-                const scores = areaScores[label];
-                return scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
-            });
-
-            return { labels, averages };
-        }
-        
-        function calculateFailingItems(data) {
-            const failingCounts = Object.keys(CRITICAL_QUESTIONS_MAP).reduce((acc, qId) => ({...acc, [qId]: 0}), {});
             data.forEach(audit => {
-                Object.keys(failingCounts).forEach(qId => {
-                    if (audit.hasOwnProperty(qId) && String(audit[qId]).trim().toLowerCase() === 'não') {
-                        failingCounts[qId]++;
+                Object.keys(questionTextMap).forEach(qId => {
+                    if (audit.hasOwnProperty(qId)) {
+                        questionStats[qId].total++;
+                        if (String(audit[qId]).trim().toLowerCase() === 'sim') {
+                            questionStats[qId].success++;
+                        }
                     }
                 });
             });
-            return Object.entries(failingCounts)
-                .map(([qId, count]) => ({'name': CRITICAL_QUESTIONS_MAP[qId], count}))
-                .filter(item => item.count > 0)
-                .sort((a, b) => b.count - a.count);
-        }
 
+            return Object.keys(questionTextMap).map(qId => ({
+                id: qId,
+                text: questionTextMap[qId],
+                weight: questionWeights[qId],
+                avg: questionStats[qId].total > 0 ? (questionStats[qId].success / questionStats[qId].total) * 100 : 0
+            })).filter(q => q.weight > 0); // Exibe apenas perguntas que valem pontos
+        }
+        
         // --- Funções de Renderização ---
-        function updateKpiCards(totalAudits, avgConformity, avgCritical) {
+        function updateKpiCards(totalAudits, avgConformity) {
             document.getElementById('totalAudits').innerText = totalAudits;
             document.getElementById('avgConformity').innerText = `${avgConformity.toFixed(0)}%`;
-            document.getElementById('avgCriticalRejected').innerText = avgCritical.toFixed(1);
         }
 
         function renderSalespersonPerformanceTable(data) {
@@ -388,24 +353,20 @@
                 tableBody.innerHTML = `<tr><td colspan="9" class="text-center text-gray-500 py-8">Nenhum dado encontrado para os filtros selecionados.</td></tr>`;
                 return;
             }
-            
             const getScoreClass = (score) => {
                 if (score >= 90) return 'score-high';
                 if (score >= 70) return 'score-medium';
                 return 'score-low';
             };
-
             data.forEach(sp => {
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-50';
                 let cells = `<td class="px-4 py-4 font-medium text-gray-900">${sp.name}</td>
                              <td class="px-4 py-4 text-gray-500">${sp.audits}</td>`;
-                
-                Object.keys(sectionWeights).forEach(sec => {
+                Object.keys(sectionDefinitions).forEach(sec => {
                     const score = sp.avgScores[sec];
                     cells += `<td class="px-4 py-4 font-semibold text-center ${getScoreClass(score)}">${score.toFixed(0)}%</td>`;
                 });
-
                 cells += `<td class="px-4 py-4 font-bold text-center text-blue-700 ${getScoreClass(sp.generalAvg)}">${sp.generalAvg.toFixed(0)}%</td>`;
                 row.innerHTML = cells;
                 tableBody.appendChild(row);
@@ -413,9 +374,7 @@
         }
         
         function renderChart(chartId, type, data, options) {
-            if (chartInstances[chartId]) {
-                chartInstances[chartId].destroy();
-            }
+            if (chartInstances[chartId]) chartInstances[chartId].destroy();
             const ctx = document.getElementById(chartId).getContext('2d');
             chartInstances[chartId] = new Chart(ctx, { type, data, options });
         }
@@ -424,15 +383,12 @@
             const labels = data.map(sp => sp.name);
             const scores = data.map(sp => sp.generalAvg);
             const backgroundColors = scores.map(score => score >= 90 ? '#22C55E' : score >= 70 ? '#F97316' : '#EF4444');
-
             renderChart('performanceRankingChart', 'bar', {
                 labels,
                 datasets: [{
                     label: 'Nota Geral Média',
                     data: scores,
                     backgroundColor: backgroundColors,
-                    borderColor: backgroundColors,
-                    borderWidth: 1
                 }]
             }, {
                 indexAxis: 'y',
@@ -443,52 +399,93 @@
             });
         }
 
-        function renderProblemAreasChart(data) {
-            renderChart('problemAreasChart', 'radar', {
-                labels: data.labels,
+        function renderQuestionPerformanceChart(data) {
+            const sectionColors = {
+                'Planejamento': 'rgba(59, 130, 246, 0.7)',   // blue
+                'Pré-Visita': 'rgba(16, 185, 129, 0.7)',    // emerald
+                'Leitura de Loja': 'rgba(234, 179, 8, 0.7)', // yellow
+                'Execução': 'rgba(249, 115, 22, 0.7)',      // orange
+                'Negociação': 'rgba(139, 92, 246, 0.7)',    // violet
+                'Fechamento': 'rgba(236, 72, 153, 0.7)'     // pink
+            };
+
+            const getSectionForQuestion = (qId) => {
+                for(const sectionName in sectionDefinitions){
+                    if(sectionDefinitions[sectionName].questions.includes(qId)) return sectionName;
+                }
+                return '';
+            };
+            
+            data.sort((a,b) => a.avg - b.avg); // Ordena das piores para as melhores notas
+            
+            const labels = data.map(q => q.text);
+            const scores = data.map(q => q.avg);
+            const backgroundColors = data.map(q => sectionColors[getSectionForQuestion(q.id)] || 'rgba(107, 114, 128, 0.7)');
+
+            renderChart('questionPerformanceChart', 'bar', {
+                labels,
                 datasets: [{
-                    label: 'Média de Conformidade por Etapa',
-                    data: data.averages,
-                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
-                    borderColor: 'rgba(59, 130, 246, 1)',
-                    borderWidth: 2,
-                    pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                    label: 'Média de Acerto',
+                    data: scores,
+                    backgroundColor: backgroundColors,
                 }]
             }, {
+                indexAxis: 'y',
                 responsive: true,
                 maintainAspectRatio: false,
-                scales: {
-                    r: {
-                        beginAtZero: true,
-                        max: 100,
-                        angleLines: { color: 'rgba(0, 0, 0, 0.1)' },
-                        grid: { color: 'rgba(0, 0, 0, 0.1)' },
-                        pointLabels: { font: { size: 12 } },
-                        ticks: { backdropColor: 'white', color: 'black' }
+                scales: { x: { beginAtZero: true, max: 100, ticks: { callback: (value) => value + '%' } } },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const index = context.dataIndex;
+                                const item = data[index];
+                                return ` Média: ${item.avg.toFixed(1)}% (Peso: ${item.weight})`;
+                            }
+                        }
                     }
-                },
-                plugins: { legend: { display: false } }
+                }
             });
         }
         
-        function renderTopFailingItems(items) {
-            const container = document.getElementById('topFailingItems');
-            container.innerHTML = '';
-            if (items.length === 0) {
-                 container.innerHTML = '<p class="text-gray-500">Nenhuma falha em itens críticos registrada para o período selecionado.</p>';
-                 return;
+        // --- Função de Exportação ---
+        function exportData() {
+            const performanceData = calculatePerformanceMetrics(processAndFilterData()).bySalesperson;
+            if (performanceData.length === 0) {
+                alert("Não há dados para exportar com os filtros atuais.");
+                return;
             }
 
-            const list = document.createElement('ul');
-            list.className = 'space-y-2';
-            items.slice(0, 3).forEach(item => { // Mostra apenas os top 3
-                const li = document.createElement('li');
-                li.className = 'flex justify-between items-center bg-gray-50 p-3 rounded-md';
-                li.innerHTML = `<span class="font-medium text-gray-800">${item.name}</span>
-                                <span class="font-bold text-red-600 bg-red-100 px-3 py-1 rounded-full text-sm">${item.count} falha(s)</span>`;
-                list.appendChild(li);
-            });
-            container.appendChild(list);
+            const headers = [
+                "Vendedor", "Auditorias", "Planejamento (%)", "Pré-Visita (%)", "Leitura de Loja (%)",
+                "Execução (%)", "Negociação (%)", "Fechamento (%)", "Nota Geral (%)"
+            ];
+            
+            const rows = performanceData.map(sp => [
+                sp.name,
+                sp.audits,
+                sp.avgScores['Planejamento'].toFixed(1),
+                sp.avgScores['Pré-Visita'].toFixed(1),
+                sp.avgScores['Leitura de Loja'].toFixed(1),
+                sp.avgScores['Execução'].toFixed(1),
+                sp.avgScores['Negociação'].toFixed(1),
+                sp.avgScores['Fechamento'].toFixed(1),
+                sp.generalAvg.toFixed(1)
+            ]);
+
+            let csvContent = "data:text/csv;charset=utf-8," 
+                + headers.join(",") + "\n" 
+                + rows.map(e => e.join(",")).join("\n");
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            const timestamp = new Date().toISOString().slice(0,10);
+            link.setAttribute("download", `desempenho_vendedores_${timestamp}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
     </script>
 </body>
