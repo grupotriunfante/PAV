@@ -150,17 +150,13 @@
 
     document.getElementById('loginForm').addEventListener('submit', async function(event) {
         event.preventDefault(); 
-
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
-        
-        // --- Elementos da UI ---
         const errorMessageDiv = document.getElementById('errorMessage');
         const submitButton = document.getElementById('loginButton');
         const buttonSpinner = document.getElementById('buttonSpinner');
         const buttonText = document.getElementById('buttonText');
 
-        // --- Resetar UI para estado de carregamento ---
         errorMessageDiv.classList.add('hidden');
         errorMessageDiv.textContent = '';
         submitButton.disabled = true;
@@ -168,43 +164,35 @@
         buttonSpinner.classList.remove('hidden');
 
         try {
-            // **MUDANÇA CRÍTICA AQUI: Voltando ao formato de formulário padrão**
             const response = await fetch(APP_SCRIPT_URL, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: new URLSearchParams({
-                    // A ação "login" será um parâmetro, assim como username e password
                     action: 'login',
                     username: username,
                     password: password
                 })
             });
 
-            // Se a requisição chegar aqui, ela foi bem-sucedida
             const result = await response.json();
 
             if (result.success) {
-                // Sucesso no login
+                // ** MUDANÇA PRINCIPAL AQUI **
+                // A chave no localStorage continua 'username', mas o valor vem de 'result.userName'
                 localStorage.setItem('isAuthenticated', 'true');
-                localStorage.setItem('username', result.username);
+                localStorage.setItem('username', result.userName); // Alterado de 'result.username' para 'result.userName'
                 localStorage.setItem('userRole', result.role);
                 localStorage.setItem('userUnit', result.unidade);
                 window.location.href = 'inicio.htm';
             } else {
-                // Falha no login (usuário/senha errados)
                 errorMessageDiv.textContent = result.message || 'Usuário ou senha inválidos.';
                 errorMessageDiv.classList.remove('hidden');
             }
-
         } catch (error) {
-            // Erro de rede ou de script
             console.error('Erro na requisição de login:', error);
             errorMessageDiv.textContent = 'Erro de conexão. Verifique sua rede e a URL do script.';
             errorMessageDiv.classList.remove('hidden');
         } finally {
-            // --- Restaurar UI para o estado normal ---
             submitButton.disabled = false;
             buttonText.textContent = 'Entrar';
             buttonSpinner.classList.add('hidden');
@@ -214,6 +202,7 @@
 </body>
 
 </html>
+
 
 
 
