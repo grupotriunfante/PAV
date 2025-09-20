@@ -142,11 +142,9 @@
     </div>
 
 <script>
-    // Substitua pelo seu URL de implantação do App Script
     const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzu_mz1seo3NI5cIfUvqSDPN3GnJheBfdE7II6zwSUJhsjH95fxQZFBXGRbPU0vAt3a/exec'; 
 
     document.addEventListener('DOMContentLoaded', function() {
-        // Limpa o localStorage para garantir um login limpo
         localStorage.clear();
     });
 
@@ -155,73 +153,68 @@
 
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
+        
+        // --- Elementos da UI ---
         const errorMessageDiv = document.getElementById('errorMessage');
+        const submitButton = document.getElementById('loginButton');
+        const buttonSpinner = document.getElementById('buttonSpinner');
+        const buttonText = document.getElementById('buttonText');
 
-        errorMessageDiv.textContent = ''; 
-        errorMessageDiv.classList.add('hidden'); 
-
-        const submitButton = this.querySelector('button[type="submit"]');
+        // --- Resetar UI para estado de carregamento ---
+        errorMessageDiv.classList.add('hidden');
+        errorMessageDiv.textContent = '';
         submitButton.disabled = true;
-        submitButton.textContent = 'Autenticando...';
+        buttonText.textContent = 'Autenticando...';
+        buttonSpinner.classList.remove('hidden');
 
         try {
-            // A requisição POST para o seu script de login
+            // **MUDANÇA CRÍTICA AQUI: Voltando ao formato de formulário padrão**
             const response = await fetch(APP_SCRIPT_URL, {
                 method: 'POST',
-                // A linha 'headers' foi REMOVIDA daqui para corrigir o erro de Content-Type
-                body: JSON.stringify({
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    // A ação "login" será um parâmetro, assim como username e password
                     action: 'login',
                     username: username,
                     password: password
                 })
             });
 
-            // Como não podemos ler a resposta diretamente por causa do CORS,
-            // vamos redirecionar e a próxima página vai validar.
-            // Para obter os dados do usuário, precisamos de uma solução mais robusta.
-            // No entanto, para fins de login/redirecionamento, assumimos sucesso momentaneamente
-            // e buscamos os dados na próxima página. A melhor prática seria configurar CORS
-            // corretamente no script, mas vamos manter a simplicidade.
-            
-            // Para contornar e pegar os dados, podemos fazer um truque:
-            // A lógica ideal seria o seu script retornar um JSONP ou ter CORS habilitado.
-            // Como seu script já está feito, vamos confiar que o login está correto
-            // e que o redirecionamento para 'inicio.htm' vai funcionar.
-            
-            // O seu script de Google Apps precisa ser ajustado para retornar os dados corretamente
-            // com JSON, mesmo com o erro de CORS. Vamos assumir que a estrutura que você
-            // me deu está correta e que o erro era apenas no envio.
-            
-            // **Vamos tentar ler a resposta, mesmo que dê erro de CORS no console, a requisição pode ter funcionado.**
-            // Esta parte é uma tentativa. Se o login funcionar mas der erro aqui, está ok.
+            // Se a requisição chegar aqui, ela foi bem-sucedida
             const result = await response.json();
 
             if (result.success) {
+                // Sucesso no login
                 localStorage.setItem('isAuthenticated', 'true');
                 localStorage.setItem('username', result.username);
                 localStorage.setItem('userRole', result.role);
                 localStorage.setItem('userUnit', result.unidade);
                 window.location.href = 'inicio.htm';
             } else {
+                // Falha no login (usuário/senha errados)
                 errorMessageDiv.textContent = result.message || 'Usuário ou senha inválidos.';
                 errorMessageDiv.classList.remove('hidden');
             }
 
         } catch (error) {
+            // Erro de rede ou de script
             console.error('Erro na requisição de login:', error);
-            // Se o erro for de CORS, mas você sabe que o login funciona, pode redirecionar mesmo assim
-            // Mas é mais seguro mostrar um erro genérico.
-            errorMessageDiv.textContent = 'Erro de conexão ou credenciais inválidas. Verifique o console para mais detalhes.';
+            errorMessageDiv.textContent = 'Erro de conexão. Verifique sua rede e a URL do script.';
             errorMessageDiv.classList.remove('hidden');
         } finally {
+            // --- Restaurar UI para o estado normal ---
             submitButton.disabled = false;
-            submitButton.textContent = 'Entrar';
+            buttonText.textContent = 'Entrar';
+            buttonSpinner.classList.add('hidden');
         }
     });
 </script>
 </body>
 
 </html>
+
 
 
 
