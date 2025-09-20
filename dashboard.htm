@@ -139,6 +139,8 @@
         
         // ** INÍCIO DO CÓDIGO CORRIGIDO **
 
+        // SUBSTITUA OS OBJETOS ANTIGOS POR ESTE BLOCO CORRIGIDO
+
         const questionWeights = {
             'planejamento_1_1': 1, 'planejamento_1_2': 1, 'planejamento_1_3': 1, 'planejamento_1_4': 1, 'planejamento_1_5': 1, 'planejamento_1_6': 1, 'planejamento_1_7': 1, 'planejamento_1_8': 1, 'planejamento_1_9': 1,
             'preVisit_2_1': 1, 'preVisit_2_2': 1, 'preVisit_2_3': 1,
@@ -205,7 +207,6 @@
         for (const sectionName in sectionDefinitions) {
             sectionDefinitions[sectionName].total = sectionDefinitions[sectionName].questions.reduce((sum, qId) => sum + (questionWeights[qId] || 0), 0);
         }
-
         // ** FIM DO CÓDIGO CORRIGIDO **
 
 
@@ -511,4 +512,5 @@
     </script>
 </body>
 </html>
+
 
