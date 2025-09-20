@@ -86,7 +86,7 @@
         </div>
         
         <div class="card p-6">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">Desempenho Detalhado</h3>
+            <h3 id="detailedTableTitle" class="text-lg font-semibold text-gray-800 mb-4">Desempenho Detalhado</h3>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                      <thead class="bg-gray-50"><tr id="detailedTableHeader"></tr></thead>
@@ -108,10 +108,11 @@
             role: localStorage.getItem('userRole'),
             unit: localStorage.getItem('userUnit')
         };
-
-        const questionWeights = { 'planejamento_1_1': 1, 'planejamento_1_2': 1, 'planejamento_1_3': 1, 'planejamento_1_4': 2, 'planejamento_1_5': 3, 'planejamento_1_6': 1, 'planejamento_1_7': 1, 'planejamento_1_8': 0, 'planejamento_1_9': 0, 'preVisit_2_1': 4, 'preVisit_2_2': 5, 'preVisit_2_3': 5, 'storeReading_3_1': 6, 'storeReading_3_2': 3, 'storeReading_3_3': 4, 'storeReading_3_4': 6, 'storeReading_3_5': 4, 'storeReading_3_6': 7, 'execution_4_1': 4, 'execution_4_2': 3, 'execution_4_3': 4, 'execution_4_4': 4, 'execution_4_5': 5, 'negotiation_5_1': 6, 'negotiation_5_2': 7, 'negotiation_5_3': 7, 'negotiation_5_4': 3, 'closing_6_1': 2, 'closing_6_2': 1 };
-        const questionTextMap = { 'planejamento_1_1': '1.1 Bem-apresentado', 'planejamento_1_2': '1.2 Palm carregado', 'planejamento_1_3': '1.3 Carro limpo', 'planejamento_1_4': '1.4 Roteiro definido', 'planejamento_1_5': '1.5 Metas definidas', 'planejamento_1_6': '1.6 Materiais em mãos', 'planejamento_1_7': '1.7 Conhecimento campanhas', 'preVisit_2_1': '2.1 Verificou histórico', 'preVisit_2_2': '2.2 Criou estratégias', 'preVisit_2_3': '2.3 Itens focos do mês', 'storeReading_3_1': '3.1 Analisou corredores', 'storeReading_3_2': '3.2 Produtos precificados', 'storeReading_3_3': '3.3 Visitou estoque', 'storeReading_3_4': '3.4 Verificou rupturas', 'storeReading_3_5': '3.5 Checou lançamentos', 'storeReading_3_6': '3.6 Montou pré-pedido', 'execution_4_1': '4.1 Abasteceu a loja', 'execution_4_2': '4.2 Garantiu limpeza', 'execution_4_3': '4.3 Posicionou expositores', 'execution_4_4': '4.4 Aplicou Cross Merch.', 'execution_4_5': '4.5 Verificou validade (FIFO)', 'negotiation_5_1': '5.1 Iniciou negociação', 'negotiation_5_2': '5.2 Mostrou soluções', 'negotiation_5_3': '5.3 Apresentou levantamento', 'negotiation_5_4': '5.4 Reforçou parceria', 'closing_6_1': '6.1 Repassou valor/prazo', 'closing_6_2': '6.2 Combinou retorno' };
-        const sectionDefinitions = { 'Planejamento': { questions: ['planejamento_1_1', 'planejamento_1_2', 'planejamento_1_3', 'planejamento_1_4', 'planejamento_1_5', 'planejamento_1_6', 'planejamento_1_7'], total: 10 }, 'Pré-Visita': { questions: ['preVisit_2_1', 'preVisit_2_2', 'preVisit_2_3'], total: 14 }, 'Leitura de Loja': { questions: ['storeReading_3_1', 'storeReading_3_2', 'storeReading_3_3', 'storeReading_3_4', 'storeReading_3_5', 'storeReading_3_6'], total: 30 }, 'Execução': { questions: ['execution_4_1', 'execution_4_2', 'execution_4_3', 'execution_4_4', 'execution_4_5'], total: 20 }, 'Negociação': { questions: ['negotiation_5_1', 'negotiation_5_2', 'negotiation_5_3'], total: 20 }, 'Fechamento': { questions: ['negotiation_5_4', 'closing_6_1', 'closing_6_2'], total: 6 } };
+        
+        // As chaves aqui (ex: 'PreVisit_2_1') DEVEM ser idênticas aos cabeçalhos da sua planilha Google
+        const questionWeights = { 'Planejamento_1_1': 1, 'Planejamento_1_2': 1, 'Planejamento_1_3': 1, 'Planejamento_1_4': 2, 'Planejamento_1_5': 3, 'Planejamento_1_6': 1, 'Planejamento_1_7': 1, 'Planejamento_1_8': 0, 'Planejamento_1_9': 0, 'PreVisit_2_1': 4, 'PreVisit_2_2': 5, 'PreVisit_2_3': 5, 'StoreReading_3_1': 6, 'StoreReading_3_2': 3, 'StoreReading_3_3': 4, 'StoreReading_3_4': 6, 'StoreReading_3_5': 4, 'StoreReading_3_6': 7, 'Execution_4_1': 4, 'Execution_4_2': 3, 'Execution_4_3': 4, 'Execution_4_4': 4, 'Execution_4_5': 5, 'Negotiation_5_1': 6, 'Negotiation_5_2': 7, 'Negotiation_5_3': 7, 'Negotiation_5_4': 3, 'Closing_6_1': 2, 'Closing_6_2': 1 };
+        const questionTextMap = { 'Planejamento_1_1': '1.1 Bem-apresentado', 'Planejamento_1_2': '1.2 Palm carregado', 'Planejamento_1_3': '1.3 Carro limpo', 'Planejamento_1_4': '1.4 Roteiro definido', 'Planejamento_1_5': '1.5 Metas definidas', 'Planejamento_1_6': '1.6 Materiais em mãos', 'Planejamento_1_7': '1.7 Conhecimento campanhas', 'PreVisit_2_1': '2.1 Verificou histórico', 'PreVisit_2_2': '2.2 Criou estratégias', 'PreVisit_2_3': '2.3 Itens focos do mês', 'StoreReading_3_1': '3.1 Analisou corredores', 'StoreReading_3_2': '3.2 Produtos precificados', 'StoreReading_3_3': '3.3 Visitou estoque', 'StoreReading_3_4': '3.4 Verificou rupturas', 'StoreReading_3_5': '3.5 Checou lançamentos', 'StoreReading_3_6': '3.6 Montou pré-pedido', 'Execution_4_1': '4.1 Abasteceu a loja', 'Execution_4_2': '4.2 Garantiu limpeza', 'Execution_4_3': '4.3 Posicionou expositores', 'Execution_4_4': '4.4 Aplicou Cross Merch.', 'Execution_4_5': '4.5 Verificou validade (FIFO)', 'Negotiation_5_1': '5.1 Iniciou negociação', 'Negotiation_5_2': '5.2 Mostrou soluções', 'Negotiation_5_3': '5.3 Apresentou levantamento', 'Negotiation_5_4': '5.4 Reforçou parceria', 'Closing_6_1': '6.1 Repassou valor/prazo', 'Closing_6_2': '6.2 Combinou retorno' };
+        const sectionDefinitions = { 'Planejamento': { questions: ['Planejamento_1_1', 'Planejamento_1_2', 'Planejamento_1_3', 'Planejamento_1_4', 'Planejamento_1_5', 'Planejamento_1_6', 'Planejamento_1_7'], total: 10 }, 'Pré-Visita': { questions: ['PreVisit_2_1', 'PreVisit_2_2', 'PreVisit_2_3'], total: 14 }, 'Leitura de Loja': { questions: ['StoreReading_3_1', 'StoreReading_3_2', 'StoreReading_3_3', 'StoreReading_3_4', 'StoreReading_3_5', 'StoreReading_3_6'], total: 30 }, 'Execução': { questions: ['Execution_4_1', 'Execution_4_2', 'Execution_4_3', 'Execution_4_4', 'Execution_4_5'], total: 20 }, 'Negociação': { questions: ['Negotiation_5_1', 'Negotiation_5_2', 'Negotiation_5_3'], total: 20 }, 'Fechamento': { questions: ['Negotiation_5_4', 'Closing_6_1', 'Closing_6_2'], total: 6 } };
 
         document.addEventListener('DOMContentLoaded', async () => {
             if (!loggedInUser.name) {
@@ -136,8 +137,10 @@
                 title.textContent = `Dashboard Gerencial - Unidade ${loggedInUser.unit}`;
                 document.querySelector('.manager-only').style.display = 'block';
                 document.getElementById('rankingTitle').textContent = 'Ranking de Supervisores (Nº Auditorias)';
+                document.getElementById('detailedTableTitle').textContent = 'Desempenho Detalhado (Todos os Vendedores)';
             } else {
                 title.textContent = `Dashboard de Desempenho - ${loggedInUser.name}`;
+                document.getElementById('rankingTitle').textContent = 'Ranking de Vendedores (Nota Geral)';
             }
         }
 
@@ -158,11 +161,11 @@
                     populateFilters(allAuditData);
                     renderDashboard(allAuditData);
                 } else {
-                    throw new Error(result.message || 'Erro desconhecido ao buscar dados.');
+                    throw new Error(result.message || 'Erro ao buscar dados.');
                 }
             } catch (error) {
                 console.error('Erro fatal ao buscar dados:', error);
-                alert(`Não foi possível carregar os dados: ${error.message}`);
+                alert(`Não foi possível carregar os dados: ${error.message}. Verifique o console (F12) para mais detalhes.`);
             } finally {
                 document.body.style.cursor = 'default';
             }
@@ -186,7 +189,6 @@
             const selectedSupervisor = document.getElementById('filterSupervisor').value;
             const selectedVendedor = document.getElementById('filterVendedor').value;
             const selectedMes = document.getElementById('filterMes').value;
-
             const filteredData = allAuditData.filter(audit => {
                 const matchesSupervisor = !selectedSupervisor || audit.Supervisor === selectedSupervisor;
                 const matchesVendedor = !selectedVendedor || audit.Vendedor === selectedVendedor;
@@ -215,7 +217,8 @@
                 renderRankingChart(performanceData.bySalesperson, 'Nota Média', 'generalAvg');
             }
         }
-
+        
+        // FUNÇÕES DE CÁLCULO E RENDERIZAÇÃO (BASEADAS NO SEU CÓDIGO ORIGINAL)
         function calculateScore(audit, sectionName) {
             const section = sectionDefinitions[sectionName];
             if (!section) return 0;
@@ -237,6 +240,11 @@
                 const salesperson = audit.Vendedor;
                 const supervisor = audit.Supervisor;
                 if (!salesperson) return;
+
+                if (!bySalesperson[salesperson]) {
+                    bySalesperson[salesperson] = { name: salesperson, supervisor: supervisor, auditCount: 0, scores: {}, generalScores: [] };
+                }
+                bySalesperson[salesperson].auditCount++;
                 
                 let auditTotalPoints = 0;
                 Object.keys(questionWeights).forEach(qId => {
@@ -244,16 +252,12 @@
                         auditTotalPoints += questionWeights[qId];
                     }
                 });
+                bySalesperson[salesperson].generalScores.push(auditTotalPoints);
                 totalGeneralScore += auditTotalPoints;
 
-                if (!bySalesperson[salesperson]) {
-                    bySalesperson[salesperson] = { name: salesperson, supervisor: supervisor, auditCount: 0, totalScores: [], sectionScoresSum: {} };
-                }
-                bySalesperson[salesperson].auditCount++;
-                bySalesperson[salesperson].totalScores.push(auditTotalPoints);
-                Object.keys(sectionDefinitions).forEach(sec => {
-                    if (!bySalesperson[salesperson].sectionScoresSum[sec]) bySalesperson[salesperson].sectionScoresSum[sec] = 0;
-                    bySalesperson[salesperson].sectionScoresSum[sec] += calculateScore(audit, sec);
+                Object.keys(sectionDefinitions).forEach(secName => {
+                    if (!bySalesperson[salesperson].scores[secName]) bySalesperson[salesperson].scores[secName] = [];
+                    bySalesperson[salesperson].scores[secName].push(calculateScore(audit, secName));
                 });
 
                 if (supervisor) {
@@ -263,10 +267,11 @@
             });
 
             const processedSalespeople = Object.values(bySalesperson).map(sp => {
-                sp.generalAvg = sp.totalScores.length > 0 ? sp.totalScores.reduce((a, b) => a + b, 0) / sp.auditCount : 0;
+                sp.generalAvg = sp.generalScores.length > 0 ? sp.generalScores.reduce((a, b) => a + b, 0) / sp.auditCount : 0;
                 sp.avgSectionScores = {};
-                Object.keys(sp.sectionScoresSum).forEach(sec => {
-                    sp.avgSectionScores[sec] = sp.sectionScoresSum[sec] / sp.auditCount;
+                Object.keys(sectionDefinitions).forEach(secName => {
+                    const scores = sp.scores[secName] || [];
+                    sp.avgSectionScores[secName] = scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
                 });
                 return sp;
             });
@@ -280,9 +285,7 @@
 
         function calculateQuestionPerformance(data) {
             const stats = {};
-            Object.keys(questionTextMap).forEach(qId => {
-                stats[qId] = { success: 0, total: 0 };
-            });
+            Object.keys(questionTextMap).forEach(qId => { stats[qId] = { success: 0, total: 0 }; });
             data.forEach(audit => {
                 Object.keys(questionTextMap).forEach(qId => {
                     if (audit.hasOwnProperty(qId)) {
@@ -292,6 +295,7 @@
                 });
             });
             return Object.keys(questionTextMap).map(qId => ({
+                id: qId,
                 text: questionTextMap[qId],
                 weight: questionWeights[qId],
                 nonConformity: stats[qId].total - stats[qId].success,
@@ -312,11 +316,11 @@
 
             let headers = [];
             if (isManagerView) headers.push('Supervisor');
-            headers.push('Vendedor', 'Auditorias', ...Object.keys(sectionDefinitions), 'Nota Geral');
+            headers.push('Vendedor', 'Auditorias', ...Object.keys(sectionDefinitions).map(s => `${s} (Peso ${sectionDefinitions[s].total})`), 'Nota Geral');
             tableHeader.innerHTML = headers.map(h => `<th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">${h}</th>`).join('');
 
             if (data.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="${headers.length}" class="text-center text-gray-500 py-8">Nenhum dado encontrado para os filtros selecionados.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="${headers.length}" class="text-center text-gray-500 py-8">Nenhum dado encontrado.</td></tr>`;
                 return;
             }
             const getScoreClass = score => score >= 90 ? 'score-high' : score >= 70 ? 'score-medium' : 'score-low';
