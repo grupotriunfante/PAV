@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,97 +10,115 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            background-color: #e0e7ff;
         }
-        /* Cor de fundo para o body */
-        body {
-            background-color: #e0e7ff; /* Um azul bem claro, similar ao da imagem */
-        }
-        /* Estilo para o container principal do formulário */
+
         .login-container {
             background-color: white;
-            padding: 2.5rem; /* p-10 para mais padding */
-            border-radius: 1rem; /* rounded-xl */
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); /* shadow-2xl */
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 480px; /* Largura um pouco maior que o padrão para acomodar o conteúdo */
-            transform: translateY(0); /* Remove o hover:translate-y-1 do container principal */
-            transition: none; /* Remove a transição do container principal */
+            max-width: 480px;
+            transform: translateY(0);
+            transition: none;
         }
+
         .logo-sig {
-            height: 40px; /* Ajuste conforme necessário */
+            height: 40px;
             margin-bottom: 1rem;
-            align-self: flex-start; /* Alinha à esquerda dentro do flex container */
+            align-self: flex-start;
         }
+
         .logo-triunfante {
-            width: 200px; /* Ajuste conforme necessário */
-            margin-bottom: 2rem; /* Espaçamento abaixo do logo principal */
-        }
-        .main-title {
-            font-size: 2.5rem; /* text-4xl */
-            font-weight: 800; /* font-extrabold */
-            color: #1a237e; /* Um azul mais escuro para o título principal */
-            line-height: 1.2; /* Espaçamento de linha para títulos multi-linha */
+            width: 200px;
             margin-bottom: 2rem;
         }
+
+        .main-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #1a237e;
+            line-height: 1.2;
+            margin-bottom: 2rem;
+        }
+
         .form-label {
             display: block;
-            color: #4a5568; /* text-gray-700 */
-            font-size: 0.875rem; /* text-sm */
-            font-weight: 600; /* font-semibold */
+            color: #4a5568;
+            font-size: 0.875rem;
+            font-weight: 600;
             margin-bottom: 0.5rem;
         }
+
         .form-input {
             width: 100%;
-            padding: 0.75rem 1rem; /* py-3 px-4 */
-            border: 1px solid #cbd5e0; /* border-gray-300 */
-            border-radius: 0.5rem; /* rounded-lg */
+            padding: 0.75rem 1rem;
+            border: 1px solid #cbd5e0;
+            border-radius: 0.5rem;
             font-size: 1rem;
-            color: #2d3748; /* text-gray-800 */
+            color: #2d3748;
             transition: all 0.2s ease-in-out;
             box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
         }
+
         .form-input:focus {
             outline: none;
-            border-color: #4299e1; /* blue-500 */
-            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5); /* ring-2 focus:ring-blue-500 */
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
         }
+
         .btn-primary {
             width: 100%;
-            padding: 0.75rem 1rem; /* py-3 px-4 */
-            background-color: #3b82f6; /* blue-600 */
+            padding: 0.75rem 1rem;
+            background-color: #3b82f6;
             color: white;
-            font-weight: 700; /* font-bold */
-            border-radius: 0.75rem; /* rounded-lg */
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+            font-weight: 700;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             transition: all 0.3s ease-in-out;
+            /* Para centralizar o texto e o spinner */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem; /* Espaço entre o spinner e o texto, se ambos estivessem visíveis */
         }
+
         .btn-primary:hover {
-            background-color: #2563eb; /* blue-700 */
-            transform: translateY(-2px); /* hover:-translate-y-1 */
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Mais sombra no hover */
+            background-color: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
+        
+        /* Estilo para quando o botão estiver desativado */
+        .btn-primary:disabled {
+            background-color: #93c5fd; /* Azul mais claro */
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
         .error-message {
-            color: #ef4444; /* red-600 */
-            font-size: 0.875rem; /* text-sm */
+            color: #ef4444;
+            font-size: 0.875rem;
             text-align: center;
             margin-top: 1rem;
         }
+
         .footer-text {
-            color: #6b7280; /* gray-500 */
-            font-size: 0.875rem; /* text-sm */
+            color: #6b7280;
+            font-size: 0.875rem;
             margin-top: 2rem;
         }
     </style>
 </head>
+
 <body class="min-h-screen flex flex-col items-center justify-center p-4">
 
     <div class="login-container flex flex-col items-center">
         <img src="https://i.imgur.com/b6JbtR3.png" alt="SIG - Sistema Integrado de Gestão" class="logo-sig">
-
         <img src="https://i.imgur.com/x5yvEo7.png" alt="Triunfante" class="logo-triunfante">
-
         <h1 class="main-title text-center">Plano de Acompanhamento de Vendedor</h1>
-
         <form id="loginForm" class="w-full space-y-6">
             <div>
                 <label for="username" class="form-label">Usuário:</label>
@@ -110,42 +128,51 @@
                 <label for="password" class="form-label">Senha:</label>
                 <input type="password" id="password" name="password" class="form-input" required>
             </div>
-            <button type="submit" class="btn-primary">
-                Entrar
+
+            <button type="submit" id="loginButton" class="btn-primary">
+                <svg id="buttonSpinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span id="buttonText">Entrar</span>
             </button>
             <div id="errorMessage" class="error-message hidden"></div>
         </form>
-
         <p class="footer-text text-center">Desenvolvido por Triunfante Brasil</p>
     </div>
 
     <script>
-        // Substitua pelo seu URL de implantação do App Script
-        const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzu_mz1seo3NI5cIfUvqSDPN3GnJheBfdE7II6zwSUJhsjH95fxQZFBXGRbPU0vAt3a/exec'; // Certifique-se de que este é o URL correto
+        const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzu_mz1seo3NI5cIfUvqSDPN3GnJheBfdE7II6zwSUJhsjH95fxQZFBXGRbPU0vAt3a/exec';
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Limpa o localStorage ao carregar a página de login para evitar logins "presos"
             localStorage.removeItem('isAuthenticated');
             localStorage.removeItem('username');
         });
 
         document.getElementById('loginForm').addEventListener('submit', async function(event) {
-            event.preventDefault(); // Impede o envio padrão do formulário
+            event.preventDefault();
 
+            // Elementos do formulário e do botão
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             const errorMessageDiv = document.getElementById('errorMessage');
+            const loginButton = document.getElementById('loginButton');
+            const buttonSpinner = document.getElementById('buttonSpinner');
+            const buttonText = document.getElementById('buttonText');
 
-            errorMessageDiv.textContent = ''; // Limpa mensagens de erro anteriores
-            errorMessageDiv.classList.add('hidden'); // Esconde a div de erro
+            // --- INICIA O ESTADO DE CARREGAMENTO ---
+            loginButton.disabled = true; // Desativa o botão
+            buttonSpinner.classList.remove('hidden'); // Mostra o spinner
+            buttonText.textContent = 'Entrando...'; // Muda o texto (opcional)
+            errorMessageDiv.classList.add('hidden'); // Esconde erros antigos
 
             try {
                 const response = await fetch(APP_SCRIPT_URL, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded' // Formato para doPost com e.parameter
+                        'Content-Type': 'application/x-www-form-urlencoded'
                     },
-                    body: new URLSearchParams({ // Envia os parâmetros no formato de formulário
+                    body: new URLSearchParams({
                         action: 'login',
                         username: username,
                         password: password
@@ -155,10 +182,9 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    // Armazena o nome do usuário logado no localStorage
                     localStorage.setItem('isAuthenticated', 'true');
-                    localStorage.setItem('username', result.userName); // Usa o userName retornado pelo App Script
-                    window.location.href = 'inicio.htm'; // Redireciona para o inicio
+                    localStorage.setItem('username', result.userName);
+                    window.location.href = 'inicio.htm';
                 } else {
                     errorMessageDiv.textContent = result.message || 'Erro desconhecido ao fazer login.';
                     errorMessageDiv.classList.remove('hidden');
@@ -167,8 +193,16 @@
                 console.error('Erro na requisição de login:', error);
                 errorMessageDiv.textContent = 'Erro de conexão. Verifique sua URL do App Script e a conexão de rede.';
                 errorMessageDiv.classList.remove('hidden');
+            } finally {
+                // --- FINALIZA O ESTADO DE CARREGAMENTO ---
+                // Este bloco `finally` executa sempre, seja em caso de sucesso ou erro.
+                // Isso garante que o botão volte ao normal.
+                loginButton.disabled = false; // Reativa o botão
+                buttonSpinner.classList.add('hidden'); // Esconde o spinner
+                buttonText.textContent = 'Entrar'; // Restaura o texto original
             }
         });
     </script>
 </body>
+
 </html>
