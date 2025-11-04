@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,7 +17,6 @@
             --box-shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
             --box-shadow-medium: 0 6px 16px rgba(0, 0, 0, 0.12);
         }
-
         body {
             font-family: 'Roboto', Arial, sans-serif;
             line-height: 1.6;
@@ -27,7 +25,6 @@
             background-color: var(--secondary-bg-color);
             color: var(--text-color);
         }
-
         .container {
             max-width: 960px;
             margin: 30px auto;
@@ -38,7 +35,6 @@
             position: relative;
             overflow: hidden;
         }
-
         h1 {
             color: var(--primary-color);
             text-align: center;
@@ -46,7 +42,6 @@
             font-size: 2.5em;
             font-weight: 700;
         }
-
         h2 {
             color: var(--primary-color);
             border-bottom: 2px solid var(--light-gray);
@@ -56,12 +51,10 @@
             font-size: 1.8em;
             font-weight: 500;
         }
-
         ul {
             list-style-type: none;
             padding: 0;
         }
-
         .info-field {
             margin-bottom: 25px;
             padding: 15px 20px;
@@ -69,7 +62,6 @@
             border-left: 6px solid #6272d3;
             border-radius: var(--border-radius);
         }
-
         .info-field label {
             display: block;
             margin-bottom: 8px;
@@ -77,7 +69,6 @@
             color: var(--dark-gray);
             font-size: 1.1em;
         }
-
         .info-field input[type="text"],
         .info-field input[type="date"],
         .info-field select {
@@ -88,12 +79,10 @@
             box-sizing: border-box;
             font-size: 1em;
         }
-
         .info-field input[readonly] {
             background-color: #f5f5f5;
             cursor: default;
         }
-
         .audit-item {
             background: var(--secondary-bg-color);
             margin-bottom: 15px;
@@ -104,31 +93,26 @@
             flex-wrap: wrap;
             box-shadow: var(--box-shadow-light);
         }
-
         .audit-item .question-text {
             flex-grow: 1;
             margin-right: 25px;
             font-size: 1.05em;
         }
-
         .question-number {
             font-weight: bold;
             color: var(--primary-color);
             margin-right: 10px;
         }
-
         .radio-options {
             display: flex;
             gap: 25px;
             margin-left: auto;
         }
-
         .radio-options label {
             cursor: pointer;
             display: flex;
             align-items: center;
         }
-
         .required-media-field {
             width: 100%;
             margin-top: 20px;
@@ -137,13 +121,11 @@
             border: 1px dashed var(--light-gray);
             border-radius: var(--border-radius);
         }
-
         .required-media-field label {
             font-weight: 500;
             margin-bottom: 10px;
             display: block;
         }
-
         .required-media-field input[type="file"] {
             width: 100%;
             padding: 10px;
@@ -152,7 +134,6 @@
             background-color: #fff;
             cursor: pointer;
         }
-
         .image-preview {
             display: flex;
             flex-wrap: wrap;
@@ -161,7 +142,6 @@
             padding-top: 15px;
             border-top: 1px solid var(--light-gray);
         }
-
         .preview-item {
             position: relative;
             width: 110px;
@@ -170,13 +150,11 @@
             border-radius: var(--border-radius);
             overflow: hidden;
         }
-
         .preview-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-
         .preview-item .file-name {
             position: absolute;
             bottom: 0;
@@ -191,7 +169,6 @@
             overflow: hidden;
             text-overflow: ellipsis;
         }
-
         .remove-btn {
             position: absolute;
             top: 5px;
@@ -210,11 +187,9 @@
             justify-content: center;
             line-height: 1;
         }
-
         .remove-btn:hover {
             background-color: rgba(255, 0, 0, 0.8);
         }
-
         .submit-button {
             display: block;
             width: 100%;
@@ -228,11 +203,9 @@
             cursor: pointer;
             margin-top: 40px;
         }
-
         .hidden-field {
             display: none;
         }
-
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -248,12 +221,10 @@
             visibility: hidden;
             transition: opacity 0.3s ease;
         }
-
         .loading-overlay.visible {
             opacity: 1;
             visibility: visible;
         }
-
         .spinner {
             border: 8px solid #f3f3f3;
             border-top: 8px solid var(--primary-color);
@@ -262,19 +233,132 @@
             height: 60px;
             animation: spin 1s linear infinite;
         }
+        
+        /* ### NOVO CSS PARA O BOTÃO E PAINEL 'VER PADRÃO' ### */
+        .view-standard-btn {
+            background-color: #e8f0fe;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 3px 8px;
+            font-size: 0.8em;
+            font-weight: 500;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+            vertical-align: middle;
+            transition: background-color 0.2s;
+        }
+        .view-standard-btn:hover {
+            background-color: #d8e2fd;
+        }
 
+        .standard-content {
+            width: 100%;
+            margin-top: 15px;
+            padding: 15px 20px;
+            background-color: #f9f9f9;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .standard-content h4 {
+            margin-top: 0;
+            color: var(--dark-gray);
+            border-bottom: 1px solid var(--light-gray);
+            padding-bottom: 5px;
+        }
+        .standard-content p {
+            margin-bottom: 10px;
+        }
+
+        /* INÍCIO DO CSS PARA AS IMAGENS NO PAINEL DE PADRÃO */
+        .standard-images {
+            margin-top: 20px;
+            border-top: 1px solid var(--light-gray);
+            padding-top: 15px;
+        }
+
+        .image-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px; /* Espaço entre as imagens */
+            justify-content: center; /* Centraliza as imagens */
+            margin-top: 10px;
+        }
+
+        .image-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius);
+            padding: 5px;
+            background-color: #fff;
+            box-shadow: var(--box-shadow-light);
+        }
+
+        .image-item img {
+            max-width: 150px; /* Tamanho máximo para as imagens de exemplo */
+            height: 150px;
+            object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer */
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+
+        .image-caption {
+            font-size: 0.9em;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+            color: #fff;
+        }
+
+        .image-caption.correct {
+            background-color: #4CAF50; /* Verde para correto */
+        }
+
+        .image-caption.incorrect {
+            background-color: #f44336; /* Vermelho para incorreto */
+        }
+        /* FIM DO CSS PARA AS IMAGENS NO PAINEL DE PADRÃO */
+        
+        /* ### FIM DO NOVO CSS ### */
+        
         @keyframes spin {
             0% {
                 transform: rotate(0deg);
             }
-
             100% {
                 transform: rotate(360deg);
             }
         }
+        /* ... (seu CSS existente para .image-caption.incorrect) ... */
+
+        /* ### NOVO CSS PARA IMAGEM ÚNICA DE PADRÃO ### */
+        .standard-single-image {
+            margin-top: 20px;
+            text-align: center; /* Centraliza a imagem e o texto */
+            border-top: 1px solid var(--light-gray);
+            padding-top: 15px;
+        }
+        .standard-single-image p {
+            font-weight: bold;
+            color: var(--dark-gray);
+            margin-bottom: 10px;
+        }
+        .standard-single-image img {
+            max-width: 100%; /* Garante que a imagem seja responsiva */
+            height: auto;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow-light);
+        }
+        /* ### FIM DO NOVO CSS ### */
+
+        /* FIM DO CSS PARA AS IMAGENS NO PAINEL DE PADRÃO */
+        /* ... (resto do seu CSS) ... */
     </style>
 </head>
-
 <body>
     <div class="container">
         <a href="inicio.htm" class="back-button">Voltar</a>
@@ -308,11 +392,41 @@
                 <h2>1. Planejamento do Dia</h2>
                 <ul>
                     <li class="audit-item">
-                        <span class="question-text"><span class="question-number">1.1.</span> Está bem-apresentado (higiene pessoal, vestimenta adequada, crachá)?</span>
+                        <span class="question-text">
+                            <span class="question-number">1.1.</span> Está bem-apresentado (higiene pessoal, vestimenta adequada, crachá)?
+                            
+                            <button type="button" class="view-standard-btn" data-target="standard-1-1">Ver Padrão</button>
+                            
+                        </span>
                         <div class="radio-options">
                             <label><input type="radio" name="planejamento_1_1" value="sim" required> Sim</label>
                             <label><input type="radio" name="planejamento_1_1" value="nao"> Não</label>
                         </div>
+
+                        <div id="standard-1-1" class="standard-content hidden-field">
+                            <h4>Padrão de Apresentação Esperado:</h4>
+                            <p>O vendedor deve seguir os seguintes pontos:</p>
+                            <ul style="list-style-type: disc; padding-left: 20px; margin-bottom: 15px;">
+                                <li><strong>Higiene:</strong> Barba feita ou aparada, cabelo penteado, unhas limpas.</li>
+                                <li><strong>Vestimenta:</strong> Uniforme oficial limpo e passado (camisa para dentro da calça).</li>
+                                <li><strong>Identificação:</strong> Crachá visível no peito.</li>
+                            </ul>
+
+                            <div class="standard-images">
+                                <p><strong>Exemplos de Apresentação:</strong></p>
+                                <div class="image-gallery">
+                                    <div class="image-item">
+                                        <img src="https://i.ibb.co/PswqybP3/Gemini-Generated-Image-ohzfa5ohzfa5ohzf.png" alt="Exemplo de apresentação correta do vendedor">
+                                        <span class="image-caption correct">Correto</span>
+                                    </div>
+                                    <div class="image-item">
+                                        <img src="https://i.ibb.co/4gYWNmwx/Gemini-Generated-Image-e619xpe619xpe619.png" alt="Exemplo de apresentação incorreta do vendedor">
+                                        <span class="image-caption incorrect">Incorreto</span>
+                                    </div>
+                                    </div>
+                            </div>
+                            </div>
+                        
                     </li>
                     <li class="audit-item">
                         <span class="question-text"><span class="question-number">1.2.</span> Palm carregado e funcionando?</span>
@@ -409,7 +523,7 @@
                         </div>
                         <div class="required-media-field hidden-field" id="storeReading_3_1_img_container">
                             <label for="storeReading_3_1_img">Anexar imagens (Máx. 10). Clique para adicionar mais fotos.</label>
-                            <input type="file" id="storeReading_3_1_img" name="storeReading_3_1_img" accept="image/*" multiple>
+                            <input type="file" id="storeReading_3_1_img" name="storeReading_3_1_img" accept="image/*" capture="environment">
                             <div class="image-preview" id="storeReading_3_1_img_preview"></div>
                         </div>
                     </li>
@@ -421,7 +535,7 @@
                         </div>
                         <div class="required-media-field hidden-field" id="storeReading_3_2_img_container">
                             <label for="storeReading_3_2_img">Anexar imagens (Máx. 5). Clique para adicionar mais fotos.</label>
-                            <input type="file" id="storeReading_3_2_img" name="storeReading_3_2_img" accept="image/*" multiple>
+                            <input type="file" id="storeReading_3_2_img" name="storeReading_3_2_img" accept="image/*" capture="environment">
                             <div class="image-preview" id="storeReading_3_2_img_preview"></div>
                         </div>
                     </li>
@@ -466,7 +580,7 @@
                         </div>
                         <div class="required-media-field hidden-field" id="execution_4_1_img_container">
                             <label for="execution_4_1_img">Anexar imagens (Máx. 5). Clique para adicionar mais fotos.</label>
-                            <input type="file" id="execution_4_1_img" name="execution_4_1_img" accept="image/*" multiple>
+                            <input type="file" id="execution_4_1_img" name="execution_4_1_img" accept="image/*" capture="environment">
                             <div class="image-preview" id="execution_4_1_img_preview"></div>
                         </div>
                     </li>
@@ -478,7 +592,7 @@
                         </div>
                         <div class="required-media-field hidden-field" id="execution_4_2_img_container">
                             <label for="execution_4_2_img">Anexar imagens (Máx. 5). Clique para adicionar mais fotos.</label>
-                            <input type="file" id="execution_4_2_img" name="execution_4_2_img" accept="image/*" multiple>
+                            <input type="file" id="execution_4_2_img" name="execution_4_2_img" accept="image/*" capture="environment">
                             <div class="image-preview" id="execution_4_2_img_preview"></div>
                         </div>
                     </li>
@@ -490,22 +604,37 @@
                         </div>
                         <div class="required-media-field hidden-field" id="execution_4_3_img_container">
                             <label for="execution_4_3_img">Anexar imagens (Máx. 5). Clique para adicionar mais fotos.</label>
-                            <input type="file" id="execution_4_3_img" name="execution_4_3_img" accept="image/*" multiple>
+                            <input type="file" id="execution_4_3_img" name="execution_4_3_img" accept="image/*" capture="environment">
                             <div class="image-preview" id="execution_4_3_img_preview"></div>
                         </div>
                     </li>
                     <li class="audit-item">
-                        <span class="question-text"><span class="question-number">4.4.</span> Aplicou Cross Merchandising?</span>
-                        <div class="radio-options">
-                            <label><input type="radio" name="execution_4_4" value="sim" data-target-field="execution_4_4_img_container"> Sim</label>
-                            <label><input type="radio" name="execution_4_4" value="nao" data-target-field="execution_4_4_img_container"> Não</label>
-                        </div>
-                        <div class="required-media-field hidden-field" id="execution_4_4_img_container">
-                            <label for="execution_4_4_img">Anexar imagens (Máx. 5). Clique para adicionar mais fotos.</label>
-                            <input type="file" id="execution_4_4_img" name="execution_4_4_img" accept="image/*" multiple>
-                            <div class="image-preview" id="execution_4_4_img_preview"></div>
-                        </div>
-                    </li>
+    <span class="question-text">
+        <span class="question-number">4.4.</span> Aplicou Cross Merchandising?
+        
+        <button type="button" class="view-standard-btn" data-target="standard-4-4">Ver Padrão</button>
+        
+    </span>
+    <div class="radio-options">
+        <label><input type="radio" name="execution_4_4" value="sim" data-target-field="execution_4_4_img_container"> Sim</label>
+        <label><input type="radio" name="execution_4_4" value="nao" data-target-field="execution_4_4_img_container"> Não</label>
+    </div>
+    <div class="required-media-field hidden-field" id="execution_4_4_img_container">
+        <label for="execution_4_4_img">Anexar imagens (Máx. 5). Clique para adicionar mais fotos.</label>
+        <input type="file" id="execution_4_4_img" name="execution_4_4_img" accept="image/*" capture="environment">
+        <div class="image-preview" id="execution_4_4_img_preview"></div>
+    </div>
+
+    <div id="standard-4-4" class="standard-content hidden-field">
+        <h4>Padrão de Cross Merchandising:</h4>
+        <p>O objetivo é posicionar produtos de categorias complementares próximos, incentivando a compra.</p>
+        
+        <div class="standard-single-image">
+            <p><strong>Exemplo:</strong></p>
+            <img src="https://i.ibb.co/vC82CfkH/cover-tira-de-venda-casada-cross-merchandising-96fe30fa37.jpg" alt="Exemplo de cross merchandising">
+        </div>
+    </div>
+</li>
                     <li class="audit-item">
                         <span class="question-text"><span class="question-number">4.5.</span> Verificou validade dos produtos (FIFO)?</span>
                         <div class="radio-options">
@@ -609,7 +738,7 @@
                 });
             }
             // ===== FIM DA ALTERAÇÃO =====
-
+            
             // --- Lógica do Supervisor e Vendedor ---
             const supervisorNameInput = document.getElementById('supervisorName');
             const salespersonSelect = document.getElementById('salespersonName');
@@ -661,6 +790,21 @@
             });
 
             fetchSalespersons();
+
+            // ### NOVO JAVASCRIPT PARA 'VER PADRÃO' ###
+            document.querySelectorAll('.view-standard-btn').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    event.preventDefault(); // Impede qualquer comportamento padrão do botão
+                    const targetId = event.target.dataset.target;
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        // Alterna a classe que já existe no seu CSS para ocultar/mostrar
+                        targetElement.classList.toggle('hidden-field');
+                    }
+                });
+            });
+            // ### FIM DO NOVO JAVASCRIPT ###
 
             // --- Lógica para mostrar/ocultar campos ---
             const radioButtons = document.querySelectorAll('input[type="radio"][data-target-field]');
@@ -874,5 +1018,4 @@
         });
     </script>
 </body>
-
 </html>
