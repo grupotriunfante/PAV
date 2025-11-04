@@ -110,6 +110,24 @@
             height: 100%;
             border: 0;
         }
+
+        /* ### NOVO CSS PARA O CONTAINER DA IMAGEM ### */
+        .image-container {
+            width: 100%;
+            margin: 0 auto;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow-medium);
+            overflow: hidden; /* Garante que a imagem respeite as bordas arredondadas */
+            border: 1px solid var(--light-gray); /* Adiciona uma borda sutil */
+        }
+
+        .image-container img {
+            width: 100%; /* Faz a imagem ocupar 100% do container */
+            height: auto;  /* Mantém a proporção da imagem */
+            display: block; /* Remove qualquer espaço extra abaixo da imagem */
+            border: 0;
+        }
+        /* ### FIM DO NOVO CSS ### */
     </style>
 </head>
 
@@ -123,6 +141,13 @@
             
         </p>
 
+        <div class="faq-item">
+            <h2>Fluxo do Processo de Acompanhamento</h2>
+            <div class="image-container">
+                <img src="https://i.ibb.co/DDfkMy7q/a28c528e-f8df-4880-a735-c9d2766f285c.jpg" 
+                     alt="Fluxograma do processo de acompanhamento">
+            </div>
+        </div>
         <div class="faq-item">
             <h2>Como acessar o sistema e fazer o acompanhamento?</h2>
             <div class="video-container">
@@ -152,4 +177,3 @@
 
 
 </html>
-
